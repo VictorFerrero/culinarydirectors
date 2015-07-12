@@ -3,7 +3,6 @@
 	require 'vendor/autoload.php';
 	require 'app/compiled/models.php';
 	require 'app/compiled/controllers.php';
-	require 'app/compiled/controllerdefs.php';
 	require 'app/filters.php';
 	require 'app/routes.php';
 	

@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b692055f5e6d7ff45a9e52eedb2a4ecd",
+    "hash": "ea0357f79cd91acb1ca95ee8063cd3c7",
     "packages": [
         {
             "name": "phroute/phroute",
