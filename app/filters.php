@@ -1,6 +1,9 @@
+<?php
 $startTime;
+$router = new Phroute\Phroute\RouteCollector();
 $router->filter('statsStart', function(){    
-    $startTime = microtime(true);
+    global $startTime;
+	$startTime = microtime(true);
 });
 
 $router->filter('basicAuth', function(){    
@@ -8,6 +11,8 @@ $router->filter('basicAuth', function(){
 });
 
 $router->filter('statsComplete', function(){    
+	global $startTime;
     var_dump('Page load time: ' . (microtime(true) - $startTime));
     //$page_load_time = (microtime(true) - $startTime);
 });
+?>
