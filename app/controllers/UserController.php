@@ -2,41 +2,60 @@
 
 class UserController{
 		
-
 	private $userRole; // 0 = fratmember, 1 = chef, 2 = admin
 	private $username;
-	private $password;
+	private $loggedIn;
 	private $userModel;
 	
-	public function __construct($userRole, $username, $password) {
-		if($this->authenticate($username, $password) {
-			$this->username = $username;
-			$this->password = $this->hash($password); // store the password hashed?
-		}
-		else {
-			throw new Exception("Invalid user credentials");
-		}
-		$this->userRole = $userRole;
-		$this->userModel = new UserModel("MySQL", $username, $password);
+	public function __construct() {
+		$this->userModel = new UserModel();
 	}
 	
 	public function __destruct() {
-		// ensure that the OrgModel destructor gets called to properly
+		// ensure that the UserModel destructor gets called to properly
 		// close the database connection
 		$this->userModel = null;
 	}
 	
-	
-	private function authenticate($username, $password) {
-		
-		
-		return true;
+	public function login() {
+		$arrValues = array();
+		$arrValues['username'] = $_REQUEST['username'];
+		$arrValues['password'] = $_REQUEST['password'];
+		$arrResult = $this->userModel->login($arrValues['username'], $arrValues['password']);
+		if($arrResult['success']) {
+			$arrUser = $arrResult['userInfo'];
+			$this->username = $arrUser['username'];
+			$this->userRole = $arrUser['userRole'];
+			$this->loggedIn = true;
+		}
+		else {
+			$this->loggedIn = false;
+			$this->username = "";
+			$this->userRole = -1;
+			print_r($arrResult);
+		}
 	}
-
-	private function hash($password) {
-		$hashedPassword = $password;
-		
-		return $hashedPassword;
+	
+	public function logout() {
+		$this->loggedIn = false;
+		$this->username = "";
+		$this->userRole = -1;
+	}
+	
+	public function addUser(){
+		$arrValues = array();
+		$arrValues['username'] = $_REQUEST['username'];
+		$arrValues['password'] = $_REQUEST['password'];
+		$arrValues['email'] = $_REQUEST['email'];
+		$arrValues['userRole'] = $_REQUEST['userRole'];
+		$arrResult = $this->userModel->addUser($arrValues);
+		if($arrResult['success']) {
+			//successfully added user
+		}
+		else {
+			//there was an error
+			print_r($arrResult);
+		}
 	}
 }
 

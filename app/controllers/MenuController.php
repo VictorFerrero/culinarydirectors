@@ -1,8 +1,5 @@
 <?php
-
-
 class MenuController{
-	
 	/*
 	 * does feed_back table need a field for menu_item_id. Otherwise, how do we know
 	 * which menu item the feedback is for?
@@ -23,7 +20,7 @@ class MenuController{
 	
 	public function __construct() {
 		// TODO: 
-		// $menuModel = new MenuModel();
+		 $this->menuModel = new MenuModel();
 	 }
 	 
 	 public function __destruct() {
@@ -36,18 +33,15 @@ class MenuController{
 		$arrInsertValues = array();
 		$arrInsertValues['feedback_type'] = $_REQUEST['feedback_type'];
 		$arrInsertValues['feedback_value'] = $_REQUEST['feedback_value'];
+		$arrInsertValues['menu_item_id'] = $_REQUEST['menu_item_id'];
 		
-		$menuModel = new MenuModel();
-		$arrResult = $menuModel->createFeedback($arrInsertValues);
-		$menuModel = null;
+		$arrResult = $this->menuModel->createFeedback($arrInsertValues);
 		return $arrResult;
 	}
 
 	public function deleteFeedback() {
 		$id = $_REQUEST['id'];
-		$menuModel = new MenuModel();
-		$arrResult = $menuModel->deleteFeedback($id);
-		
+		$arrResult = $this->menuModel->deleteFeedback($id);
 		return $arrResult;
 	}
 
@@ -56,9 +50,8 @@ class MenuController{
 		$arrEdit['id'] = $_REQUEST['id'];
 		$arrEdit['feedback_type'] = $_REQUEST['feedback_type'];
 		$arrEdit['feedback_value'] = $_REQUEST['feedback_value']; 
-		
-		$menuModel = new MenuModel();
-		$arrResult = $menuModel->editFeedBack($arrEdit);
+		$arrEdit['menu_item_id'] = $_REQUEST['menu_item_id'];
+		$arrResult = $this->menuModel->editFeedBack($arrEdit);
 		return $arrResult;
 	}	 
 
@@ -71,8 +64,7 @@ class MenuController{
 	    $arrInsertValues['day'] = $_REQUEST['day'];
 		$arrInsertValues['approved'] = $_REQUEST['approved'];
 		
-		$menuModel = new MenuModel();
-		$arrResult = $menuModel->createMenu($arrInsertValues);
+		$arrResult = $this->menuModel->createMenu($arrInsertValues);
 		return $arrResult;
 	 }
 	 
@@ -86,16 +78,13 @@ class MenuController{
 		$arrEdit['day'] = $_REQUEST['day'];
 		$arrEdit['approved'] = $_REQUEST['approved'];
 		
-		$menuModel = new MenuModel();
-		$arrResult = $menuModel->editMenu($arrEdit);
+		$arrResult = $this->menuModel->editMenu($arrEdit);
 		return $arrResult;
 	 }
 	 
 	 public function deleteMenu() {
 		$id = $_REQUEST['id'];
-		$menuModel = new MenuModel();
-		$arrResult = $menuModel->deleteMenu($id); // dont forget to remove menu items too
-		
+		$arrResult = $this->menuModel->deleteMenu($id); // dont forget to remove menu items too
 		return $arrResult;
 	 }
 	 
@@ -106,16 +95,14 @@ class MenuController{
 		$arrValues['item_name'] = $_REQUEST['item_name'];
 		$arrValues['meal'] = $_REQUEST['mean'];
 		
-		$menuModel = new MenuModel();
-		$arrResult = $menuModel->createMenuItem($arrValues);
+		$arrResult = $this->menuModel->createMenuItem($arrValues);
 		return $arrResult;
 	 }
 	 
 	 public function deleteMenuItem() {
 		$id = $_REQUEST['id'];
 		
-		$menuModel = new MenuModel();
-		$arrResult = $menuModel->deleteMenuItem($id); 
+		$arrResult = $this->menuModel->deleteMenuItem($id); 
 	 }
 	 
 	 // every field for a menu_item must be in the $_REQUEST variable. Fields not being
@@ -127,8 +114,7 @@ class MenuController{
 		$arrEdit['item_name'] = $_REQUEST['item_name']; 
 		$arrEdit['meal'] = $_REQUEST['meal'];
 		
-		$menuModel = new MenuModel();
-		$arrResult = $menuModel->editMenuItem($arrEdit);
+		$arrResult = $this->menuModel->editMenuItem($arrEdit);
 		return $arrResult;
 	 }
 }

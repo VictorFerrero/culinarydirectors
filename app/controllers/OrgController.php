@@ -12,7 +12,7 @@ class OrgController{
 		private $orgModel;
 		// TODO: use ID to select this from db
 	public function __construct($OrgId) {
-		$this->orgModel = new OrgModel("MySQL", $user, $password); // TODO: 
+		$this->orgModel = new OrgModel(); // TODO: 
 		$arrResult = $orgModel->getOrgById($OrgId);
 		$arrOrgInfo = $arrResult['data'];
 		

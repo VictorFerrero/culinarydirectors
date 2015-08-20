@@ -3,8 +3,8 @@
 class OrgModel{
 		private $dbo;
 
-	public function __construct($dbNickname, $user, $pass) {
-		$db = new DB_Connections()->getNewDBO($dbNickname, $user, $pass);
+	public function __construct() {
+		$db = new DB_Connections()->getNewDBO();
 		$this->dbo = $db;
 	 }
 	 

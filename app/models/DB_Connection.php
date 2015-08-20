@@ -6,12 +6,15 @@ class DB_Connections extends PDO
 	 public function __construct() {
 		
 	 }
-	
-	
-	public function getNewDBO($dbNickname, $user, $password) {
+		
+	public function getNewDBO() {
 		$arrReturn = array();
 		$success = false;
 		$db = null;
+		$arrCredentials = DatabaseConnectionStrings::getDBCredentials();
+		$dbNickname = NULL; // need to do something here
+		$user = $arrCredentials['username'];
+		$password = $arrCredentials['password'];
 		try {
 		 $dscs = $this->getDSCS($dbNickname); 
 		 $db = new PDO($dcsc, $user, $password);
@@ -24,10 +27,6 @@ class DB_Connections extends PDO
 	//	 $arrReturn['success'] = $success;
 	//	 $arrReturn['DBO'] = $db;
 		 return $db;
-	}
-	
-	public function setConfigPath($path) {
-		$this->configFilePath = $path;
 	}	
 	// DSCS = database specific connection string
 	// helper function to access the dscs from config file
