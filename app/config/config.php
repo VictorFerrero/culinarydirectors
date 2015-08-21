@@ -3,47 +3,26 @@
 
 class DatabaseConnectionStrings{
 
-	private static $MySQL_DSCS = "MySQL"; // TODO: need to get MySql connection string
+	private static $MySQL_DSCS = "localhost:root:r00t:culinarydirectors"; // TODO: need to get MySql connection string
 	
 	// just default to MySql right now
-	public function getDBCS($dbNickname) {
-		
+	public function getDBCS($dbNickname) {		
 	//	if(strcmp($dbNickname, "MySQL") == 0) {
 			return DatabaseConnectionStrings::$MySQL_DSCS;
 	//	}
 	}
 	
-	public function getDBCredentials($userRole){
-		$arr = array();
-		// TODO: accessing db credentials
-		/*
-		$arr['username'] = "root";
-		$arr['password'] = "password";
-		return $arr;
-		*/ 
-		
-		// OR 
-		
-		/*
-		switch ($userRole) {
-			
-			case 0: 
-			$arr['username'] = "member";
-			$arr['password'] = "password";
-			break; // frat member credentials
-		
-			case 1: 
-			$arr['username'] = "chef";
-			$arr['password'] = "password";
-			break; // chef credentials
-			
-			case 2: 
-			$arr['username'] = "root";
-			$arr['password'] = "password";
-			break; // admin credentials
-		}
-		*/
-		return $arr;
+	public function getDBCredentials($environment){
+		$environment = 'local';
+		//TODO: get nickname from environment->nickname mapping (maybe assoc array)?
+		$numericalArr = explode(':',getDBCS("MySQL_local"));
+		$optionsArr = array();
+		return array("host"=>$numericalArr[0],
+					"username"=>$numericalArr[1],
+					"password"=>$numericalArr[2],
+					"schema"=>$numericalArr[3],
+					"dsn"=>'mysql:host='.$numericalArr[0].';dbname='.$numericalArr[3].'',
+					"options"=>$optionsArr);
 	}
 
 }

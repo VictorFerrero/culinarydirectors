@@ -49,6 +49,9 @@ class UserModel{
 		$arrResult['success'] = $success;
 		return $arrResult;
 	}
+	
+	//TODO: get users by org ID
+	//TODO: get true/false if user_id is in org_id
 
 	/**
 		expected input: 
@@ -74,6 +77,7 @@ class UserModel{
 		$hashedPassword = password_hash($arrValues['password']);
 		$email = $arrValues['email'];
 		$userRole = $arrValues['userRole'];
+		$orgId = $arrValues['orgId'];
 		$arrResult['error'] = array();
 		// see if username has been used already
 		$boolValidUsername = false;
@@ -101,8 +105,8 @@ class UserModel{
 		}
 		// we have a valid username. So lets add it to the db
 		 try {
-			$data = array( 'username' => $username, 'password' => $hashedPassword, 'email' => $email, 'userRole' => $userRole);
-			$STH = $dbo->prepare("INSERT INTO User VALUES (NULL, :username, :password, :email, :userRole)");
+			$data = array( 'username' => $username, 'password' => $hashedPassword, 'email' => $email, 'orgId' => $orgId, 'userRole' => $userRole);
+			$STH = $dbo->prepare("INSERT INTO User VALUES (NULL, :username, :password, :email, :userRole, :orgId)");
 			$STH->execute($data);
 			$success = true;
 			//now, based on the userRole, insert a new record into: member_info, chef_info, or admin_info

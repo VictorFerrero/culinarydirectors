@@ -12,20 +12,21 @@ class DB_Connections extends PDO
 		$success = false;
 		$db = null;
 		// TODO: accessing db credentials=> connection string, username and password??
-		$arrCredentials = DatabaseConnectionStrings::getDBCredentials();
-		$dbNickname = NULL; // need to do something here
+		$arrCredentials = DatabaseConnectionStrings::getDBCredentials("local");
 		
+		$dsn = $arrCredentials['dsn'];
 		$user = $arrCredentials['username'];
 		$password = $arrCredentials['password'];
+		$options = $arrCredentials['options'];
+		
 		try {
-		 $dscs = $this->getDSCS($dbNickname); 
-		 $db = new PDO($dcsc, $user, $password);
-		 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // make PDO throw exceptions
-		 $success = true;
-	 } catch(Exception $e) {
-		 $success = false;
-	//	 $arrReturn['error'] = $e->getMessage();
-	 }
+			 $db = new PDO($dsn, $user, $password);
+			 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // make PDO throw exceptions
+			 $success = true;
+		 } catch(Exception $e) {
+			 $success = false;
+		//	 $arrReturn['error'] = $e->getMessage();
+		 }
 	//	 $arrReturn['success'] = $success;
 	//	 $arrReturn['DBO'] = $db;
 		 return $db;

@@ -7,7 +7,9 @@ class OrgModel{
 		$db = new DB_Connections()->getNewDBO();
 		$this->dbo = $db;
 	 }
-	 
+	 public function __destruct() {
+		$this->dbo = null;
+	}
 	 
 	 /**
 		expected input: the orgs id
@@ -15,7 +17,7 @@ class OrgModel{
 		$arrResult = array (
 		'data' => assoc array containing this orgs record from db
 		'error' => exception object for db query
-		'success' => true if org was successfuly retrieved from the db
+		'success' => true if org was successfully retrieved from the db
 		);
 	*/
 	 public function getOrgById($id) {
@@ -36,6 +38,10 @@ class OrgModel{
 		 $arrResult['success'] = $success;
 		 return $arrResult;
 	 }
+	 
+	 //TODO: insertOrUpdate org
+	 
+	 //delete org
 }
 
 ?>

@@ -5,8 +5,8 @@ class MenuModel
 	private $dbo;
 		
 	 public function __construct() {
-			$db = new DB_Connections()->getNewDBO();
-			$this->dbo = $db;
+		$db = new DB_Connections()->getNewDBO();
+		$this->dbo = $db;
 	 }
 
 	public function __destruct() {
@@ -183,6 +183,7 @@ class MenuModel
 		'error' => exception object for db query
 		'success' => true if menu was successfuly created, false otherwise
 		);
+		//TODO: batch create function that uses a transaction instead of repeating inserts
 	*/
 	public function createMenuItem($arrValues) {
 		$arrResult = array();

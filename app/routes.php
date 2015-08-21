@@ -1,6 +1,6 @@
 <?php
 /*Test Functions*/
-$routePrefix = '6zeta/index.php/';
+$routePrefix = 'culinarydirectors/index.php/';
 $router->get($routePrefix.'hello/{name}', function($name){
     return 'Hello ' . $name;
 }, array('before' => 'statsStart', 'after' => 'statsComplete'));
