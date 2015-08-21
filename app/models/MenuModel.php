@@ -13,6 +13,20 @@ class MenuModel
 		$this->dbo = null;
 	}
 
+	/**
+		expected input: 
+		$arrValues = array( 
+		'chef_id' => the id of the chef who is making the menu,
+		'week' => the week of the year (0-52)
+		'day' => day of the week (0-6)
+		'approve' => 1 if menu is approved, 0 otherwise
+		
+		output:
+		$arrResult = array (
+		'error' => exception object for db query
+		'success' => true if menu was successfuly created, false otherwise
+		);
+	*/
 	public function createMenu($arrValues) {
 		$arrResult = array();
 		$success = false;		
@@ -32,14 +46,24 @@ class MenuModel
 		$arrResult['success'] = $success;
 		return $arrResult;
 	}
-		/* query
 
-	$sql = "UPDATE books 
-	        SET title=?, author=?
-	        WHERE id=?";
-	$q = $conn->prepare($sql);
-	$q->execute(array($title,$author,$id));
-	 */
+	/**
+	   for fields that are not being edditted, the associative array must still be set with the 
+	   value of the empty string
+		expected input: 
+		$arrValues = array( 
+		'id' => id of the menu being editted
+		'chef_id' => the new id of the chef, "" otherwise
+		'week' => the new week for this menu, (0-52)
+		'day' => the new day of the week for this menu(0-6)
+		'approve' => 1 if menu is approved, 0 otherwise
+		
+		output:
+		$arrResult = array (
+		'error' => exception object for db query
+		'success' => true if menu was successfuly created, false otherwise
+		);
+*/
 	public function editMenu($arrValues) {
 	 $arrResult = array();
 	 $success = false;
@@ -87,6 +111,22 @@ class MenuModel
 	return $arrResult;
 	}
 	
+		/**
+		expected input: id of the menu being deleted
+		
+		output:
+		$arrResult = array (
+		'db_result1' => result of running delete query
+		'error1' => exception object for the first db query (DELETE FROM Menu)
+		'menu_success' => true if menu was successfuly removed, false otherwise
+		'db_result2' => result of running second delete query (DELETE FROM Menu_Item)
+		'error2' => exception object for the second db query
+		'menu_item_success' => true if the menu items on this menu were successfully removed
+		'db_result3' => result of running the third delete query (DELETE FROM Menu_Feedback)
+		'error3' => the error message from running the 3 delete query
+		'menu_feedback_success' => true if the feedback for this menu was removed
+		);
+	*/
 	public function deleteMenu($id) {
 		$arrResult = array();
 		$success = false;
@@ -131,6 +171,19 @@ class MenuModel
 		return $arrResult;
 	}
 	
+	/**
+		expected input: 
+		$arrValues = array( 
+		'menu_id' => the id of the menu that this item belongs on
+		'item_name' => the name of the item
+		'meal' => lunch or dinner?
+		
+		output:
+		$arrResult = array (
+		'error' => exception object for db query
+		'success' => true if menu was successfuly created, false otherwise
+		);
+	*/
 	public function createMenuItem($arrValues) {
 		$arrResult = array();
 		$success = false;
@@ -150,23 +203,22 @@ class MenuModel
 		return $arrResult;
 	}
 	
-	public function deleteMenuItem($id) {
-		$arrResult = array();
-		$success = false;
-		$sql = "DELETE FROM Menu_Item WHERE id=:id";
-		try{
-			$stm = $dbo->prepare($sql);
-			$stm->bindParam(":id", $id);
-			$arrResult['db_result'] = $stm->execute();
-			$success = true;
-		} catch(Exception $e) {
-			$arrResult['error'] = $e->getMessage();
-			$success = false;
-		}
-		$arrResult['success'] = $success;
-		return $arrResult;
-	}
-	 // --each menu_item has id | menu_id | item_name | meal (0 for lunch, 1 for dinner)
+		 // --each menu_item has id | menu_id | item_name | meal (0 for lunch, 1 for dinner)
+	 	/**
+		// must use empty string for fields not being updated.
+		expected input: 
+		$arrValues = array( 
+		'id' => id of the menu item being editted
+		'menu_id' => the new id of the menu this item is on, "" otherwise
+		'item_name' => the new item name, "" otherwise
+		'meal' => lunch or dinner, "" otherwise
+		
+		output:
+		$arrResult = array (
+		'error' => exception object for db query
+		'success' => true if menu was successfuly created, false otherwise
+		);
+*/
 	public function editMenuItem($arrValues) {
 	 $arrResult = array();
 	 $success = false;	
@@ -205,13 +257,55 @@ class MenuModel
 	$arrResult['success'] = $success;
 	return $arrResult;
 	}
-}
+	
+			/**
+		expected input: id of the menu item being deleted
+		
+		output:
+		$arrResult = array (
+		'db_result' => result of running delete query
+		'error' => exception object for the first db query 
+		'success' => true if menu was successfuly removed, false otherwise
+		);
+	*/
+	public function deleteMenuItem($id) {
+		$arrResult = array();
+		$success = false;
+		$sql = "DELETE FROM Menu_Item WHERE id=:id";
+		try{
+			$stm = $dbo->prepare($sql);
+			$stm->bindParam(":id", $id);
+			$arrResult['db_result'] = $stm->execute();
+			$success = true;
+		} catch(Exception $e) {
+			$arrResult['error'] = $e->getMessage();
+			$success = false;
+		}
+		$arrResult['success'] = $success;
+		return $arrResult;
+	}
 /*
 --we need a menu_feedback table with id, feedback_type (enum, ["lateplate","noshow","thumbs"],
 *  and feedback_value (1 for lateplate/noshow -- any entries in here mean "i do have a 
 * lateplate/noshow", there is no entry in this table for other cases, 1 for thumbs up and 0 for thumbs down)
 * we also need to have a field for menu_item_id
 * can we also have a field for menu_id?? => will make deletes easier for deleting a menu
+	*/
+	
+	/**
+		expected input: 
+		$arrValues = array( 
+		'feedback_type' => enum, ["lateplate","noshow","thumbs"]
+		'feedback_value' => 1 for lateplate/noshow -- any entries in here mean "i do have a lateplate/noshow",
+							there is no entry in this table for other cases, 1 for thumbs up and 0 for thumbs down
+		'menu_item_id' => the id of the menu item that this feedback corresponds to
+		'menu_id' => the id of the menu that this feedback is for (same menu item could be on a different menu, but done better?)
+		
+		output:
+		$arrResult = array (
+		'error' => exception object for db query
+		'success' => true if menu was successfuly created, false otherwise
+		);
 	*/
 	public function createFeedback($arrValues) {
 		$arrResult = array();
@@ -233,6 +327,23 @@ class MenuModel
 		return $arrResult;
 	}
 	
+ // --each menu_item has id | menu_id | item_name | meal (0 for lunch, 1 for dinner)
+	 	/**
+		// must use empty string for fields not being updated.
+		expected input: 
+		$arrValues = array( 
+		'id' => id of the feedback being editted
+		'feedback_type' => the new id of the menu this item is on, "" otherwise
+		'feedback_value' => the new item name, "" otherwise
+		'menu_item_id' => the new id of the menu item this feedback is for
+		'menu_id' => the new id of the menu this feedback is for
+		
+		output:
+		$arrResult = array (
+		'error' => exception object for db query
+		'success' => true if menu was successfuly created, false otherwise
+		);
+*/
 	public function editFeedback($arrValues) {
 	 $arrResult = array();
 	 $success = false;
@@ -240,6 +351,7 @@ class MenuModel
 	 $feedback_type = $arrValues['feedback_type'];
 	 $feedback_value = $arrValues['feedback_value'];
 	 $menu_item_id = $arrValues['menu_item_id'];
+	 $menu_id = $arrValues['menu_id'];
 	 $sql = "UPDATE Menu_Feedback SET ";
 	 $data = array();
 	 $index = 0;
@@ -258,6 +370,11 @@ class MenuModel
 		 $data[$index] = $menu_item_id;
 		 $index = $index + 1;
 	 }
+	  if(strcmp($menu_id, "") != 0) {
+		 $sql = $sql . "menu_id=?, ";
+		 $data[$index] = $menu_id;
+		 $index = $index + 1;
+	 }
 	 // get rid of the last two characters 
 	 $sql = substr($sql,0,-1);
 	 $sql = $sql . " WHERE id=?";
@@ -274,6 +391,16 @@ class MenuModel
 	return $arrResult;
 	}
 	
+			/**
+		expected input: id of the feedback being deleted
+		
+		output:
+		$arrResult = array (
+		'db_result' => result of running delete query
+		'error' => exception object for the first db query 
+		'success' => true if menu was successfuly removed, false otherwise
+		);
+	*/
 	public function deleteFeedback($id) {
 		$arrResult = array();
 		$success = false;

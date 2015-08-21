@@ -8,6 +8,16 @@ class OrgModel{
 		$this->dbo = $db;
 	 }
 	 
+	 
+	 /**
+		expected input: the orgs id
+		output:
+		$arrResult = array (
+		'data' => assoc array containing this orgs record from db
+		'error' => exception object for db query
+		'success' => true if org was successfuly retrieved from the db
+		);
+	*/
 	 public function getOrgById($id) {
 		 $success = false;
 		 $arrResult = array();

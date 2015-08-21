@@ -42,7 +42,7 @@ class FeedController
 		$arrValues = array();
 		$arrValues['id'] = $_REQUEST['fromId']
 		$arrValues['where_clause'] = "from=:id";
-		$arrResult = $this->feedModel->getMessagesByFromId($arrValues);
+		$arrResult = $this->feedModel->getMessages($arrValues);
 		
 		$arrMessages = $arrResult['data'];
 	}
@@ -51,7 +51,7 @@ class FeedController
 		$arrValues = array();
 		$arrValues['id'] = $_REQUEST['id']
 		$arrValues['where_clause'] = "id=:id";
-		$arrResult = $this->feedModel->getMessagesById($arrValues);
+		$arrResult = $this->feedModel->getMessages($arrValues);
 		
 		$arrMessages = $arrResult['data'];
 	}

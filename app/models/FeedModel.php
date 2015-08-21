@@ -13,6 +13,20 @@ class FeedModel
 		$this->dbo = null;
 	}
 	
+	/**
+		expected input: 
+		$arrValues = array( 
+		'to' => enum, ["lateplate","noshow","thumbs"]
+		'from' => 1 for lateplate/noshow -- any entries in here mean "i do have a lateplate/noshow",
+							there is no entry in this table for other cases, 1 for thumbs up and 0 for thumbs down
+		'message' => the id of the menu item that this feedback corresponds to
+		)
+		output:
+		$arrResult = array (
+		'error' => exception object for db query
+		'success' => true if message was successfuly added, false otherwise
+		);
+	*/
 	public function addMessage($arrValues) {
 		$arrResult = array();
 		$success = false;		
@@ -32,6 +46,19 @@ class FeedModel
 		return $arrResult;
 	}
 	
+	/**
+		expected input: 
+		$arrValues = array( 
+		'id' => the id of the message to delete
+		'whereClause' => sql for where clause. specify which id the one being passed in is
+		)
+		
+		output:
+		$arrResult = array (
+		'error' => exception object for db query
+		'success' => true if menu was successfuly created, false otherwise
+		);
+	*/
 	public function deleteMessage($arrValues) {
 		$id = $arrValues['id'];
 		$whereClause = $arrValues['where_clause']; // id=:id
@@ -52,6 +79,21 @@ class FeedModel
 	}
 	
 	//   set where clause like this to=:id, now we only need one function for getting messages
+	
+	/**
+		expected input: 
+		$arrValues = array( 
+		'id' => the id of the message to delete
+		'whereClause' => sql for where clause. specify which id the one being passed in is, 
+						  should be 1 of following: id=:id, to=:id, from=:id
+		)
+		
+		output:
+		$arrResult = array (
+		'error' => exception object for db query
+		'success' => true if menu was successfuly created, false otherwise
+		);
+	*/
 	public function getMessages($arrValues) {
 		$id = $arrValues['id'];
 		$whereClause = $arrValues['where_clause'];

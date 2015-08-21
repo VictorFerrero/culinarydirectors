@@ -30,6 +30,7 @@ class MenuController{
 	 }
 		 
 	public function createFeedback() {
+	// might need error checking, or we could put constraints on db fields
 		$arrInsertValues = array();
 		$arrInsertValues['feedback_type'] = $_REQUEST['feedback_type'];
 		$arrInsertValues['feedback_value'] = $_REQUEST['feedback_value'];
@@ -63,8 +64,15 @@ class MenuController{
 		$arrInsertValues['week'] = $_REQUEST['week'];
 	    $arrInsertValues['day'] = $_REQUEST['day'];
 		$arrInsertValues['approved'] = $_REQUEST['approved'];
-		
-		$arrResult = $this->menuModel->createMenu($arrInsertValues);
+		$arrResult = array();
+		$arrResult['success'] = false; // assume it does not work
+		if($this->isInputValid($arrInsertValues['week'], 0)) {
+			if($this->isInputValid($arrInsertValues['day'], 1)) {
+				if($this->isInputValid($arrInsertValues['approved'], 2)) {
+				$arrResult = $this->menuModel->createMenu($arrInsertValues);
+				}
+			}
+		}
 		return $arrResult;
 	 }
 	 
@@ -78,7 +86,15 @@ class MenuController{
 		$arrEdit['day'] = $_REQUEST['day'];
 		$arrEdit['approved'] = $_REQUEST['approved'];
 		
-		$arrResult = $this->menuModel->editMenu($arrEdit);
+		$arrResult = array();
+		$arrResult['success'] = false; // assume it does not work
+		if($this->isInputValid($arrInsertValues['week'], 0)) {
+			if($this->isInputValid($arrInsertValues['day'], 1)) {
+				if($this->isInputValid($arrInsertValues['approved'], 2)) {
+				$arrResult = $arrResult = $this->menuModel->editMenu($arrEdit);
+				}
+			}
+		}
 		return $arrResult;
 	 }
 	 
@@ -91,11 +107,15 @@ class MenuController{
 	 // --each menu_item has id | menu_id | item_name | meal (0 for lunch, 1 for dinner)
 	 public function createMenuItem() {
 		$arrValues = array();
-		$arrValues['menu_id'] = $_REQUEST['menu_id'];
+		$arrValues['menu_id'] = $_REQUEST['menu_id']; // do we have to check that this id exists?
 		$arrValues['item_name'] = $_REQUEST['item_name'];
-		$arrValues['meal'] = $_REQUEST['mean'];
+		$arrValues['meal'] = $_REQUEST['meal'];
 		
-		$arrResult = $this->menuModel->createMenuItem($arrValues);
+		$arrResult = array();
+		$arrResult['success'] = false
+		if($this->isInputValid($arrValues['meal'], 2)) {
+			$arrResult = $this->menuModel->createMenuItem($arrValues);
+		}
 		return $arrResult;
 	 }
 	 
@@ -114,8 +134,36 @@ class MenuController{
 		$arrEdit['item_name'] = $_REQUEST['item_name']; 
 		$arrEdit['meal'] = $_REQUEST['meal'];
 		
-		$arrResult = $this->menuModel->editMenuItem($arrEdit);
+		$arrResult = array();
+		$arrResult['success'] = false;
+		if(strcmp($arrEdit['meal'], "" != 0)) {
+			if($this->isInputValid($arrEdit['meal'], 2)) {
+				$arrResult = $this->menuModel->editMenuItem($arrEdit);
+			}
+		}
 		return $arrResult;
+	 }
+	 
+	 private function isInputValid($input, $flag) {
+		switch($flag) {
+			case 0:  //check valid week
+			if($input >= 0 AND $input <= 52) {
+				return true;
+			}		
+			return false;
+			break;
+			case 1: // check for valid day
+				if($input >= 0 AND $input <= 6) {
+					return true;
+				}
+				return false;
+				break;	
+			case 2: // check for valid approved value
+				if($input == 0 OR $input == 1) {
+						return true;
+				}
+			break;
+		}
 	 }
 }
 ?>

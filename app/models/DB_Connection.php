@@ -11,8 +11,10 @@ class DB_Connections extends PDO
 		$arrReturn = array();
 		$success = false;
 		$db = null;
+		// TODO: accessing db credentials=> connection string, username and password??
 		$arrCredentials = DatabaseConnectionStrings::getDBCredentials();
 		$dbNickname = NULL; // need to do something here
+		
 		$user = $arrCredentials['username'];
 		$password = $arrCredentials['password'];
 		try {
@@ -22,7 +24,7 @@ class DB_Connections extends PDO
 		 $success = true;
 	 } catch(Exception $e) {
 		 $success = false;
-	//	 $arrReturn['error'] = $e;
+	//	 $arrReturn['error'] = $e->getMessage();
 	 }
 	//	 $arrReturn['success'] = $success;
 	//	 $arrReturn['DBO'] = $db;

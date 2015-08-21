@@ -16,6 +16,15 @@ class UserModel{
 		$this->dbo = null;
 	}
 	
+	/**
+		expected input: username and password pair
+		
+		output:
+		$arrResult = array (
+		'error' => exception object error message
+		'success' => true if user was successfuly removed from db, false otherwise
+		);
+	*/
 	public function deleteUser($username, $password) {
 		$arrResult = array();
 		$success = false;
@@ -33,6 +42,22 @@ class UserModel{
 		return $arrResult;
 	}
 
+	/**
+		expected input: 
+		$arrValues = array( 
+		'username' => username,
+		'password' => non-hashed user password
+		'email' => user email address
+		'userRole' => the users role
+		
+		output:
+		$arrResult = array (
+		'username_error' => the username already exists
+		'error1' => exception object for first query attempt
+		'error2' => exception object for second query attempt
+		'success' => true if user was successfuly added, false otherwise
+		);
+	*/
 	public function addUser($arrValues) {
 		// first we check if username already exists
 		$arrResult = array();
@@ -58,7 +83,7 @@ class UserModel{
 				$boolValidUsername = true;
 			}
 		} catch (Exception $e) {
-			$arrResult['error'] = $e->getMessage();
+			$arrResult['error1'] = $e->getMessage();
 			$boolValidUsername = false; // assume username is invalid if we get an exception
 		}
 		if(!$boolValidUsername) {
@@ -73,10 +98,11 @@ class UserModel{
 			$success = true;
 		} catch (Exception $e) {
 			$success = false;
-			$arrResult['error'] = $e->getMessage();
+			$arrResult['error2'] = $e->getMessage();
 		}
 		// just send some stuff back to caller for debug
 		$arrResult['success'] = $success;
+		// below is for debug
 		$arrResult['username'] = $username;
 		$arrResult['hashed_password'] = $hashedPassword;
 		$arrResult['email'] = $email;
@@ -84,6 +110,17 @@ class UserModel{
 		return $arrResult;	
 	}
 	
+	/**
+		expected input: username and password pair
+		
+		output:
+		$arrResult = array (
+		'error_message' => invalid username and password pair
+		'error' => exception object for first query attempt
+		'userInfo' => the assoc array representing the users record in the db
+		'success' => true if user was successfuly added, false otherwise
+		);
+	*/
 	public function login($username, $password) {
 		$success = false;
 		$arrResult = array();	
@@ -101,7 +138,7 @@ class UserModel{
 			}
 			else {
 				// invalid username/password combo
-				$arrResult['error_message'] = "invalid username and password combo";
+				$arrResult['error_message'] = "invalid username and password pair";
 				$success = false;
 			}
 		} catch (Exception $e) {

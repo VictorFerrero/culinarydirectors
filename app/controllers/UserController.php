@@ -1,4 +1,5 @@
 <?php
+// TODO: login and logout need work
 
 class UserController{
 		
@@ -49,6 +50,20 @@ class UserController{
 		$arrValues['email'] = $_REQUEST['email'];
 		$arrValues['userRole'] = $_REQUEST['userRole'];
 		$arrResult = $this->userModel->addUser($arrValues);
+		if($arrResult['success']) {
+			//successfully added user
+		}
+		else {
+			//there was an error
+			print_r($arrResult);
+		}
+	}
+	
+	public function deleteUser() {
+		$arrValues = array();
+		$arrValues['username'] = $_REQUEST['username'];
+		$arrValues['password'] = $_REQUEST['password'];
+		$arrResult = $this->userModel->deleteUser($arrValues['username'], $arrValues['password']);
 		if($arrResult['success']) {
 			//successfully added user
 		}

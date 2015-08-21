@@ -3,8 +3,9 @@
 
 class DatabaseConnectionStrings{
 
-	private static $MySQL_DSCS = "MySQL";
+	private static $MySQL_DSCS = "MySQL"; // TODO: need to get MySql connection string
 	
+	// just default to MySql right now
 	public function getDBCS($dbNickname) {
 		
 	//	if(strcmp($dbNickname, "MySQL") == 0) {
