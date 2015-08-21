@@ -25,15 +25,23 @@ class UserModel{
 		'success' => true if user was successfuly removed from db, false otherwise
 		);
 	*/
-	public function deleteUser($username, $password) {
+	public function deleteUser($username,$password) {
 		$arrResult = array();
 		$success = false;
 		 try {
-			$STH = $dbo->prepare("DELETE FROM User WHERE username=:username AND password=:password");
+			$STH = $dbo->prepare("SELECT * FROM User WHERE username=:username");
 			$STH->bindParam(":username", $username);
-			$STH->bindParam(":password", $this->hash($password));
-			$STH->execute();	
-			$success = true;
+			$STH->execute();
+			$fetch = $STH->fetch(PDO::FETCH_ASSOC);
+			if(password_verify($password,$fetch['password']){ //TODO: or if admin is deleting a user
+				$STH = $dbo->prepare("DELETE FROM User WHERE username=:username");
+				$STH->bindParam(":username", $username);
+				$STH->execute();	
+				$success = true;
+			} else {
+				$success = false;
+				$arrResult['error'] = "not authorized to delete this acct";
+			}
 		} catch (Exception $e) {
 			$arrResult['error'] = $e->getMessage();
 			$boolValidUsername = false; // assume username is invalid if we get an exception
@@ -63,9 +71,10 @@ class UserModel{
 		$arrResult = array();
 		$success = false;
 		$username = $arrValues['username'];
-		$hashedPassword = $this->hash($arrValues['password']);
+		$hashedPassword = password_hash($arrValues['password']);
 		$email = $arrValues['email'];
 		$userRole = $arrValues['userRole'];
+		$arrResult['error'] = array();
 		// see if username has been used already
 		$boolValidUsername = false;
 		 try {
@@ -76,14 +85,14 @@ class UserModel{
 			if(is_array($fetch)) {
 				// username exists in the db
 				$boolValidUsername = false;
-				$arrResult['username_error'] = "the username already exists";
+				$arrResult['error'][] = "the username already exists";
 			}
 			else {
 				// username is available
 				$boolValidUsername = true;
 			}
 		} catch (Exception $e) {
-			$arrResult['error1'] = $e->getMessage();
+			$arrResult['error'][] = $e->getMessage();
 			$boolValidUsername = false; // assume username is invalid if we get an exception
 		}
 		if(!$boolValidUsername) {
@@ -96,9 +105,11 @@ class UserModel{
 			$STH = $dbo->prepare("INSERT INTO User VALUES (NULL, :username, :password, :email, :userRole)");
 			$STH->execute($data);
 			$success = true;
+			//now, based on the userRole, insert a new record into: member_info, chef_info, or admin_info
+				//use same error checks as with the above insert query
 		} catch (Exception $e) {
 			$success = false;
-			$arrResult['error2'] = $e->getMessage();
+			$arrResult['error'][] = $e->getMessage();
 		}
 		// just send some stuff back to caller for debug
 		$arrResult['success'] = $success;
@@ -124,17 +135,30 @@ class UserModel{
 	public function login($username, $password) {
 		$success = false;
 		$arrResult = array();	
-		$hashedPassword = $this->hash($password);
 		$success = false;
 		 try {
-			$STH = $dbo->prepare("SELECT * FROM User WHERE username=:username AND password=:password");
+			$STH = $dbo->prepare("SELECT * FROM User WHERE username=:username");
 			$STH->bindParam(":username", $username);
-			$STH->bindParam(":password", $hashedPassword);
 			$STH->execute();
 			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
-			if(is_array($fetch)) {
-				// username and password combo exist in the database
+			if(is_array($fetch) && password_verify($password, $fetch["password"])) {
+				// username exists in the database and pw hash compare returned true
 				$arrResult['userInfo'] = $fetch; // not sure what to return. just putting this here for now
+				// find info specific to this type of user
+				switch($fetch['userRole']){
+					case 0: //member
+						//query user_info table and assign to ['member_info']
+						break;
+					case 1: //chef
+						//query chef_info table and assign to ['chef_info']
+						break;
+					case 2: //admin
+						//query admin_info table and assign to ['admin_info']
+						break;
+					default: 
+						//throw error, somehow userRole isn't a number
+						break;
+				}
 			}
 			else {
 				// invalid username/password combo
@@ -151,15 +175,9 @@ class UserModel{
 		}
 		
 		$arrResult['success'] = $success;
-//		$arrResult['hashed_password'] = $hashedPassword; 
 		return $arrResult;
 	}	
 	
-	// using sha1() hashing function
-	private function hash($password) {
-		$hashedPassword = sha1($password);
-		return $hashedPassword;
-	}
 }
 
 ?>
