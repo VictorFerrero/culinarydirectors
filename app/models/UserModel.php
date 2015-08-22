@@ -1,8 +1,7 @@
 <?php
 require_once('DB_Connection.php');
 
-	// assumed user table structure:
-	// id | username | password | email | userRole
+	// id | username | password | email | userRole | orgId
 class UserModel{
 			
 	private $dbo;
@@ -29,7 +28,7 @@ class UserModel{
 		$arrResult = array();
 		$success = false;
 		 try {
-			$STH = $dbo->prepare("SELECT * FROM User WHERE username=:username");
+			$STH = $dbo->prepare("SELECT * FROM user WHERE username=:username");
 			$STH->bindParam(":username", $username);
 			$STH->execute();
 			$fetch = $STH->fetch(PDO::FETCH_ASSOC);
@@ -82,7 +81,7 @@ class UserModel{
 		// see if username has been used already
 		$boolValidUsername = false;
 		 try {
-			$STH = $dbo->prepare("SELECT * FROM User WHERE username=:username");
+			$STH = $dbo->prepare("SELECT * FROM user WHERE username=:username");
 			$STH->bindParam(":username", $username);
 			$STH->execute();
 			$fetch = $STH->fetch(PDO::FETCH_ASSOC);
@@ -106,7 +105,7 @@ class UserModel{
 		// we have a valid username. So lets add it to the db
 		 try {
 			$data = array( 'username' => $username, 'password' => $hashedPassword, 'email' => $email, 'orgId' => $orgId, 'userRole' => $userRole);
-			$STH = $dbo->prepare("INSERT INTO User VALUES (NULL, :username, :password, :email, :userRole, :orgId)");
+			$STH = $dbo->prepare("INSERT INTO user VALUES (NULL, :username, :password, :email, :userRole, :orgId)");
 			$STH->execute($data);
 			$success = true;
 			//now, based on the userRole, insert a new record into: member_info, chef_info, or admin_info
@@ -123,6 +122,59 @@ class UserModel{
 		$arrResult['email'] = $email;
 		$arrResult['userRole'] = $userRole;
 		return $arrResult;	
+	}
+	// id | username | password | email | userRole | orgId
+	public function editUser($arrValues) {
+			 $arrResult = array();
+	 $success = false;
+	 $id = $arrValues['id'];
+	 $username = $arrValues['username'];
+	 $hashedPassword = password_hash($arrValues['password']);
+	 $email = $arrValues['email'];
+	 $userRole = $arrValues['userRole'];
+	 $orgId = $arrValues['orgId'];
+	 $sql = "UPDATE menu SET ";
+	 $data = array();
+	 $index = 0;
+	 if(strcmp($username, "") != 0) {
+		 $sql = $sql . "username=?, ";
+		 $data[$index] = $username;
+		 $index = $index + 1;
+	 }
+	 if(strcmp($hashedPassword, "") != 0) {
+		 $sql = $sql . "password=?, ";
+		 $data[$index] = $password;
+		 $index = $index + 1;
+	 }
+	 if(strcmp($email, "") != 0) {
+		 $sql = $sql . "email=?, ";
+		 $data[$index] = $email;
+		 $index = $index + 1;
+	 }
+	 if(strcmp($userRole, "") != 0) {
+		 $sql = $sql . "userRole=?, ";
+		 $data[$index] = $userRole;
+		 $index = $index + 1;
+	 }
+	  if(strcmp($orgId, "") != 0) {
+		 $sql = $sql . "orgId=?, ";
+		 $data[$index] = $orgId;
+		 $index = $index + 1;
+	 }
+	 // get rid of the last two characters
+	 $sql = substr($sql,0,-1);
+	 $sql = $sql . " WHERE id=?";
+	 $data[$index] = $id;
+	try {
+		 $stm = $dbo->prepare($sql);
+		 $arrResult['db_result'] = $stm->execute($data);
+		 $success = true;
+     } catch (Exception $e) {
+		 $arrResult['error'] = $e->getMessage();
+		 $success = false;
+	 }	
+	$arrResult['success'] = $success;
+	return $arrResult;
 	}
 	
 	/**
@@ -141,7 +193,7 @@ class UserModel{
 		$arrResult = array();	
 		$success = false;
 		 try {
-			$STH = $dbo->prepare("SELECT * FROM User WHERE username=:username");
+			$STH = $dbo->prepare("SELECT * FROM user WHERE username=:username");
 			$STH->bindParam(":username", $username);
 			$STH->execute();
 			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
@@ -177,7 +229,6 @@ class UserModel{
 			$arrResult['success'] = $success;
 			return $arrResult;
 		}
-		
 		$arrResult['success'] = $success;
 		return $arrResult;
 	}	

@@ -35,7 +35,7 @@ class FeedModel
 	    $message = $arrValues['message'];
 		 try {
 			$data = array( 'to' => $to, 'from' => $from, 'message' => $message);
-			$STH = $dbo->prepare("INSERT INTO Feed VALUES (NULL, :to, :from, :message)");
+			$STH = $dbo->prepare("INSERT INTO feed VALUES (NULL, :to, :from, :message)");
 			$STH->execute($data);
 			$success = true;
 		} catch (Exception $e) {
@@ -64,7 +64,7 @@ class FeedModel
 		$whereClause = $arrValues['where_clause']; // id=:id
 		$arrResult = array();
 		$success = false;
-		$sql = "DELETE FROM Feed WHERE " . $whereClause;
+		$sql = "DELETE FROM feed WHERE " . $whereClause;
 		try{
 			$stm = $dbo->prepare($sql);
 			$stm->bindParam(":id", $id);
@@ -79,7 +79,6 @@ class FeedModel
 	}
 	
 	//   set where clause like this to=:id, now we only need one function for getting messages
-	
 	/**
 		expected input: 
 		$arrValues = array( 
@@ -100,7 +99,7 @@ class FeedModel
 		$arrResult = array();
 		$success = false;
 		 try {
-			$STH = $dbo->prepare("SELECT * FROM Feed WHERE " . $whereClause);
+			$STH = $dbo->prepare("SELECT * FROM feed WHERE " . $whereClause);
 			$STH->bindParam(":id", $id);
 			$STH->execute();
 			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);

@@ -31,12 +31,6 @@ class DB_Connections extends PDO
 	//	 $arrReturn['DBO'] = $db;
 		 return $db;
 	}	
-	// DSCS = database specific connection string
-	// helper function to access the dscs from config file
-	private function getDSCS($nickname) {
-		$dscs = DatabaseConnectionStrings::getDSCS($nickname);
-		return $dscs;
-	}
 }
 
 ?>

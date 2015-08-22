@@ -6,16 +6,16 @@ class DatabaseConnectionStrings{
 	private static $MySQL_DSCS = "localhost:root:r00t:culinarydirectors"; // TODO: need to get MySql connection string
 	
 	// just default to MySql right now
-	public function getDBCS($dbNickname) {		
+	public static function getDBCS($dbNickname) {		
 	//	if(strcmp($dbNickname, "MySQL") == 0) {
 			return DatabaseConnectionStrings::$MySQL_DSCS;
 	//	}
 	}
 	
-	public function getDBCredentials($environment){
+	public static function getDBCredentials($environment){
 		$environment = 'local';
 		//TODO: get nickname from environment->nickname mapping (maybe assoc array)?
-		$numericalArr = explode(':',getDBCS("MySQL_local"));
+		$numericalArr = explode(':',DatabaseConnectionStrings::getDBCS("MySQL_local"));
 		$optionsArr = array();
 		return array("host"=>$numericalArr[0],
 					"username"=>$numericalArr[1],

@@ -36,7 +36,7 @@ class MenuModel
 		$approved = $arrValues['approved'];
 		 try {
 			$data = array( 'chef_id' => $chef_id, 'week' => $week, 'day' => $day, 'approved' => $approved);
-			$STH = $dbo->prepare("INSERT INTO Menu VALUES (NULL, :chef_id, :week, :day, :approved)");
+			$STH = $dbo->prepare("INSERT INTO menu VALUES (NULL, :chef_id, :week, :day, :approved)");
 			$STH->execute($data);
 			$success = true;
 		} catch (Exception $e) {
@@ -72,7 +72,7 @@ class MenuModel
 	 $week = $arrValues['week'];
 	 $day = $arrValues['day'];
 	 $approved = $arrValues['approved'];
-	 $sql = "UPDATE Menu SET ";
+	 $sql = "UPDATE menu SET ";
 	 $data = array();
 	 $index = 0;
 	 if(strcmp($chef_id, "") != 0) {
@@ -129,42 +129,44 @@ class MenuModel
 	*/
 	public function deleteMenu($id) {
 		$arrResult = array();
+		$arrResult['error'] = array();
+		$arrResult['db_result'] = array();
 		$success = false;
-		$sql = "DELETE FROM Menu WHERE id=:id";
+		$sql = "DELETE FROM menu WHERE id=:id";
 		try {
 			$stm = $dbo->prepare($sql);
 			$stm->bindParam(":id", $id);
-			$arrResult['db_result1'] = $stm->execute();
+			$arrResult['db_result'][] = $stm->execute();
 			$success = true;
 		} catch(Exception $e) {
-			$arrResult['error1'] = $e->getMessage();
+			$arrResult['error'][] = $e->getMessage();
 			$success = false;
 		}
 		$arrResult['menu_success'] = $success;
 		// now we will try to delete every menu item that is on this menu
 		$success = false;
-		$sql = "DELETE FROM Menu_Item WHERE menu_id=:menu_id";
+		$sql = "DELETE FROM menu_item WHERE menu_id=:menu_id";
 		try{
 			$stm = $dbo->prepare($sql);
 			$stm->bindParam(":menu_id", $id);
-			$arrResult['db_result2'] = $stm->execute();
+			$arrResult['db_result'][] = $stm->execute();
 			$success = true;
 		} catch(Exception $e) {
-			$arrResult['error2'] = $e->getMessage();
+			$arrResult['error'][] = $e->getMessage();
 			$success = false;
 		}
 		$arrResult['menu_item_success'] = $success;
 		
 		// now we need to delete all the feedback for that menu
 		$success = false;
-		$sql = "DELETE FROM Menu_Feedback WHERE menu_id=:menu_id";
+		$sql = "DELETE FROM menu_feedback WHERE menu_id=:menu_id";
 		try{
 			$stm = $dbo->prepare($sql);
 			$stm->bindParam(":menu_id", $id);
-			$arrResult['db_result3'] = $stm->execute();
+			$arrResult['db_result'][] = $stm->execute();
 			$success = true;
 		} catch(Exception $e) {
-			$arrResult['error3'] = $e->getMessage();
+			$arrResult['error'][] = $e->getMessage();
 			$success = false;
 		}
 		$arrResult['menu_feedback_success'] = $success;
@@ -193,7 +195,7 @@ class MenuModel
 		$meal = $arrValues['meal'];
 		 try {
 			$data = array( 'menu_id' => $menu_id, 'item_name' => $item_name, 'meal' => $meal);
-			$STH = $dbo->prepare("INSERT INTO Menu_Item VALUES (NULL, :menu_id, :item_name, :meal)");
+			$STH = $dbo->prepare("INSERT INTO menu_item VALUES (NULL, :menu_id, :item_name, :meal)");
 			$STH->execute($data);
 			$success = true;
 		} catch (Exception $e) {
@@ -227,7 +229,7 @@ class MenuModel
 	 $menu_id = $arrValues['menu_id'];
 	 $item_name = $arrValues['item_name'];
 	 $meal = $arrValues['meal'];
-	 $sql = "UPDATE Menu_Item SET ";
+	 $sql = "UPDATE menu_item SET ";
 	 $data = array();
 	 $index = 0;
 	 if(strcmp($menu_id, "") != 0) {
@@ -272,7 +274,7 @@ class MenuModel
 	public function deleteMenuItem($id) {
 		$arrResult = array();
 		$success = false;
-		$sql = "DELETE FROM Menu_Item WHERE id=:id";
+		$sql = "DELETE FROM menu_item WHERE id=:id";
 		try{
 			$stm = $dbo->prepare($sql);
 			$stm->bindParam(":id", $id);
@@ -317,7 +319,7 @@ class MenuModel
 		$menu_id = $arrValues['menu_id'];
 		 try {
 			$data = array( 'feedback_type' => $feedback_type, 'feedback_value' => $feedback_value, 'menu_item_id' => $menu_item_id, 'menu_id' => $menu_id);
-			$STH = $dbo->prepare("INSERT INTO Menu_Feedback VALUES (NULL, :feedback_type, :feedback_value, :menu_item_id, :menu_id)");
+			$STH = $dbo->prepare("INSERT INTO menu_feedback VALUES (NULL, :feedback_type, :feedback_value, :menu_item_id, :menu_id)");
 			$STH->execute($data);
 			$success = true;
 		} catch (Exception $e) {
@@ -353,7 +355,7 @@ class MenuModel
 	 $feedback_value = $arrValues['feedback_value'];
 	 $menu_item_id = $arrValues['menu_item_id'];
 	 $menu_id = $arrValues['menu_id'];
-	 $sql = "UPDATE Menu_Feedback SET ";
+	 $sql = "UPDATE menu_feedback SET ";
 	 $data = array();
 	 $index = 0;
 	 if(strcmp($feedback_type, "") != 0) {
@@ -405,7 +407,7 @@ class MenuModel
 	public function deleteFeedback($id) {
 		$arrResult = array();
 		$success = false;
-		$sql = "DELETE FROM Menu_Feedback WHERE id=:id";
+		$sql = "DELETE FROM menu_feedback WHERE id=:id";
 		try {
 			$stm = $dbo->prepare($sql);
 			$stm->bindParam(":id", $id);
