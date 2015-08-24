@@ -1,56 +1,22 @@
 <?php
 require_once('DB_Connection.php');
-
 	// id | username | password | email | userRole | orgId
+	
+	
+	// TODO: login is not working. issues with password_verify
+	//TODO: get true/false if user_id is in org_id
 class UserModel{
 			
 	private $dbo;
 	
 	 public function __construct() {
-			$db = new DB_Connections()->getNewDBO();
-			$this->dbo = $db;
+			$db = new DB_Connections();
+			$this->dbo = $db->getNewDBO();
 	 }
 
 	public function __destruct() {
 		$this->dbo = null;
 	}
-	
-	/**
-		expected input: username and password pair
-		
-		output:
-		$arrResult = array (
-		'error' => exception object error message
-		'success' => true if user was successfuly removed from db, false otherwise
-		);
-	*/
-	public function deleteUser($username,$password) {
-		$arrResult = array();
-		$success = false;
-		 try {
-			$STH = $dbo->prepare("SELECT * FROM user WHERE username=:username");
-			$STH->bindParam(":username", $username);
-			$STH->execute();
-			$fetch = $STH->fetch(PDO::FETCH_ASSOC);
-			if(password_verify($password,$fetch['password']){ //TODO: or if admin is deleting a user
-				$STH = $dbo->prepare("DELETE FROM User WHERE username=:username");
-				$STH->bindParam(":username", $username);
-				$STH->execute();	
-				$success = true;
-			} else {
-				$success = false;
-				$arrResult['error'] = "not authorized to delete this acct";
-			}
-		} catch (Exception $e) {
-			$arrResult['error'] = $e->getMessage();
-			$boolValidUsername = false; // assume username is invalid if we get an exception
-		}
-		$arrResult['success'] = $success;
-		return $arrResult;
-	}
-	
-	//TODO: get users by org ID
-	//TODO: get true/false if user_id is in org_id
 
 	/**
 		expected input: 
@@ -73,7 +39,7 @@ class UserModel{
 		$arrResult = array();
 		$success = false;
 		$username = $arrValues['username'];
-		$hashedPassword = password_hash($arrValues['password']);
+		$hashedPassword = password_hash($arrValues['password'], PASSWORD_DEFAULT);
 		$email = $arrValues['email'];
 		$userRole = $arrValues['userRole'];
 		$orgId = $arrValues['orgId'];
@@ -81,7 +47,7 @@ class UserModel{
 		// see if username has been used already
 		$boolValidUsername = false;
 		 try {
-			$STH = $dbo->prepare("SELECT * FROM user WHERE username=:username");
+			$STH = $this->dbo->prepare("SELECT * FROM user WHERE username=:username");
 			$STH->bindParam(":username", $username);
 			$STH->execute();
 			$fetch = $STH->fetch(PDO::FETCH_ASSOC);
@@ -105,10 +71,10 @@ class UserModel{
 		// we have a valid username. So lets add it to the db
 		 try {
 			$data = array( 'username' => $username, 'password' => $hashedPassword, 'email' => $email, 'orgId' => $orgId, 'userRole' => $userRole);
-			$STH = $dbo->prepare("INSERT INTO user VALUES (NULL, :username, :password, :email, :userRole, :orgId)");
+			$STH = $this->dbo->prepare("INSERT INTO user VALUES (NULL, :username, :password, :email, :userRole, :orgId)");
 			$STH->execute($data);
 			$success = true;
-			//now, based on the userRole, insert a new record into: member_info, chef_info, or admin_info
+			// TODO: now, based on the userRole, insert a new record into: member_info, chef_info, or admin_info
 				//use same error checks as with the above insert query
 		} catch (Exception $e) {
 			$success = false;
@@ -123,17 +89,52 @@ class UserModel{
 		$arrResult['userRole'] = $userRole;
 		return $arrResult;	
 	}
+	
+	/**
+		expected input: username and password pair
+		
+		output:
+		$arrResult = array (
+		'error' => exception object error message
+		'success' => true if user was successfuly removed from db, false otherwise
+		);
+	*/
+	public function deleteUser($username,$password) {
+		$arrResult = array();
+		$success = false;
+		 try {
+			$STH = $this->dbo->prepare("SELECT * FROM user WHERE username=:username");
+			$STH->bindParam(":username", $username);
+			$STH->execute();
+			$fetch = $STH->fetch(PDO::FETCH_ASSOC);
+			if(password_verify($password,$fetch['password'])){ //TODO: or if admin is deleting a user
+				$STH = $this->dbo->prepare("DELETE FROM user WHERE username=:username");
+				$STH->bindParam(":username", $username);
+				$STH->execute();	
+				$success = true;
+			} else {
+				$success = false;
+				$arrResult['error'] = "not authorized to delete this acct";
+			}
+		} catch (Exception $e) {
+			$arrResult['error'] = $e->getMessage();
+			$boolValidUsername = false; // assume username is invalid if we get an exception
+		}
+		$arrResult['success'] = $success;
+		return $arrResult;
+	}
+
 	// id | username | password | email | userRole | orgId
 	public function editUser($arrValues) {
 			 $arrResult = array();
 	 $success = false;
 	 $id = $arrValues['id'];
 	 $username = $arrValues['username'];
-	 $hashedPassword = password_hash($arrValues['password']);
+	 $hashedPassword = password_hash($arrValues['password'], PASSWORD_DEFAULT);
 	 $email = $arrValues['email'];
 	 $userRole = $arrValues['userRole'];
 	 $orgId = $arrValues['orgId'];
-	 $sql = "UPDATE menu SET ";
+	 $sql = "UPDATE user SET ";
 	 $data = array();
 	 $index = 0;
 	 if(strcmp($username, "") != 0) {
@@ -143,7 +144,7 @@ class UserModel{
 	 }
 	 if(strcmp($hashedPassword, "") != 0) {
 		 $sql = $sql . "password=?, ";
-		 $data[$index] = $password;
+		 $data[$index] = $hashedPassword;
 		 $index = $index + 1;
 	 }
 	 if(strcmp($email, "") != 0) {
@@ -162,11 +163,11 @@ class UserModel{
 		 $index = $index + 1;
 	 }
 	 // get rid of the last two characters
-	 $sql = substr($sql,0,-1);
+	 $sql = substr($sql,0,-2);
 	 $sql = $sql . " WHERE id=?";
 	 $data[$index] = $id;
 	try {
-		 $stm = $dbo->prepare($sql);
+		 $stm = $this->dbo->prepare($sql);
 		 $arrResult['db_result'] = $stm->execute($data);
 		 $success = true;
      } catch (Exception $e) {
@@ -191,13 +192,19 @@ class UserModel{
 	public function login($username, $password) {
 		$success = false;
 		$arrResult = array();	
+		$arrResult['error_message'] = array();
 		$success = false;
 		 try {
-			$STH = $dbo->prepare("SELECT * FROM user WHERE username=:username");
+			$STH = $this->dbo->prepare("SELECT * FROM user WHERE username=:username");
 			$STH->bindParam(":username", $username);
 			$STH->execute();
 			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
-			if(is_array($fetch) && password_verify($password, $fetch["password"])) {
+			print_r($fetch);
+			echo "<br>";
+			if(is_array($fetch)) {
+				$hashedPassword = "'" . $fetch[0]['password'] . "'";
+				echo $hashedPassword;
+				if(password_verify($password, $hashedPassword)) {
 				// username exists in the database and pw hash compare returned true
 				$arrResult['userInfo'] = $fetch; // not sure what to return. just putting this here for now
 				// find info specific to this type of user
@@ -217,8 +224,13 @@ class UserModel{
 				}
 			}
 			else {
-				// invalid username/password combo
-				$arrResult['error_message'] = "invalid username and password pair";
+					$arrResult['error_message'][] = "invalid password";
+					$success = false;
+				}
+			}
+			else {
+				// invalid username
+				$arrResult['error_message'][] = "invalid username";
 				$success = false;
 			}
 		} catch (Exception $e) {
@@ -231,8 +243,26 @@ class UserModel{
 		}
 		$arrResult['success'] = $success;
 		return $arrResult;
-	}	
+	}
 	
+	//get users by org ID
+	public function getUsersByOrgId($orgId) {
+		$arrResult = array();
+		$success = false;
+		 try {
+			$STH = $this->dbo->prepare("SELECT * FROM user WHERE orgId=:orgId");
+			$STH->bindParam(":orgId", $orgId);
+			$STH->execute();
+			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
+			$arrResult['data'] = $fetch;
+			$success = true;
+		} catch (Exception $e) {
+			$arrResult['error'] = $e->getMessage();
+			$success = false; // assume username is invalid if we get an exception
+		}
+		$arrResult['success'] = $success;
+	    return $arrResult;
+	}
 }
 
 ?>

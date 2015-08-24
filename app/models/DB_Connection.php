@@ -1,6 +1,6 @@
 <?php
 require_once ("config/config.php");
-class DB_Connections extends PDO
+class DB_Connections
 {
 		
 	 public function __construct() {

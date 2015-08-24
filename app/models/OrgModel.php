@@ -1,5 +1,5 @@
 <?php
-
+require_once('DB_Connection.php');
 /*
  * Org table database schema: 
  * 
@@ -11,13 +11,12 @@ class OrgModel{
 		private $dbo;
 
 	public function __construct() {
-		$db = new DB_Connections()->getNewDBO();
-		$this->dbo = $db;
+		$db = new DB_Connections();
+		$this->dbo = $db->getNewDBO();
 	 }
 	 public function __destruct() {
 		$this->dbo = null;
 	}
-	
 	
 	 public function createOrg($arrValues) {
 		$arrResult = array();
@@ -37,7 +36,7 @@ class OrgModel{
 			'city' => $city, 'state' => $state, 
 			'zip' => $zip, 'phone' => $phone, 'email' => $email,
 			'phone2' => $phone2, 'profileJSON' => $profileJSON);
-			$STH = $dbo->prepare("INSERT INTO menu VALUES (NULL, :name, :address, 
+			$STH = $this->dbo->prepare("INSERT INTO org VALUES (NULL, :name, :address, 
 			:city, :state, :zip, :phone, :email, :phone2, :profileJSON)");
 			$STH->execute($data);
 			$success = true;
@@ -63,60 +62,60 @@ class OrgModel{
 	$email = $arrValues['email'];
 	$phone2 = $arrValues['phone2'];
 	$profileJSON = $arrValues['profileJSON'];
-	 $sql = "UPDATE menu SET ";
+	 $sql = "UPDATE org SET ";
 	 $data = array();
 	 $index = 0;
 	 if(strcmp($name, "") != 0) {
 		 $sql = $sql . "name=?, ";
-		 $data[$index] = $chef_id;
+		 $data[$index] = $name;
 		 $index = $index + 1;
 	 }
 	 if(strcmp($address, "") != 0) {
 		 $sql = $sql . "address=?, ";
-		 $data[$index] = $week;
+		 $data[$index] = $address;
 		 $index = $index + 1;
 	 }
 	 if(strcmp($city, "") != 0) {
 		 $sql = $sql . "city=?, ";
-		 $data[$index] = $day;
+		 $data[$index] = $city;
 		 $index = $index + 1;
 	 }
 	 if(strcmp($state, "") != 0) {
 		 $sql = $sql . "state=?, ";
-		 $data[$index] = $approved;
+		 $data[$index] = $state;
 		 $index = $index + 1;
 	 }
 	  if(strcmp($zip, "") != 0) {
 		 $sql = $sql . "zip=?, ";
-		 $data[$index] = $approved;
+		 $data[$index] = $zip;
 		 $index = $index + 1;
 	 }
 	  if(strcmp($phone, "") != 0) {
 		 $sql = $sql . "phone=?, ";
-		 $data[$index] = $approved;
+		 $data[$index] = $phone;
 		 $index = $index + 1;
 	 }
 	  if(strcmp($email, "") != 0) {
 		 $sql = $sql . "email=?, ";
-		 $data[$index] = $approved;
+		 $data[$index] = $email;
 		 $index = $index + 1;
 	 }
 	  if(strcmp($phone2, "") != 0) {
 		 $sql = $sql . "phone2=?, ";
-		 $data[$index] = $approved;
+		 $data[$index] = $phone2;
 		 $index = $index + 1;
 	 }
 	  if(strcmp($profileJSON, "") != 0) {
 		 $sql = $sql . "profileJSON=?, ";
-		 $data[$index] = $approved;
+		 $data[$index] = $profileJSON;
 		 $index = $index + 1;
 	 }
 	 // get rid of the last two characters
-	 $sql = substr($sql,0,-1);
+	 $sql = substr($sql,0,-2);
 	 $sql = $sql . " WHERE id=?";
 	 $data[$index] = $id;
 	try {
-		 $stm = $dbo->prepare($sql);
+		 $stm = $this->dbo->prepare($sql);
 		 $arrResult['db_result'] = $stm->execute($data);
 		 $success = true;
      } catch (Exception $e) {
@@ -131,9 +130,9 @@ class OrgModel{
 	 public function deleteOrg($id) {
 		$arrResult = array();
 		$success = false;
-		$sql = "DELETE FROM Org WHERE id=:id";
+		$sql = "DELETE FROM org WHERE id=:id";
 		try {
-			$stm = $dbo->prepare($sql);
+			$stm = $this->dbo->prepare($sql);
 			$stm->bindParam(":id", $id);
 			$arrResult['db_result'] = $stm->execute();
 			$success = true;
@@ -159,8 +158,8 @@ class OrgModel{
 		 $arrResult = array();
 		 
 		 try {
-			$stmt = $db->prepare("SELECT * FROM Org WHERE id=:id");
-			$stmt->bindValue(':id', $id);
+			$stmt = $this->dbo->prepare("SELECT * FROM org WHERE id=:id");
+			$stmt->bindParam(':id', $id);
 			$stmt->execute();
 			$row = $stmt->fetch(PDO::FETCH_ASSOC);
 			$success = true;

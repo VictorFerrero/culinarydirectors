@@ -1,12 +1,15 @@
 <?php
 require_once('DB_Connection.php');
+
+// TODO: getMessagesByFromId and getMessagesByToId are not working. MySQL is throwing a syntax error.
+//		i have no idea why. Something about that field/column is being weird in PDO?
 class FeedModel
 {
 	private $dbo;
 		
 	 public function __construct() {
-			$db = new DB_Connections()->getNewDBO();
-			$this->dbo = $db;
+			$db = new DB_Connections();
+			$this->dbo = $db->getNewDBO();
 	 }
 
 	public function __destruct() {
@@ -35,7 +38,7 @@ class FeedModel
 	    $message = $arrValues['message'];
 		 try {
 			$data = array( 'to' => $to, 'from' => $from, 'message' => $message);
-			$STH = $dbo->prepare("INSERT INTO feed VALUES (NULL, :to, :from, :message)");
+			$STH = $this->dbo->prepare("INSERT INTO feed VALUES (NULL, :to, :from, :message)");
 			$STH->execute($data);
 			$success = true;
 		} catch (Exception $e) {
@@ -59,14 +62,12 @@ class FeedModel
 		'success' => true if menu was successfuly created, false otherwise
 		);
 	*/
-	public function deleteMessage($arrValues) {
-		$id = $arrValues['id'];
-		$whereClause = $arrValues['where_clause']; // id=:id
+	public function deleteMessageById($id) {
 		$arrResult = array();
 		$success = false;
-		$sql = "DELETE FROM feed WHERE " . $whereClause;
+		$sql = "DELETE FROM feed WHERE id=:id";
 		try{
-			$stm = $dbo->prepare($sql);
+			$stm = $this->dbo->prepare($sql);
 			$stm->bindParam(":id", $id);
 			$arrResult['db_result'] = $stm->execute();
 			$success = true;
@@ -78,14 +79,11 @@ class FeedModel
 		return $arrResult;
 	}
 	
-	//   set where clause like this to=:id, now we only need one function for getting messages
+	//   set where clause like this to=:id, now we only need one function for getting messages/
+	//		where_clause is only working with id=:id. 
 	/**
 		expected input: 
-		$arrValues = array( 
-		'id' => the id of the message to delete
-		'whereClause' => sql for where clause. specify which id the one being passed in is, 
-						  should be 1 of following: id=:id, to=:id, from=:id
-		)
+		$id
 		
 		output:
 		$arrResult = array (
@@ -93,17 +91,72 @@ class FeedModel
 		'success' => true if menu was successfuly created, false otherwise
 		);
 	*/
-	public function getMessages($arrValues) {
-		$id = $arrValues['id'];
-		$whereClause = $arrValues['where_clause'];
+	public function getMessagesById($id) {
 		$arrResult = array();
 		$success = false;
 		 try {
-			$STH = $dbo->prepare("SELECT * FROM feed WHERE " . $whereClause);
+			$STH = $this->dbo->prepare("SELECT * FROM feed WHERE id=:id");
 			$STH->bindParam(":id", $id);
 			$STH->execute();
 			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
 			$arrResult['data'] = $fetch;
+			$success = true;
+		} catch (Exception $e) {
+			$arrResult['error'] = $e->getMessage();
+			$success = false; // assume username is invalid if we get an exception
+		}
+		$arrResult['success'] = $success;
+	    return $arrResult;
+	}
+	
+		/**
+		expected input: 
+		$toId
+		
+		output:
+		$arrResult = array (
+		'error' => exception object for db query
+		'success' => true if menu was successfuly created, false otherwise
+		);
+	*/
+	public function getMessagesByToId($toId) {
+		$arrResult = array();
+		$success = false;
+		 try {
+			$STH = $this->dbo->prepare("SELECT * FROM feed WHERE to=:id");
+			$STH->bindParam(":id", $toId);
+			$STH->execute();
+			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
+			$arrResult['data'] = $fetch;
+			$success = true;
+		} catch (Exception $e) {
+			$arrResult['error'] = $e->getMessage();
+			$success = false; // assume username is invalid if we get an exception
+		}
+		$arrResult['success'] = $success;
+	    return $arrResult;
+	}
+	
+			/**
+		expected input: 
+		$fromId
+		
+		output:
+		$arrResult = array (
+		'error' => exception object for db query
+		'success' => true if menu was successfuly created, false otherwise
+		);
+	*/
+	public function getMessagesByFromId($fromId) {
+		$arrResult = array();
+		$success = false;
+		 try {
+			$STH = $this->dbo->prepare("SELECT * FROM feed WHERE from=:fromId");
+			$STH->bindParam(":fromId", $fromId);
+			$STH->execute();
+			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
+			$arrResult['data'] = $fetch;
+			$success = true;
 		} catch (Exception $e) {
 			$arrResult['error'] = $e->getMessage();
 			$success = false; // assume username is invalid if we get an exception

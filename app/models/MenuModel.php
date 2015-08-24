@@ -1,12 +1,13 @@
 <?php
 require_once('DB_Connection.php');
+// TODO: we need accessors for the menu table. not sure what field we should be selecting on.
 class MenuModel
 {
 	private $dbo;
 		
 	 public function __construct() {
-		$db = new DB_Connections()->getNewDBO();
-		$this->dbo = $db;
+		$db = new DB_Connections();
+		$this->dbo = $db->getNewDBO();
 	 }
 
 	public function __destruct() {
@@ -36,7 +37,7 @@ class MenuModel
 		$approved = $arrValues['approved'];
 		 try {
 			$data = array( 'chef_id' => $chef_id, 'week' => $week, 'day' => $day, 'approved' => $approved);
-			$STH = $dbo->prepare("INSERT INTO menu VALUES (NULL, :chef_id, :week, :day, :approved)");
+			$STH = $this->dbo->prepare("INSERT INTO menu VALUES (NULL, :chef_id, :week, :day, :approved)");
 			$STH->execute($data);
 			$success = true;
 		} catch (Exception $e) {
@@ -96,11 +97,11 @@ class MenuModel
 		 $index = $index + 1;
 	 }
 	 // get rid of the last two characters
-	 $sql = substr($sql,0,-1);
+	 $sql = substr($sql,0,-2);
 	 $sql = $sql . " WHERE id=?";
 	 $data[$index] = $id;
 	try {
-		 $stm = $dbo->prepare($sql);
+		 $stm = $this->dbo->prepare($sql);
 		 $arrResult['db_result'] = $stm->execute($data);
 		 $success = true;
      } catch (Exception $e) {
@@ -134,7 +135,7 @@ class MenuModel
 		$success = false;
 		$sql = "DELETE FROM menu WHERE id=:id";
 		try {
-			$stm = $dbo->prepare($sql);
+			$stm = $this->dbo->prepare($sql);
 			$stm->bindParam(":id", $id);
 			$arrResult['db_result'][] = $stm->execute();
 			$success = true;
@@ -147,7 +148,7 @@ class MenuModel
 		$success = false;
 		$sql = "DELETE FROM menu_item WHERE menu_id=:menu_id";
 		try{
-			$stm = $dbo->prepare($sql);
+			$stm = $this->dbo->prepare($sql);
 			$stm->bindParam(":menu_id", $id);
 			$arrResult['db_result'][] = $stm->execute();
 			$success = true;
@@ -157,11 +158,10 @@ class MenuModel
 		}
 		$arrResult['menu_item_success'] = $success;
 		
-		// now we need to delete all the feedback for that menu
 		$success = false;
 		$sql = "DELETE FROM menu_feedback WHERE menu_id=:menu_id";
 		try{
-			$stm = $dbo->prepare($sql);
+			$stm = $this->dbo->prepare($sql);
 			$stm->bindParam(":menu_id", $id);
 			$arrResult['db_result'][] = $stm->execute();
 			$success = true;
@@ -172,6 +172,7 @@ class MenuModel
 		$arrResult['menu_feedback_success'] = $success;
 		return $arrResult;
 	}
+	
 	
 	/**
 		expected input: 
@@ -185,6 +186,7 @@ class MenuModel
 		'error' => exception object for db query
 		'success' => true if menu was successfuly created, false otherwise
 		);
+
 		//TODO: batch create function that uses a transaction instead of repeating inserts
 	*/
 	public function createMenuItem($arrValues) {
@@ -195,7 +197,7 @@ class MenuModel
 		$meal = $arrValues['meal'];
 		 try {
 			$data = array( 'menu_id' => $menu_id, 'item_name' => $item_name, 'meal' => $meal);
-			$STH = $dbo->prepare("INSERT INTO menu_item VALUES (NULL, :menu_id, :item_name, :meal)");
+			$STH = $this->dbo->prepare("INSERT INTO menu_item VALUES (NULL, :menu_id, :item_name, :meal)");
 			$STH->execute($data);
 			$success = true;
 		} catch (Exception $e) {
@@ -250,7 +252,7 @@ class MenuModel
 	 $sql = $sql . " WHERE id=?";
 	 $data[$index] = $id;
 	try {
-		 $stm = $dbo->prepare($sql);
+		 $stm = $this->dbo->prepare($sql);
 		 $arrResult['db_result'] = $stm->execute($data);
 		 $success = true;
      } catch (Exception $e) {
@@ -276,9 +278,28 @@ class MenuModel
 		$success = false;
 		$sql = "DELETE FROM menu_item WHERE id=:id";
 		try{
-			$stm = $dbo->prepare($sql);
+			$stm = $this->dbo->prepare($sql);
 			$stm->bindParam(":id", $id);
 			$arrResult['db_result'] = $stm->execute();
+			$success = true;
+		} catch(Exception $e) {
+			$arrResult['error'] = $e->getMessage();
+			$success = false;
+		}
+		$arrResult['success'] = $success;
+		return $arrResult;
+	}
+	
+	public function getMenuItemForMenu($menuId) {
+		$arrResult = array();
+		$success = false;
+		$sql = "SELECT * FROM menu_item WHERE menu_id=:menu_id";
+		try {
+			$stm = $this->dbo->prepare($sql);
+			$stm->bindParam(":menu_id", $menuId);
+			$arrResult['db_result'] = $stm->execute();
+			$fetch = $stm->fetchAll(PDO::FETCH_ASSOC);
+			$arrResult['data'] = $fetch;
 			$success = true;
 		} catch(Exception $e) {
 			$arrResult['error'] = $e->getMessage();
@@ -319,7 +340,7 @@ class MenuModel
 		$menu_id = $arrValues['menu_id'];
 		 try {
 			$data = array( 'feedback_type' => $feedback_type, 'feedback_value' => $feedback_value, 'menu_item_id' => $menu_item_id, 'menu_id' => $menu_id);
-			$STH = $dbo->prepare("INSERT INTO menu_feedback VALUES (NULL, :feedback_type, :feedback_value, :menu_item_id, :menu_id)");
+			$STH = $this->dbo->prepare("INSERT INTO menu_feedback VALUES (NULL, :feedback_type, :feedback_value, :menu_item_id, :menu_id)");
 			$STH->execute($data);
 			$success = true;
 		} catch (Exception $e) {
@@ -379,11 +400,11 @@ class MenuModel
 		 $index = $index + 1;
 	 }
 	 // get rid of the last two characters 
-	 $sql = substr($sql,0,-1);
+	 $sql = substr($sql,0,-2);
 	 $sql = $sql . " WHERE id=?";
 	 $data[$index] = $id;
 	try {
-		 $stm = $dbo->prepare($sql);
+		 $stm = $this->dbo->prepare($sql);
 		 $arrResult['db_result'] = $stm->execute($data);
 		 $success = true;
      } catch (Exception $e) {
@@ -409,7 +430,7 @@ class MenuModel
 		$success = false;
 		$sql = "DELETE FROM menu_feedback WHERE id=:id";
 		try {
-			$stm = $dbo->prepare($sql);
+			$stm = $this->dbo->prepare($sql);
 			$stm->bindParam(":id", $id);
 			$arrResult['db_result'] = $stm->execute();
 			$success = true;
@@ -420,4 +441,24 @@ class MenuModel
 		$arrResult['success'] = $success;
 		return $arrResult;
 	}
+	
+	public function getFeedbackForMenu($menuId) {
+		$arrResult = array();
+		$success = false;
+		$sql = "SELECT * FROM menu_feedback WHERE menu_id=:menu_id";
+		try {
+			$stm = $this->dbo->prepare($sql);
+			$stm->bindParam(":menu_id", $menuId);
+			$arrResult['db_result'] = $stm->execute();
+			$fetch = $stm->fetchAll(PDO::FETCH_ASSOC);
+			$arrResult['data'] = $fetch;
+			$success = true;
+		} catch(Exception $e) {
+			$arrResult['error'] = $e->getMessage();
+			$success = false;
+		}
+		$arrResult['success'] = $success;
+		return $arrResult;	
+	}
+}
 ?>
