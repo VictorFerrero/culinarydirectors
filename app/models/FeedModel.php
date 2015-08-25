@@ -51,15 +51,12 @@ class FeedModel
 	
 	/**
 		expected input: 
-		$arrValues = array( 
-		'id' => the id of the message to delete
-		'whereClause' => sql for where clause. specify which id the one being passed in is
-		)
+		$id
 		
 		output:
 		$arrResult = array (
 		'error' => exception object for db query
-		'success' => true if menu was successfuly created, false otherwise
+		'success' => true if delete was successfuly created, false otherwise
 		);
 	*/
 	public function deleteMessageById($id) {
@@ -119,6 +116,7 @@ class FeedModel
 		'success' => true if menu was successfuly created, false otherwise
 		);
 	*/
+	// not working. causes mysql syntax error
 	public function getMessagesByToId($toId) {
 		$arrResult = array();
 		$success = false;
@@ -147,6 +145,7 @@ class FeedModel
 		'success' => true if menu was successfuly created, false otherwise
 		);
 	*/
+	// not working. causes mysql syntax error
 	public function getMessagesByFromId($fromId) {
 		$arrResult = array();
 		$success = false;
