@@ -1,9 +1,6 @@
 <?php
 require_once('DB_Connection.php');
 	// id | username | password | email | userRole | orgId
-	
-	
-	// TODO: login is not working. issues with password_verify
 	//TODO: get true/false if user_id is in org_id
 class UserModel{
 			
@@ -39,7 +36,7 @@ class UserModel{
 		$arrResult = array();
 		$success = false;
 		$username = $arrValues['username'];
-		$hashedPassword = password_hash($arrValues['password'], PASSWORD_DEFAULT);
+		$hashedPassword = password_hash($arrValues['password'], PASSWORD_BCRYPT);
 		$email = $arrValues['email'];
 		$userRole = $arrValues['userRole'];
 		$orgId = $arrValues['orgId'];
@@ -130,7 +127,7 @@ class UserModel{
 	 $success = false;
 	 $id = $arrValues['id'];
 	 $username = $arrValues['username'];
-	 $hashedPassword = password_hash($arrValues['password'], PASSWORD_DEFAULT);
+	 $hashedPassword = password_hash($arrValues['password'], PASSWORD_BCRYPT);
 	 $email = $arrValues['email'];
 	 $userRole = $arrValues['userRole'];
 	 $orgId = $arrValues['orgId'];
@@ -199,16 +196,15 @@ class UserModel{
 			$STH->bindParam(":username", $username);
 			$STH->execute();
 			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
-			print_r($fetch);
-			echo "<br>";
+		//	print_r($fetch);
 			if(is_array($fetch)) {
-				$hashedPassword = "'" . $fetch[0]['password'] . "'";
-				echo $hashedPassword;
+				$hashedPassword = $fetch[0]['password'];
+//				echo $hashedPassword;
 				if(password_verify($password, $hashedPassword)) {
 				// username exists in the database and pw hash compare returned true
-				$arrResult['userInfo'] = $fetch; // not sure what to return. just putting this here for now
+				$arrResult['userInfo'] = $fetch[0]; // not sure what to return. just putting this here for now
 				// find info specific to this type of user
-				switch($fetch['userRole']){
+				switch($fetch[0]['userRole']){
 					case 0: //member
 						//query user_info table and assign to ['member_info']
 						break;
@@ -222,6 +218,7 @@ class UserModel{
 						//throw error, somehow userRole isn't a number
 						break;
 				}
+				$success = true;
 			}
 			else {
 					$arrResult['error_message'][] = "invalid password";

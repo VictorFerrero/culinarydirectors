@@ -1,8 +1,6 @@
 <?php
 require_once('DB_Connection.php');
 
-// TODO: getMessagesByFromId and getMessagesByToId are not working. MySQL is throwing a syntax error.
-//		i have no idea why. Something about that field/column is being weird in PDO?
 class FeedModel
 {
 	private $dbo;
@@ -33,12 +31,12 @@ class FeedModel
 	public function addMessage($arrValues) {
 		$arrResult = array();
 		$success = false;		
-		$to = $arrValues['to'];
-		$from = $arrValues['from'];
+		$sender = $arrValues['sender'];
+		$receiver = $arrValues['receiver'];
 	    $message = $arrValues['message'];
 		 try {
-			$data = array( 'to' => $to, 'from' => $from, 'message' => $message);
-			$STH = $this->dbo->prepare("INSERT INTO feed VALUES (NULL, :to, :from, :message)");
+			$data = array( 'sender' => $sender, 'receiver' => $receiver, 'message' => $message);
+			$STH = $this->dbo->prepare("INSERT INTO feed VALUES (NULL, :sender, :receiver, :message)");
 			$STH->execute($data);
 			$success = true;
 		} catch (Exception $e) {
@@ -59,10 +57,12 @@ class FeedModel
 		'success' => true if delete was successfuly created, false otherwise
 		);
 	*/
-	public function deleteMessageById($id) {
+	public function deleteMessage($arrValues) {
 		$arrResult = array();
 		$success = false;
-		$sql = "DELETE FROM feed WHERE id=:id";
+		$id = $arrValues['id'];
+		$whereClause = $arrValues['where_clause'];
+		$sql = "DELETE FROM feed WHERE " . $whereClause;
 		try{
 			$stm = $this->dbo->prepare($sql);
 			$stm->bindParam(":id", $id);
@@ -75,83 +75,29 @@ class FeedModel
 		$arrResult['success'] = $success;
 		return $arrResult;
 	}
-	
-	//   set where clause like this to=:id, now we only need one function for getting messages/
-	//		where_clause is only working with id=:id. 
+
 	/**
 		expected input: 
-		$id
+		$arrValues = array( 
+		'id' => id for where clause
+		'where_clause' => must be of the form 'column'=:id
 		
 		output:
 		$arrResult = array (
 		'error' => exception object for db query
-		'success' => true if menu was successfuly created, false otherwise
+		'success' => true if menu was successfuly selected, false otherwise
+		'data' => the array of menus which satisfied the where clause
 		);
 	*/
-	public function getMessagesById($id) {
+	public function getMessages($arrValues) {
 		$arrResult = array();
 		$success = false;
+		$id = $arrValues['id'];
+		$whereClause = $arrValues['where_clause'];
+		$sql = "SELECT * FROM feed WHERE " . $whereClause;
 		 try {
-			$STH = $this->dbo->prepare("SELECT * FROM feed WHERE id=:id");
+			$STH = $this->dbo->prepare($sql);
 			$STH->bindParam(":id", $id);
-			$STH->execute();
-			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
-			$arrResult['data'] = $fetch;
-			$success = true;
-		} catch (Exception $e) {
-			$arrResult['error'] = $e->getMessage();
-			$success = false; // assume username is invalid if we get an exception
-		}
-		$arrResult['success'] = $success;
-	    return $arrResult;
-	}
-	
-		/**
-		expected input: 
-		$toId
-		
-		output:
-		$arrResult = array (
-		'error' => exception object for db query
-		'success' => true if menu was successfuly created, false otherwise
-		);
-	*/
-	// not working. causes mysql syntax error
-	public function getMessagesByToId($toId) {
-		$arrResult = array();
-		$success = false;
-		 try {
-			$STH = $this->dbo->prepare("SELECT * FROM feed WHERE to=:id");
-			$STH->bindParam(":id", $toId);
-			$STH->execute();
-			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
-			$arrResult['data'] = $fetch;
-			$success = true;
-		} catch (Exception $e) {
-			$arrResult['error'] = $e->getMessage();
-			$success = false; // assume username is invalid if we get an exception
-		}
-		$arrResult['success'] = $success;
-	    return $arrResult;
-	}
-	
-			/**
-		expected input: 
-		$fromId
-		
-		output:
-		$arrResult = array (
-		'error' => exception object for db query
-		'success' => true if menu was successfuly created, false otherwise
-		);
-	*/
-	// not working. causes mysql syntax error
-	public function getMessagesByFromId($fromId) {
-		$arrResult = array();
-		$success = false;
-		 try {
-			$STH = $this->dbo->prepare("SELECT * FROM feed WHERE from=:fromId");
-			$STH->bindParam(":fromId", $fromId);
 			$STH->execute();
 			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
 			$arrResult['data'] = $fetch;

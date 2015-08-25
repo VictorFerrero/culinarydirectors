@@ -5,7 +5,6 @@ require_once('DB_Connection.php');
  * 
  * id | name | address | city | state | zip | phone | email | phone2 | profileJSON
  * 
- * 
  * */
 class OrgModel{
 		private $dbo;
@@ -172,5 +171,4 @@ class OrgModel{
 		 return $arrResult;
 	 }
 }
-
 ?>

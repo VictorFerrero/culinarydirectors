@@ -1,6 +1,7 @@
 <?php
 require_once('DB_Connection.php');
-// TODO: we need accessors for the menu table. not sure what field we should be selecting on.
+// TODO: we need accessors for the menu table. 
+// not sure what field we should be selecting on.
 class MenuModel
 {
 	private $dbo;
@@ -14,6 +15,39 @@ class MenuModel
 		$this->dbo = null;
 	}
 
+	/**
+		expected input: 
+		$arrValues = array( 
+		'id' => id for where clause
+		'where_clause' => must be of the form 'column'=:id
+		
+		output:
+		$arrResult = array (
+		'error' => exception object for db query
+		'success' => true if menu was successfuly selected, false otherwise
+		'data' => the array of menus which satisfied the where clause
+		);
+	*/
+	public function getMenu($arrValues) {
+		$id = $arrValues['id'];
+		$whereClause = $arrValues['where_clause'];
+		$arrResult = array();
+		$success = false;
+		$sql = "SELECT * FROM menu WHERE " . $whereClause;
+		 try {
+			$STH = $this->dbo->prepare($sql);
+			$STH->bindParam(":id", $id);
+			$STH->execute();
+			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
+			$arrResult['data'] = $fetch;
+			$success = true;
+		} catch (Exception $e) {
+			$arrResult['error'] = $e->getMessage();
+			$success = false; // assume username is invalid if we get an exception
+		}
+		$arrResult['success'] = $success;
+	    return $arrResult;
+	}
 	/**
 		expected input: 
 		$arrValues = array( 

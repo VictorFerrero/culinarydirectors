@@ -11,18 +11,16 @@ $feedModel = new FeedModel();
 
 // add message
 /*
-$arrInsert = array("to" => "10", "from" => "50", "message" => "second example");
+$arrInsert = array("sender" => "10", "receiver" => "50", "message" => "second example");
 $arrResult = $feedModel->addMessage($arrInsert);
 echo print_r($arrResult);
 */
 //get message
 
+$arrResult = $feedModel->getMessages(array("id"=>50, "where_clause"=>"receiver=:id"));
+print_r($arrResult);
 
-//$arrResult = $feedModel->getMessagesByFromId(50);
-//print_r($arrResult);
 //delete message
-
-
 //$arrResult = $feedModel->deleteMessageById(50);
 //print_r($arrResult);
 
@@ -58,10 +56,13 @@ print_r($arrResult);
 
 //START testing MenuModel
 //$menuModel = new MenuModel();
-
 /*
 $arrCreateMenu = array('chef_id' => 1, 'week' => 1, 'day' => 2, 'approved' => 1);
 $arrResult = $menuModel->createMenu($arrCreateMenu);
+print_r($arrResult);
+*/
+/*
+$arrResult = $menuModel->getMenu(array("id"=>1, "where_clause" => "approved=:id"));
 print_r($arrResult);
 */
 /*
@@ -105,7 +106,7 @@ print_r($arrResult);
 // END testing MenuModel
  
  // START testing UserModel
- // $userModel = new UserModel();
+//  $userModel = new UserModel();
 /*
  $arrUser = array("username" => "vf", "password" => "vf", 
 		"email" => "vferrero14@gmail.com", "userRole" => 0, "orgId" => 1);
@@ -123,10 +124,10 @@ print_r($arrResult);
  $arrResult = $userModel->getUsersByOrgId(2);
  print_r($arrResult);
 */
-/*    TODO: login is not working. password_verify is returning false
-$arrResult = $userModel->login("vf", "vf");
-print_r($arrResult);
-* */
+
+//$arrResult = $userModel->login("vf", "vf");
+//print_r($arrResult);
+
  // END testing UserModel
 ?>
 
