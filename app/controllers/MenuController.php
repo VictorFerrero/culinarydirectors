@@ -1,8 +1,5 @@
 <?php
-
-
 class MenuController{
-	
 	/*
 	 * does feed_back table need a field for menu_item_id. Otherwise, how do we know
 	 * which menu item the feedback is for?
@@ -19,48 +16,18 @@ class MenuController{
 	 * add menu_item_id to feedback
 	 */
 	
-	 private $menuModel; // this would prevent PDO connection from being made every time we create a MenuModel object
+	 private $menuModel; 
 	
 	public function __construct() {
 		// TODO: 
-		// $menuModel = new MenuModel();
+		 $this->menuModel = new MenuModel();
 	 }
 	 
 	 public function __destruct() {
-		 // ensure that the OrgModel destructor gets called to properly
+		 // ensure that the MenuModel destructor gets called to properly
 		 // close the database connection
 		 $this->menuModel = null;
-	 }
-		 
-	public function createFeedback() {
-		$arrInsertValues = array();
-		$arrInsertValues['feedback_type'] = $_REQUEST['feedback_type'];
-		$arrInsertValues['feedback_value'] = $_REQUEST['feedback_value'];
-		
-		$menuModel = new MenuModel();
-		$arrResult = $menuModel->createFeedback($arrInsertValues);
-		$menuModel = null;
-		return $arrResult;
-	}
-
-	public function deleteFeedback() {
-		$id = $_REQUEST['id'];
-		$menuModel = new MenuModel();
-		$arrResult = $menuModel->deleteFeedback($id);
-		
-		return $arrResult;
-	}
-
-	public function editFeedBack() {
-		$arrEdit = array();
-		$arrEdit['id'] = $_REQUEST['id'];
-		$arrEdit['feedback_type'] = $_REQUEST['feedback_type'];
-		$arrEdit['feedback_value'] = $_REQUEST['feedback_value']; 
-		
-		$menuModel = new MenuModel();
-		$arrResult = $menuModel->editFeedBack($arrEdit);
-		return $arrResult;
-	}	 
+	 }	 
 
 // create a menu. Menu Table schema = 
 // id | chef_id | week (0-52) | day (0-7) | approved (0-1)
@@ -70,9 +37,16 @@ class MenuController{
 		$arrInsertValues['week'] = $_REQUEST['week'];
 	    $arrInsertValues['day'] = $_REQUEST['day'];
 		$arrInsertValues['approved'] = $_REQUEST['approved'];
-		
-		$menuModel = new MenuModel();
-		$arrResult = $menuModel->createMenu($arrInsertValues);
+		$arrResult = array();
+		$arrResult['success'] = false; // assume it does not work
+		// make sure that week, day, and approved are valid values
+		if($this->isInputValid($arrInsertValues['week'], 0)) {
+			if($this->isInputValid($arrInsertValues['day'], 1)) {
+				if($this->isInputValid($arrInsertValues['approved'], 2)) {
+				$arrResult = $this->menuModel->createMenu($arrInsertValues);
+				}
+			}
+		}
 		return $arrResult;
 	 }
 	 
@@ -85,37 +59,42 @@ class MenuController{
 		$arrEdit['week'] = $_REQUEST['week']; 
 		$arrEdit['day'] = $_REQUEST['day'];
 		$arrEdit['approved'] = $_REQUEST['approved'];
-		
-		$menuModel = new MenuModel();
-		$arrResult = $menuModel->editMenu($arrEdit);
+		$arrResult = array();
+		$arrResult['success'] = false; // assume it does not work
+		// do some error checkking
+		if($this->isInputValid($arrInsertValues['week'], 0)) {
+			if($this->isInputValid($arrInsertValues['day'], 1)) {
+				if($this->isInputValid($arrInsertValues['approved'], 2)) {
+				$arrResult = $arrResult = $this->menuModel->editMenu($arrEdit);
+				}
+			}
+		}
 		return $arrResult;
 	 }
 	 
 	 public function deleteMenu() {
 		$id = $_REQUEST['id'];
-		$menuModel = new MenuModel();
-		$arrResult = $menuModel->deleteMenu($id); // dont forget to remove menu items too
-		
+		$arrResult = $this->menuModel->deleteMenu($id); 
 		return $arrResult;
 	 }
 	 
 	 // --each menu_item has id | menu_id | item_name | meal (0 for lunch, 1 for dinner)
 	 public function createMenuItem() {
 		$arrValues = array();
-		$arrValues['menu_id'] = $_REQUEST['menu_id'];
+		$arrValues['menu_id'] = $_REQUEST['menu_id']; // do we have to check that this id exists?
 		$arrValues['item_name'] = $_REQUEST['item_name'];
-		$arrValues['meal'] = $_REQUEST['mean'];
-		
-		$menuModel = new MenuModel();
-		$arrResult = $menuModel->createMenuItem($arrValues);
+		$arrValues['meal'] = $_REQUEST['meal'];
+		$arrResult = array();
+		$arrResult['success'] = false
+		if($this->isInputValid($arrValues['meal'], 2)) { // meal can only be 0 or 1
+			$arrResult = $this->menuModel->createMenuItem($arrValues);
+		}
 		return $arrResult;
 	 }
 	 
 	 public function deleteMenuItem() {
 		$id = $_REQUEST['id'];
-		
-		$menuModel = new MenuModel();
-		$arrResult = $menuModel->deleteMenuItem($id); 
+		$arrResult = $this->menuModel->deleteMenuItem($id); 
 	 }
 	 
 	 // every field for a menu_item must be in the $_REQUEST variable. Fields not being
@@ -126,10 +105,62 @@ class MenuController{
 		$arrEdit['menu_id'] = $_REQUEST['menu_id'];
 		$arrEdit['item_name'] = $_REQUEST['item_name']; 
 		$arrEdit['meal'] = $_REQUEST['meal'];
-		
-		$menuModel = new MenuModel();
-		$arrResult = $menuModel->editMenuItem($arrEdit);
+		$arrResult = array();
+		$arrResult['success'] = false;
+		if(strcmp($arrEdit['meal'], "" != 0)) {
+			if($this->isInputValid($arrEdit['meal'], 2)) {
+				$arrResult = $this->menuModel->editMenuItem($arrEdit);
+			}
+		}
 		return $arrResult;
+	 }
+	 
+	 	public function createFeedback() {
+	// might need error checking, or we could put constraints on db fields
+		$arrInsertValues = array();
+		$arrInsertValues['feedback_type'] = $_REQUEST['feedback_type'];
+		$arrInsertValues['feedback_value'] = $_REQUEST['feedback_value'];
+		$arrInsertValues['menu_item_id'] = $_REQUEST['menu_item_id'];
+		$arrResult = $this->menuModel->createFeedback($arrInsertValues);
+		return $arrResult;
+	}
+
+	public function deleteFeedback() {
+		$id = $_REQUEST['id'];
+		$arrResult = $this->menuModel->deleteFeedback($id);
+		return $arrResult;
+	}
+
+	public function editFeedBack() {
+		$arrEdit = array();
+		$arrEdit['id'] = $_REQUEST['id'];
+		$arrEdit['feedback_type'] = $_REQUEST['feedback_type'];
+		$arrEdit['feedback_value'] = $_REQUEST['feedback_value']; 
+		$arrEdit['menu_item_id'] = $_REQUEST['menu_item_id'];
+		$arrResult = $this->menuModel->editFeedBack($arrEdit);
+		return $arrResult;
+	}
+	 
+	 private function isInputValid($input, $flag) {
+		switch($flag) {
+			case 0:  //check valid week
+			if($input >= 0 AND $input <= 52) {
+				return true;
+			}		
+			return false;
+			break;
+			case 1: // check for valid day
+				if($input >= 0 AND $input <= 6) {
+					return true;
+				}
+				return false;
+				break;	
+			case 2: // check for valid approved value
+				if($input == 0 OR $input == 1) {
+						return true;
+				}
+			break;
+		}
 	 }
 }
 ?>
