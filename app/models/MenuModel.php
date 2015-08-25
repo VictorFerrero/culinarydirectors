@@ -192,8 +192,9 @@ class MenuModel
 		}
 		$arrResult['menu_item_success'] = $success;
 		
+		// set menu_id = 0
 		$success = false;
-		$sql = "DELETE FROM menu_feedback WHERE menu_id=:menu_id";
+		$sql = "UPDATE menu_feedback SET menu_id=0 WHERE menu_id=" . $id;
 		try{
 			$stm = $this->dbo->prepare($sql);
 			$stm->bindParam(":menu_id", $id);
@@ -324,6 +325,16 @@ class MenuModel
 		return $arrResult;
 	}
 	
+	
+/*	expected input: id of the menu to get all menu items on that menu
+		
+		output:
+		$arrResult = array (
+		'db_result' => result of running delete query
+		'error' => exception object for the first db query 
+		'success' => true if menu was successfuly removed, false otherwise
+		);
+	*/
 	public function getMenuItemForMenu($menuId) {
 		$arrResult = array();
 		$success = false;
@@ -475,7 +486,17 @@ class MenuModel
 		$arrResult['success'] = $success;
 		return $arrResult;
 	}
-	
+/*	
+	expected input: id of the menu to get feedback for
+		
+		output:
+		$arrResult = array (
+		'db_result' => result of running the query
+		'error' => exception object for the first db query 
+		'success' => true if menu was successfuly removed, false otherwise
+		'data' => array containing all feedback for the given menu id
+		);
+	*/
 	public function getFeedbackForMenu($menuId) {
 		$arrResult = array();
 		$success = false;

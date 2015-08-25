@@ -17,6 +17,17 @@ class OrgModel{
 		$this->dbo = null;
 	}
 	
+	
+	 /**
+		expected input: 
+		$arrValues => assoc array containing all fields neccessary 
+					to add an org to the database
+		output:
+		$arrResult = array (
+		'error' => exception object for db query
+		'success' => true if org was successfully retrieved from the db
+		);
+	*/
 	 public function createOrg($arrValues) {
 		$arrResult = array();
 		$success = false;		
@@ -47,7 +58,16 @@ class OrgModel{
 		return $arrResult;
 	 }
 	 
-	 
+	  /**
+		expected input: 
+		$arrValues => assoc array containing all fields to be changed.
+					if a field is not being changed, it must be set to empty string
+		output:
+		$arrResult = array (
+		'error' => exception object for db query
+		'success' => true if org was successfully retrieved from the db
+		);
+	*/
 	 public function editOrg($arrValues) {
 	$arrResult = array();
 	$success = false;
@@ -125,7 +145,16 @@ class OrgModel{
 	return $arrResult;
 	 }
 	 
-	 	 //delete org
+	 /**
+		expected input: 
+		$id => the id of the org being deleted
+		output:
+		$arrResult = array (
+		'error' => exception object for db query
+		'success' => true if org was successfully retrieved from the db
+		'db_result' => result of running the query. 1 for success, 0 for failure
+		);
+	*/	
 	 public function deleteOrg($id) {
 		$arrResult = array();
 		$success = false;

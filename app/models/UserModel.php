@@ -25,9 +25,7 @@ class UserModel{
 		
 		output:
 		$arrResult = array (
-		'username_error' => the username already exists
-		'error1' => exception object for first query attempt
-		'error2' => exception object for second query attempt
+		'error' => array of errors that occurred
 		'success' => true if user was successfuly added, false otherwise
 		);
 	*/
@@ -122,6 +120,20 @@ class UserModel{
 	}
 
 	// id | username | password | email | userRole | orgId
+	/**
+		expected input: => values not being changed must be set to empty string
+		$arrValues = array( 
+		'username' => username,
+		'password' => non-hashed user password
+		'email' => user email address
+		'userRole' => the users role
+		
+		output:
+		$arrResult = array (
+		'error' => exception object for query attempt
+		'success' => true if successfully eddited, false otherwise
+		);
+	*/
 	public function editUser($arrValues) {
 			 $arrResult = array();
 	 $success = false;
@@ -242,7 +254,16 @@ class UserModel{
 		return $arrResult;
 	}
 	
-	//get users by org ID
+		/**
+		expected input: => the id of the org to get users for
+		
+		output:
+		$arrResult = array (
+		'error' => exception object for query attempt
+		'success' => true if successfully eddited, false otherwise
+		'data' => array containing all users that are in the org
+		);
+	*/
 	public function getUsersByOrgId($orgId) {
 		$arrResult = array();
 		$success = false;
