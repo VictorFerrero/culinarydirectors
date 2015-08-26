@@ -19,6 +19,7 @@ class FeedController
 		$arrValues['message'] = $_REQUEST['message'];
 		
 		$arrResult = $this->feedModel->addMessage($arrValues);
+		return $arrResult;
 	}
 	
 	public function deleteMessageById() {
@@ -26,6 +27,7 @@ class FeedController
 		$arrValues['id'] = $_REQUEST['id']; // id of thing we want to delete
 		$arrValues['where_clause'] = "id=:id"; // where clause specifying what condition is to delete
 		$arrResult = $this->feedModel->deleteMessage($arrValues);
+		return $arrResult;
 	}
 	
 	// -1 means the message is TO everyone
@@ -36,6 +38,7 @@ class FeedController
 		$arrResult = $this->feedModel->getMessages($arrValues);
 		
 		$arrMessages = $arrResult['data'];
+		return $arrResult;
 	}
 	
 	public function getMessagesByReceiverId() {
@@ -45,6 +48,7 @@ class FeedController
 		$arrResult = $this->feedModel->getMessages($arrValues);
 		
 		$arrMessages = $arrResult['data'];
+		return $arrResult;
 	}
 	
 	public function getMessagesById() {
@@ -54,6 +58,7 @@ class FeedController
 		$arrResult = $this->feedModel->getMessages($arrValues);
 		
 		$arrMessages = $arrResult['data'];
+		return $arrResult;
 	}
 }
 ?>

@@ -62,9 +62,9 @@ class MenuController{
 		$arrResult = array();
 		$arrResult['success'] = false; // assume it does not work
 		// do some error checkking
-		if($this->isInputValid($arrInsertValues['week'], 0)) {
-			if($this->isInputValid($arrInsertValues['day'], 1)) {
-				if($this->isInputValid($arrInsertValues['approved'], 2)) {
+		if($this->isInputValid($arrEdit['week'], 0)) {
+			if($this->isInputValid($arrEdit['day'], 1)) {
+				if($this->isInputValid($arrEdit['approved'], 2)) {
 				$arrResult = $arrResult = $this->menuModel->editMenu($arrEdit);
 				}
 			}
@@ -107,11 +107,11 @@ class MenuController{
 		$arrEdit['meal'] = $_REQUEST['meal'];
 		$arrResult = array();
 		$arrResult['success'] = false;
-		if(strcmp($arrEdit['meal'], "" != 0)) {
-			if($this->isInputValid($arrEdit['meal'], 2)) {
+//		if(strcmp($arrEdit['meal'], "" != 0)) {
+//			if($this->isInputValid($arrEdit['meal'], 2)) {
 				$arrResult = $this->menuModel->editMenuItem($arrEdit);
-			}
-		}
+//			}
+//		}
 		return $arrResult;
 	 }
 	 
@@ -121,6 +121,7 @@ class MenuController{
 		$arrInsertValues['feedback_type'] = $_REQUEST['feedback_type'];
 		$arrInsertValues['feedback_value'] = $_REQUEST['feedback_value'];
 		$arrInsertValues['menu_item_id'] = $_REQUEST['menu_item_id'];
+		$arrInsertValues['menu_id'] = $_REQUEST['menu_id'];
 		$arrResult = $this->menuModel->createFeedback($arrInsertValues);
 		return $arrResult;
 	}
@@ -137,7 +138,14 @@ class MenuController{
 		$arrEdit['feedback_type'] = $_REQUEST['feedback_type'];
 		$arrEdit['feedback_value'] = $_REQUEST['feedback_value']; 
 		$arrEdit['menu_item_id'] = $_REQUEST['menu_item_id'];
+		$arrEdit['menu_id'] = $_REQUEST['menu_id'];
 		$arrResult = $this->menuModel->editFeedBack($arrEdit);
+		return $arrResult;
+	}
+	
+	public function getFeedbackForMenu() {
+		$id = $_REQUEST['id'];
+		$arrResult = $this->menuModel->getFeedbackForMenu($id);
 		return $arrResult;
 	}
 	 

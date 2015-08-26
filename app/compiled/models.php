@@ -341,7 +341,7 @@ class MenuModel
 		
 		// set menu_id = 0
 		$success = false;
-		$sql = "UPDATE menu_feedback SET menu_id=0 WHERE menu_id=" . $id;
+		$sql = "UPDATE menu_feedback SET menu_id=0, menu_item_id=0 WHERE menu_id=" . $id;
 		try{
 			$stm = $this->dbo->prepare($sql);
 			$stm->bindParam(":menu_id", $id);
@@ -417,20 +417,22 @@ class MenuModel
 	 $data = array();
 	 $index = 0;
 	 if(strcmp($menu_id, "") != 0) {
-		 $sql = $sql . "menu_id=?";
+		 $sql = $sql . "menu_id=?, ";
 		 $data[$index] = $menu_id;
 		 $index = $index + 1;
 	 }
 	 if(strcmp($item_name, "") != 0) {
-		 $sql = $sql . ", item_name=?";
+		 $sql = $sql . "item_name=?, ";
 		 $data[$index] = $item_name;
 		 $index = $index + 1;
 	 }
 	 if(strcmp($meal, "") != 0) {
-		 $sql = $sql . ", meal=?";
+		 $sql = $sql . "meal=?, ";
 		 $data[$index] = $meal;
 		 $index = $index + 1;
 	 }
+	 // get rid of the last two characters
+	 $sql = substr($sql,0,-2);
 	 $sql = $sql . " WHERE id=?";
 	 $data[$index] = $id;
 	try {
@@ -581,8 +583,8 @@ class MenuModel
 		 $data[$index] = $feedback_value;
 		 $index = $index + 1;
 	 }
-	 if(strcmp($feedback_value, "") != 0) {
-		 $sql = $sql . ", menu_item_id=?, ";
+	 if(strcmp($menu_item_id, "") != 0) {
+		 $sql = $sql . "menu_item_id=?, ";
 		 $data[$index] = $menu_item_id;
 		 $index = $index + 1;
 	 }
@@ -807,6 +809,8 @@ class OrgModel{
 		 $success = false;
 	 }	
 	$arrResult['success'] = $success;
+	$arrResult['sql'] = $sql;
+	$arrResult['data'] = $data;
 	return $arrResult;
 	 }
 	 
@@ -886,6 +890,7 @@ class UserModel{
 		$this->dbo = null;
 	}
 
+// TODO: success is getting set to false when it should be true
 	public function isUserInOrg($userId, $orgId) {
 		$success = false;
 		$arrResult = array();
