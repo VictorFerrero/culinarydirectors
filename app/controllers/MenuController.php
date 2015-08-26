@@ -85,7 +85,7 @@ class MenuController{
 		$arrValues['item_name'] = $_REQUEST['item_name'];
 		$arrValues['meal'] = $_REQUEST['meal'];
 		$arrResult = array();
-		$arrResult['success'] = false
+		$arrResult['success'] = false;
 		if($this->isInputValid($arrValues['meal'], 2)) { // meal can only be 0 or 1
 			$arrResult = $this->menuModel->createMenuItem($arrValues);
 		}

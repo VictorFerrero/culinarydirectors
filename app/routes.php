@@ -1,14 +1,24 @@
 <?php
 /*Test Functions*/
 $routePrefix = 'culinarydirectors/index.php/';
-$router->get($routePrefix.'hello/{name}', function($name){
-    return 'Hello ' . $name;
-}, array('before' => 'statsStart', 'after' => 'statsComplete'));
 
 $router->get($routePrefix.'helloworld', function(){
 	return Test::getIndex();
 }, array('before' => 'statsStart', 'after' => 'statsComplete'));
-/*Main Reflective Functions*/
+/*Webservice Functions*/
+
+$router->post($routePrefix.'user/register', function(){
+	$UserController = new UserController();
+	return json_encode($UserController->register());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->get($routePrefix.'user/get', function(){
+	$UserController = new UserController();
+	return json_encode($UserController->getAllUsers());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+/*End Webservice Functions*/
+/*BaaS - Main Reflective Functions*/
 //SELECT and SELECT-like API calls
 /*
 Simple select

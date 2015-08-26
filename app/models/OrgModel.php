@@ -1,5 +1,4 @@
 <?php
-require_once('DB_Connection.php');
 /*
  * Org table database schema: 
  * 

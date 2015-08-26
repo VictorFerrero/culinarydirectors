@@ -1,3 +1,5 @@
+package culinarydirectors.culinarydirectors;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +16,9 @@ import org.apache.http.message.BasicNameValuePair;
 // currently just returning HttpResponse object
 public class CulinaryDirectorsAPI {
 
-	// base urls for each controller
-	private static final String MenuControllerRoute = "";
-	private static final String OrgControllerRoute = "";
-	private static final String UserControllerRoute = "";
-	private static final String FeedControllerRoute = "";
+	// API BASE URL
+	// TODO: Dynamically switch between environments based on a config string
+	private static final String localAPI = "localhost/culinarydirectors/index.php";
 	
 	public CulinaryDirectorsAPI() {
 		
@@ -37,7 +37,7 @@ public class CulinaryDirectorsAPI {
  */
 	public HttpResponse createOrg(String[] name, String[] value) {
 		List<NameValuePair> postData = this.initializePostData(name, value);
-		String route = CulinaryDirectorsAPI.OrgControllerRoute + "/createOrg";
+		String route = CulinaryDirectorsAPI.localAPI + "/createOrg";
 		HttpResponse response = this.sendPost(postData, route);
 		return response;
 	}
@@ -55,7 +55,7 @@ public class CulinaryDirectorsAPI {
 	 */
 	public HttpResponse editOrg(String[] name, String[] value) {
 		List<NameValuePair> postData = this.initializePostData(name, value);
-		String route = CulinaryDirectorsAPI.OrgControllerRoute + "/editOrg";
+		String route = CulinaryDirectorsAPI.localAPI + "/editOrg";
 		HttpResponse response = this.sendPost(postData, route);
 		return response;
 	}
@@ -63,7 +63,7 @@ public class CulinaryDirectorsAPI {
 //  $id = $_REQUEST['id'];
 	public HttpResponse deleteOrg(String[] name, String[] value) {
 		List<NameValuePair> postData = this.initializePostData(name, value);
-		String route = CulinaryDirectorsAPI.OrgControllerRoute + "/deleteOrg";
+		String route = CulinaryDirectorsAPI.localAPI + "/deleteOrg";
 		HttpResponse response = this.sendPost(postData, route);
 		return response;
 	}
@@ -71,7 +71,7 @@ public class CulinaryDirectorsAPI {
 //  $id = $_REQUEST['id'];
 	public HttpResponse getOrgById(String[] name, String[] value) {
 		List<NameValuePair> postData = this.initializePostData(name, value);
-		String route = CulinaryDirectorsAPI.OrgControllerRoute + "/getOrgById";
+		String route = CulinaryDirectorsAPI.localAPI + "/getOrgById";
 		HttpResponse response = this.sendPost(postData, route);
 		return response;
 	}
@@ -84,7 +84,7 @@ public class CulinaryDirectorsAPI {
  */
 	public HttpResponse addMessage(String[] name, String[] value) {
 		List<NameValuePair> postData = this.initializePostData(name, value);
-		String route = CulinaryDirectorsAPI.FeedControllerRoute + "/addMessage";
+		String route = CulinaryDirectorsAPI.localAPI + "/addMessage";
 		HttpResponse response = this.sendPost(postData, route);
 		return response;
 	}
@@ -92,7 +92,7 @@ public class CulinaryDirectorsAPI {
 //	 $arrValues['id'] = $_REQUEST['id']; 	
 	public HttpResponse deleteMessageById(String[] name, String[] value) {
 		List<NameValuePair> postData = this.initializePostData(name, value);
-		String route = CulinaryDirectorsAPI.FeedControllerRoute + "/deleteMessageById";
+		String route = CulinaryDirectorsAPI.localAPI + "/deleteMessageById";
 		HttpResponse response = this.sendPost(postData, route);
 		return response;
 	}
@@ -100,7 +100,7 @@ public class CulinaryDirectorsAPI {
 	// $arrValues['id'] = $_REQUEST['senderId']
 	public HttpResponse getMessagesBySenderId(String[] name, String[] value) {
 		List<NameValuePair> postData = this.initializePostData(name, value);
-		String route = CulinaryDirectorsAPI.FeedControllerRoute + "/getMessagesBySenderId";
+		String route = CulinaryDirectorsAPI.localAPI + "/getMessagesBySenderId";
 		HttpResponse response = this.sendPost(postData, route);
 		return response;
 	}
@@ -108,7 +108,7 @@ public class CulinaryDirectorsAPI {
 	// $arrValues['id'] = $_REQUEST['receiverId']
 	public HttpResponse getMessagesByReceiverId(String[] name, String[] value) {
 		List<NameValuePair> postData = this.initializePostData(name, value);
-		String route = CulinaryDirectorsAPI.FeedControllerRoute + "/getMessagesByReceiverId";
+		String route = CulinaryDirectorsAPI.localAPI + "/getMessagesByReceiverId";
 		HttpResponse response = this.sendPost(postData, route);
 		return response;
 	}
@@ -116,7 +116,7 @@ public class CulinaryDirectorsAPI {
 	// $arrValues['id'] = $_REQUEST['id']
 	public HttpResponse getMessagesById(String[] name, String[] value) {
 		List<NameValuePair> postData = this.initializePostData(name, value);
-		String route = CulinaryDirectorsAPI.FeedControllerRoute + "/getMessagesById";
+		String route = CulinaryDirectorsAPI.localAPI + "/getMessagesById";
 		HttpResponse response = this.sendPost(postData, route);
 		return response;
 	}

@@ -1,5 +1,4 @@
 <?php
-require_once('DB_Connection.php');
 // TODO: we need accessors for the menu table. 
 // not sure what field we should be selecting on.
 class MenuModel

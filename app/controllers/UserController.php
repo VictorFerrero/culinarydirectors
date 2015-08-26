@@ -49,15 +49,21 @@ class UserController{
 		$this->userRole = -1;
 	}
 	
-	public function addUser(){
+	public function getAllUsers(){
+		return $this->userModel->getAllUsers();
+	}
+	
+	public function register(){
 		$arrValues = array();
 		$arrValues['username'] = $_REQUEST['username'];
 		$arrValues['password'] = $_REQUEST['password'];
 		$arrValues['email'] = $_REQUEST['email'];
 		$arrValues['userRole'] = $_REQUEST['userRole'];
-		$arrResult = $this->userModel->addUser($arrValues);
+		$arrValues['orgId'] = $_REQUEST['orgId'];
+		$arrResult = $this->userModel->register($arrValues);
 		if($arrResult['success']) {
 			//successfully added user
+			return $arrResult;
 		}
 		else {
 			//there was an error
@@ -72,6 +78,7 @@ class UserController{
 		$arrResult = $this->userModel->deleteUser($arrValues['username'], $arrValues['password']);
 		if($arrResult['success']) {
 			//successfully added user
+			return $arrResult;
 		}
 		else {
 			//there was an error

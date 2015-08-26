@@ -12,7 +12,8 @@ $router->filter('basicAuth', function(){
 
 $router->filter('statsComplete', function(){    
 	global $startTime;
-    var_dump('Page load time: ' . (microtime(true) - $startTime));
+	//TODO: log Page load time in return json, maybe...
+    //var_dump('Page load time: ' . (microtime(true) - $startTime));
     //$page_load_time = (microtime(true) - $startTime);
 });
 ?>

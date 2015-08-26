@@ -31,7 +31,7 @@ class FeedController
 	// -1 means the message is TO everyone
 	public function getMessagesBySenderId() {
 		$arrValues = array();
-		$arrValues['id'] = $_REQUEST['senderId']
+		$arrValues['id'] = $_REQUEST['senderId'];
 		$arrValues['where_clause'] = "sender=:id";
 		$arrResult = $this->feedModel->getMessages($arrValues);
 		
@@ -40,7 +40,7 @@ class FeedController
 	
 	public function getMessagesByReceiverId() {
 		$arrValues = array();
-		$arrValues['id'] = $_REQUEST['receiverId']
+		$arrValues['id'] = $_REQUEST['receiverId'];
 		$arrValues['where_clause'] = "receiver=:id";
 		$arrResult = $this->feedModel->getMessages($arrValues);
 		
@@ -49,7 +49,7 @@ class FeedController
 	
 	public function getMessagesById() {
 		$arrValues = array();
-		$arrValues['id'] = $_REQUEST['id']
+		$arrValues['id'] = $_REQUEST['id'];
 		$arrValues['where_clause'] = "id=:id";
 		$arrResult = $this->feedModel->getMessages($arrValues);
 		

@@ -1,10 +1,11 @@
 <?php
 
-	require 'vendor/autoload.php';
-	require 'app/compiled/models.php';
-	require 'app/compiled/controllers.php';
-	require 'app/filters.php';
-	require 'app/routes.php';
+	require_once ('vendor/autoload.php');
+	require_once ("app/config/config.php");
+	require_once ('app/compiled/models.php');
+	require_once ('app/compiled/controllers.php');
+	require_once ('app/filters.php');
+	require_once ('app/routes.php');
 	
 	# NB. You can cache the return value from $router->getData() so you don't have to create the routes each request - massive speed gains
 	$routerData = (apc_fetch('routerData') === false)? $router->getData() : apc_fetch('routerData');

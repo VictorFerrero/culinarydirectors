@@ -1,5 +1,4 @@
 <?php
-require_once('DB_Connection.php');
 	// id | username | password | email | userRole | orgId
 	//TODO: get true/false if user_id is in org_id
 class UserModel{
@@ -26,7 +25,7 @@ class UserModel{
 			$STH->execute();
 			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
 			$succcess = true;
-			if(fetch[0]['orgId'] == $orgId) {
+			if($fetch[0]['orgId'] == $orgId) {
 				$returnValue = true;
 			}
 			else {
@@ -39,6 +38,21 @@ class UserModel{
 		$arrResult['success'] = $success;
 		$arrResult['returnValue'] = $returnValue;
 		return $arrResult;
+	}
+	
+	/**
+		no input
+		return list of users
+	*/
+	public function getAllUsers(){
+		try{
+			$STH = $this->dbo->prepare("SELECT * FROM user");
+			$STH->execute();
+			return $STH->fetchAll();
+		}
+		catch(Exception $e){
+			return array("error"=>$e->getMessage());
+		}
 	}
 	
 	/**
@@ -55,7 +69,7 @@ class UserModel{
 		'success' => true if user was successfuly added, false otherwise
 		);
 	*/
-	public function addUser($arrValues) {
+	public function register($arrValues) {
 		// first we check if username already exists
 		$arrResult = array();
 		$success = false;
@@ -161,7 +175,7 @@ class UserModel{
 		);
 	*/
 	public function editUser($arrValues) {
-			 $arrResult = array();
+	 $arrResult = array();
 	 $success = false;
 	 $id = $arrValues['id'];
 	 $username = $arrValues['username'];

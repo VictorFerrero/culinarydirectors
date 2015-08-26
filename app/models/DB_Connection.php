@@ -1,5 +1,5 @@
 <?php
-require_once ("config/config.php");
+
 class DB_Connections
 {
 		
