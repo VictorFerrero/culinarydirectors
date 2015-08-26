@@ -18,12 +18,18 @@ class UserController{
 		$this->userModel = null;
 	}
 	
+	public function isUserInOrg($userId, $orgId) {
+		$userId = $_REQUEST['userId'];
+		$orgId = $_REQUEST['orgId'];
+		$arrResult = $this->userModel->isUserInOrg($userId, $orgId);
+	}
+	
 	public function login() {
 		$arrValues = array();
 		$arrValues['username'] = $_REQUEST['username'];
 		$arrValues['password'] = $_REQUEST['password'];
 		$arrResult = $this->userModel->login($arrValues['username'], $arrValues['password']);
-		if($arrResult['success']) {
+		if($arrResult['login']) {
 			$arrUser = $arrResult['userInfo'];
 			$this->username = $arrUser['username'];
 			$this->userRole = $arrUser['userRole'];

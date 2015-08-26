@@ -14,8 +14,8 @@ class FeedController
 	
 	public function addMessage() {
 		$arrValues = array();
-		$arrValues['to'] = $_REQUEST['to'];
-		$arrValues['from'] = $_REQUEST['from'];
+		$arrValues['sender'] = $_REQUEST['sender'];
+		$arrValues['receiver'] = $_REQUEST['receiver'];
 		$arrValues['message'] = $_REQUEST['message'];
 		
 		$arrResult = $this->feedModel->addMessage($arrValues);
@@ -29,19 +29,19 @@ class FeedController
 	}
 	
 	// -1 means the message is TO everyone
-	public function getMessagesByToId() {
+	public function getMessagesBySenderId() {
 		$arrValues = array();
-		$arrValues['id'] = $_REQUEST['toId']
-		$arrValues['where_clause'] = "to=:id";
+		$arrValues['id'] = $_REQUEST['senderId']
+		$arrValues['where_clause'] = "sender=:id";
 		$arrResult = $this->feedModel->getMessages($arrValues);
 		
 		$arrMessages = $arrResult['data'];
 	}
 	
-	public function getMessagesByFromId() {
+	public function getMessagesByReceiverId() {
 		$arrValues = array();
-		$arrValues['id'] = $_REQUEST['fromId']
-		$arrValues['where_clause'] = "from=:id";
+		$arrValues['id'] = $_REQUEST['receiverId']
+		$arrValues['where_clause'] = "receiver=:id";
 		$arrResult = $this->feedModel->getMessages($arrValues);
 		
 		$arrMessages = $arrResult['data'];

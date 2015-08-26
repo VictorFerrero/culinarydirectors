@@ -15,6 +15,32 @@ class UserModel{
 		$this->dbo = null;
 	}
 
+	public function isUserInOrg($userId, $orgId) {
+		$success = false;
+		$arrResult = array();
+		$success = false;
+		$returnValue = false;
+		 try {
+			$STH = $this->dbo->prepare("SELECT * FROM user WHERE id=:id");
+			$STH->bindParam(":id", $userId);
+			$STH->execute();
+			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
+			$succcess = true;
+			if(fetch[0]['orgId'] == $orgId) {
+				$returnValue = true;
+			}
+			else {
+				$returnValue = false;
+			}	
+		} catch(Exception $e) {
+			$arrResult['error'] = $e->getMessage();
+			$success = false;
+		}
+		$arrResult['success'] = $success;
+		$arrResult['returnValue'] = $returnValue;
+		return $arrResult;
+	}
+	
 	/**
 		expected input: 
 		$arrValues = array( 
@@ -202,6 +228,7 @@ class UserModel{
 		$success = false;
 		$arrResult = array();	
 		$arrResult['error_message'] = array();
+		$arrResult['login'] = false;
 		$success = false;
 		 try {
 			$STH = $this->dbo->prepare("SELECT * FROM user WHERE username=:username");
@@ -215,6 +242,7 @@ class UserModel{
 				if(password_verify($password, $hashedPassword)) {
 				// username exists in the database and pw hash compare returned true
 				$arrResult['userInfo'] = $fetch[0]; // not sure what to return. just putting this here for now
+				$arrResult['login'] = true; // the login had the correct credentials
 				// find info specific to this type of user
 				switch($fetch[0]['userRole']){
 					case 0: //member

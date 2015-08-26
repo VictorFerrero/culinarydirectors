@@ -57,5 +57,10 @@ class OrgController{
 		 $id = $_REQUEST['id'];
 		 $arrResult = $this->orgModel->deleteOrg($id);
 	 }
+	 
+	 public function getOrgById() {
+		$id = $_REQUEST['id'];
+		$arrResult = $this->orgModel->getOrgById($id);
+	 }
 }
 ?>

@@ -14,7 +14,6 @@ class MenuModel
 	public function __destruct() {
 		$this->dbo = null;
 	}
-
 	/**
 		expected input: 
 		$arrValues = array( 
