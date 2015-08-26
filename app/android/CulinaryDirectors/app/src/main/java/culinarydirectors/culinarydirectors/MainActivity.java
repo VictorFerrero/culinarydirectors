@@ -1,9 +1,11 @@
 package culinarydirectors.culinarydirectors;
 
+import android.graphics.Typeface;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -12,6 +14,15 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //initialize Navigation
+        Typeface font_awesome = Typefaces.get(this,"");
+        Button button = (Button)findViewById(R.id.btnMenu);
+        button.setTypeface(font_awesome);
+        button = (Button)findViewById(R.id.btnFeed);
+        button.setTypeface(font_awesome);
+        button = (Button)findViewById(R.id.btnProfile);
+        button.setTypeface(font_awesome);
+        //end initialize Navigation
     }
 
 

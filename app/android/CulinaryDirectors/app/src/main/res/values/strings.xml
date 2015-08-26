@@ -1,6 +1,16 @@
 <resources>
     <string name="app_name">CulinaryDirectors</string>
-
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <!-- begin font-awesome strings -->
+    <string name="double_arrow_left">&#xf100;</string>
+    <string name="double_arrow_right">&#xf101;</string>
+    <string name="thumbs_up">&#xf087;</string>
+    <string name="thumbs_down">&#xf088;</string>
+    <string name="fa_user">&#xf007;</string>
+    <string name="fa_comments">&#xf086;</string>
+    <string name="fa_cutlery">&#xf0f5;</string>
+    <string name="fa_pencil">&#xf040;</string>
+    <string name="fa_edit">&#xf044;</string>
+    <!-- end font-awesome strings -->
 </resources>
