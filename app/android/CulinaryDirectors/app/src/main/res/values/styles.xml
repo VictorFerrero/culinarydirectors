@@ -1,10 +1,11 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-
-    </style>
+    <!--style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    </style-->
+    <style name="Theme.Default" parent="@android:style/Theme"></style>
+    <style name="Theme.NoTitle" parent="@android:style/Theme.NoTitleBar"></style>
+    <style name="Theme.FullScreen" parent="@android:style/Theme.NoTitleBar.Fullscreen"></style>
 
     <style name="navbar_button">
         <item name="android:layout_width">0dp</item>
@@ -13,7 +14,7 @@
         <item name="android:background">#222</item>
         <item name="android:gravity">center_horizontal</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:textSize">12dp</item>
+        <item name="android:textSize">54dp</item>
         <item name="android:textColor">#fff</item>
     </style>
 

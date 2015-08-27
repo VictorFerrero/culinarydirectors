@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.util.Log;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Hashtable;
 public class Typefaces {
     private static final String TAG = "Typefaces";
 
-    private static final Hashtable<String, Typeface> cache = new Hashtable<String, Typeface>();
+    private static final HashMap<String, Typeface> cache = new HashMap<String, Typeface>();
 
     public static Typeface get(Context c, String assetPath) {
         synchronized (cache) {
