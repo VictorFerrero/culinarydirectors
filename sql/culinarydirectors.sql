@@ -91,9 +91,9 @@ CREATE TABLE IF NOT EXISTS `org` (
   `city` varchar(100) NOT NULL,
   `state` varchar(2) NOT NULL,
   `zip` int(5) NOT NULL,
-  `phone` int(10) NOT NULL,
+  `phone` BIGINT(10) NOT NULL,
   `email` varchar(200) NOT NULL,
-  `phone2` int(10) NOT NULL,
+  `phone2` BIGINT(10) NOT NULL,
   `profileJSON` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
