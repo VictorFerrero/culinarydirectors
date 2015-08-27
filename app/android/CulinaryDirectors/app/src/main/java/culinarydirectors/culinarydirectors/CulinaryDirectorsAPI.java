@@ -3,6 +3,7 @@ package culinarydirectors.culinarydirectors;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -10,7 +11,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-
+   
 
 // what are we doing for return values?
 // currently just returning HttpResponse object
@@ -35,7 +36,7 @@ public class CulinaryDirectorsAPI {
 		$arrValues['phone2'] = $_REQUEST['phone2'];
 		$arrValues['profileJSON'] = $_REQUEST['profileJSON'];
  */
-	public HttpResponse createOrg(String[] name, String[] value) {
+	public HttpResponse createOrg(HashMap<String,String> postData) {
 		List<NameValuePair> postData = this.initializePostData(name, value);
 		String route = CulinaryDirectorsAPI.localAPI + "/createOrg";
 		HttpResponse response = this.sendPost(postData, route);
@@ -53,7 +54,7 @@ public class CulinaryDirectorsAPI {
 		$arrValues['phone2'] = $_REQUEST['phone2'];
 		$arrValues['profileJSON'] = $_REQUEST['profileJSON'];
 	 */
-	public HttpResponse editOrg(String[] name, String[] value) {
+	public HttpResponse editOrg(HashMap<String,String> postData) {
 		List<NameValuePair> postData = this.initializePostData(name, value);
 		String route = CulinaryDirectorsAPI.localAPI + "/editOrg";
 		HttpResponse response = this.sendPost(postData, route);
@@ -61,7 +62,7 @@ public class CulinaryDirectorsAPI {
 	}
 	
 //  $id = $_REQUEST['id'];
-	public HttpResponse deleteOrg(String[] name, String[] value) {
+	public HttpResponse deleteOrg(HashMap<String,String> postData) {
 		List<NameValuePair> postData = this.initializePostData(name, value);
 		String route = CulinaryDirectorsAPI.localAPI + "/deleteOrg";
 		HttpResponse response = this.sendPost(postData, route);
@@ -69,7 +70,7 @@ public class CulinaryDirectorsAPI {
 	}
 	
 //  $id = $_REQUEST['id'];
-	public HttpResponse getOrgById(String[] name, String[] value) {
+	public HttpResponse getOrgById(HashMap<String,String> postData) {
 		List<NameValuePair> postData = this.initializePostData(name, value);
 		String route = CulinaryDirectorsAPI.localAPI + "/getOrgById";
 		HttpResponse response = this.sendPost(postData, route);
@@ -82,7 +83,7 @@ public class CulinaryDirectorsAPI {
 		$arrValues['receiver'] = $_REQUEST['receiver'];
 		$arrValues['message'] = $_REQUEST['message'];
  */
-	public HttpResponse addMessage(String[] name, String[] value) {
+	public HttpResponse addMessage(HashMap<String,String> postData) {
 		List<NameValuePair> postData = this.initializePostData(name, value);
 		String route = CulinaryDirectorsAPI.localAPI + "/addMessage";
 		HttpResponse response = this.sendPost(postData, route);
@@ -90,7 +91,7 @@ public class CulinaryDirectorsAPI {
 	}
 	
 //	 $arrValues['id'] = $_REQUEST['id']; 	
-	public HttpResponse deleteMessageById(String[] name, String[] value) {
+	public HttpResponse deleteMessageById(HashMap<String,String> postData) {
 		List<NameValuePair> postData = this.initializePostData(name, value);
 		String route = CulinaryDirectorsAPI.localAPI + "/deleteMessageById";
 		HttpResponse response = this.sendPost(postData, route);
@@ -98,7 +99,7 @@ public class CulinaryDirectorsAPI {
 	}
 	
 	// $arrValues['id'] = $_REQUEST['senderId']
-	public HttpResponse getMessagesBySenderId(String[] name, String[] value) {
+	public HttpResponse getMessagesBySenderId(HashMap<String,String> postData) {
 		List<NameValuePair> postData = this.initializePostData(name, value);
 		String route = CulinaryDirectorsAPI.localAPI + "/getMessagesBySenderId";
 		HttpResponse response = this.sendPost(postData, route);
@@ -106,7 +107,7 @@ public class CulinaryDirectorsAPI {
 	}
 	
 	// $arrValues['id'] = $_REQUEST['receiverId']
-	public HttpResponse getMessagesByReceiverId(String[] name, String[] value) {
+	public HttpResponse getMessagesByReceiverId(HashMap<String,String> postData) {
 		List<NameValuePair> postData = this.initializePostData(name, value);
 		String route = CulinaryDirectorsAPI.localAPI + "/getMessagesByReceiverId";
 		HttpResponse response = this.sendPost(postData, route);
@@ -114,7 +115,7 @@ public class CulinaryDirectorsAPI {
 	}
 	
 	// $arrValues['id'] = $_REQUEST['id']
-	public HttpResponse getMessagesById(String[] name, String[] value) {
+	public HttpResponse getMessagesById(HashMap<String,String> postData) {
 		List<NameValuePair> postData = this.initializePostData(name, value);
 		String route = CulinaryDirectorsAPI.localAPI + "/getMessagesById";
 		HttpResponse response = this.sendPost(postData, route);
@@ -122,14 +123,121 @@ public class CulinaryDirectorsAPI {
 	}
 	
 // START of menu related API calls	
+		public HttpResponse createMenu(HashMap<String,String> postData) {
+		List<NameValuePair> postData = this.initializePostData(name, value);
+		String route = CulinaryDirectorsAPI.localAPI + "/createMenu";
+		HttpResponse response = this.sendPost(postData, route);
+		return response;
+	}
 	
+		public HttpResponse editMenu(HashMap<String,String> postData) {
+		List<NameValuePair> postData = this.initializePostData(name, value);
+		String route = CulinaryDirectorsAPI.localAPI + "/editMenu";
+		HttpResponse response = this.sendPost(postData, route);
+		return response;
+	}
+	
+		public HttpResponse deleteMenu(HashMap<String,String> postData) {
+		List<NameValuePair> postData = this.initializePostData(name, value);
+		String route = CulinaryDirectorsAPI.localAPI + "/deleteMenu";
+		HttpResponse response = this.sendPost(postData, route);
+		return response;
+	}
+	
+		public HttpResponse createMenuItem(HashMap<String,String> postData) {
+		List<NameValuePair> postData = this.initializePostData(name, value);
+		String route = CulinaryDirectorsAPI.localAPI + "/createMenuItem";
+		HttpResponse response = this.sendPost(postData, route);
+		return response;
+	}
+	
+		public HttpResponse editMenuItem(HashMap<String,String> postData) {
+		List<NameValuePair> postData = this.initializePostData(name, value);
+		String route = CulinaryDirectorsAPI.localAPI + "/editMenuItem";
+		HttpResponse response = this.sendPost(postData, route);
+		return response;
+	}
+	
+		public HttpResponse deleteMenuItem(HashMap<String,String> postData) {
+		List<NameValuePair> postData = this.initializePostData(name, value);
+		String route = CulinaryDirectorsAPI.localAPI + "/deleteMenuItem";
+		HttpResponse response = this.sendPost(postData, route);
+		return response;
+	}
+	
+		public HttpResponse createFeedback(HashMap<String,String> postData) {
+		List<NameValuePair> postData = this.initializePostData(name, value);
+		String route = CulinaryDirectorsAPI.localAPI + "/createFeedback";
+		HttpResponse response = this.sendPost(postData, route);
+		return response;
+	}
+	
+		public HttpResponse editFeedback(HashMap<String,String> postData) {
+		List<NameValuePair> postData = this.initializePostData(name, value);
+		String route = CulinaryDirectorsAPI.localAPI + "/editFeedback";
+		HttpResponse response = this.sendPost(postData, route);
+		return response;
+	}
+	
+		public HttpResponse deleteFeedback(HashMap<String,String> postData) {
+		List<NameValuePair> postData = this.initializePostData(name, value);
+		String route = CulinaryDirectorsAPI.localAPI + "/deleteFeedback";
+		HttpResponse response = this.sendPost(postData, route);
+		return response;
+	}
+	
+		public HttpResponse getFeedbackForMenu(HashMap<String,String> postData) {
+		List<NameValuePair> postData = this.initializePostData(name, value);
+		String route = CulinaryDirectorsAPI.localAPI + "/getFeedbackForMenu";
+		HttpResponse response = this.sendPost(postData, route);
+		return response;
+	}
 	
 	
 // START of user related API calls	
+		public HttpResponse isUserInOrg(HashMap<String,String> postData) {
+		List<NameValuePair> postData = this.initializePostData(name, value);
+		String route = CulinaryDirectorsAPI.localAPI + "/isUserInOrg";
+		HttpResponse response = this.sendPost(postData, route);
+		return response;
+	}
+	
+			public HttpResponse login(HashMap<String,String> postData) {
+		List<NameValuePair> postData = this.initializePostData(name, value);
+		String route = CulinaryDirectorsAPI.localAPI + "/login";
+		HttpResponse response = this.sendPost(postData, route);
+		return response;
+	}
+	
+			public HttpResponse logout(HashMap<String,String> postData) {
+		List<NameValuePair> postData = this.initializePostData(name, value);
+		String route = CulinaryDirectorsAPI.localAPI + "/logout";
+		HttpResponse response = this.sendPost(postData, route);
+		return response;
+	}
+	
+	public HttpResponse getAllUsers(HashMap<String,String> postData) {
+		List<NameValuePair> postData = this.initializePostData(name, value);
+		String route = CulinaryDirectorsAPI.localAPI + "/getAllUsers";
+		HttpResponse response = this.sendPost(postData, route);
+		return response;
+	}
+	
+	public HttpResponse register(HashMap<String,String> postData) {
+		List<NameValuePair> postData = this.initializePostData(name, value);
+		String route = CulinaryDirectorsAPI.localAPI + "/register";
+		HttpResponse response = this.sendPost(postData, route);
+		return response;
+	}
+	
+			public HttpResponse deleteUser(HashMap<String,String> postData) {
+		List<NameValuePair> postData = this.initializePostData(name, value);
+		String route = CulinaryDirectorsAPI.localAPI + "/deleteUser";
+		HttpResponse response = this.sendPost(postData, route);
+		return response;
+	}	
 	
 	
-
-		
 // PRIVATE helper methods.	
 	private List<NameValuePair> initializePostData(String[] name, String[] value) {
 		List<NameValuePair> postData = new ArrayList<NameValuePair>();
