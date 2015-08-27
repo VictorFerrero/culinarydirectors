@@ -14,6 +14,7 @@ class UserModel{
 		$this->dbo = null;
 	}
 
+// TODO: success is getting set to false when it should be true
 	public function isUserInOrg($userId, $orgId) {
 		$success = false;
 		$arrResult = array();

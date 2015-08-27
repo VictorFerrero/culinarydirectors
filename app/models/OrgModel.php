@@ -141,6 +141,8 @@ class OrgModel{
 		 $success = false;
 	 }	
 	$arrResult['success'] = $success;
+	$arrResult['sql'] = $sql;
+	$arrResult['data'] = $data;
 	return $arrResult;
 	 }
 	 

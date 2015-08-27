@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `menu_item` (
 
 --
 -- Table structure for table `org`
---
+-- TODO: change datatype for phone and phone2
 
 CREATE TABLE IF NOT EXISTS `org` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

@@ -19,6 +19,7 @@ class FeedController
 		$arrValues['message'] = $_REQUEST['message'];
 		
 		$arrResult = $this->feedModel->addMessage($arrValues);
+		return $arrResult;
 	}
 	
 	public function deleteMessageById() {
@@ -26,6 +27,7 @@ class FeedController
 		$arrValues['id'] = $_REQUEST['id']; // id of thing we want to delete
 		$arrValues['where_clause'] = "id=:id"; // where clause specifying what condition is to delete
 		$arrResult = $this->feedModel->deleteMessage($arrValues);
+		return $arrResult;
 	}
 	
 	// -1 means the message is TO everyone
@@ -36,6 +38,7 @@ class FeedController
 		$arrResult = $this->feedModel->getMessages($arrValues);
 		
 		$arrMessages = $arrResult['data'];
+		return $arrResult;
 	}
 	
 	public function getMessagesByReceiverId() {
@@ -45,6 +48,7 @@ class FeedController
 		$arrResult = $this->feedModel->getMessages($arrValues);
 		
 		$arrMessages = $arrResult['data'];
+		return $arrResult;
 	}
 	
 	public function getMessagesById() {
@@ -54,6 +58,7 @@ class FeedController
 		$arrResult = $this->feedModel->getMessages($arrValues);
 		
 		$arrMessages = $arrResult['data'];
+		return $arrResult;
 	}
 }
 ?>
@@ -121,9 +126,9 @@ class MenuController{
 		$arrResult = array();
 		$arrResult['success'] = false; // assume it does not work
 		// do some error checkking
-		if($this->isInputValid($arrInsertValues['week'], 0)) {
-			if($this->isInputValid($arrInsertValues['day'], 1)) {
-				if($this->isInputValid($arrInsertValues['approved'], 2)) {
+		if($this->isInputValid($arrEdit['week'], 0)) {
+			if($this->isInputValid($arrEdit['day'], 1)) {
+				if($this->isInputValid($arrEdit['approved'], 2)) {
 				$arrResult = $arrResult = $this->menuModel->editMenu($arrEdit);
 				}
 			}
@@ -166,11 +171,11 @@ class MenuController{
 		$arrEdit['meal'] = $_REQUEST['meal'];
 		$arrResult = array();
 		$arrResult['success'] = false;
-		if(strcmp($arrEdit['meal'], "" != 0)) {
-			if($this->isInputValid($arrEdit['meal'], 2)) {
+//		if(strcmp($arrEdit['meal'], "" != 0)) {
+//			if($this->isInputValid($arrEdit['meal'], 2)) {
 				$arrResult = $this->menuModel->editMenuItem($arrEdit);
-			}
-		}
+//			}
+//		}
 		return $arrResult;
 	 }
 	 
@@ -180,6 +185,7 @@ class MenuController{
 		$arrInsertValues['feedback_type'] = $_REQUEST['feedback_type'];
 		$arrInsertValues['feedback_value'] = $_REQUEST['feedback_value'];
 		$arrInsertValues['menu_item_id'] = $_REQUEST['menu_item_id'];
+		$arrInsertValues['menu_id'] = $_REQUEST['menu_id'];
 		$arrResult = $this->menuModel->createFeedback($arrInsertValues);
 		return $arrResult;
 	}
@@ -196,7 +202,14 @@ class MenuController{
 		$arrEdit['feedback_type'] = $_REQUEST['feedback_type'];
 		$arrEdit['feedback_value'] = $_REQUEST['feedback_value']; 
 		$arrEdit['menu_item_id'] = $_REQUEST['menu_item_id'];
+		$arrEdit['menu_id'] = $_REQUEST['menu_id'];
 		$arrResult = $this->menuModel->editFeedBack($arrEdit);
+		return $arrResult;
+	}
+	
+	public function getFeedbackForMenu() {
+		$id = $_REQUEST['id'];
+		$arrResult = $this->menuModel->getFeedbackForMenu($id);
 		return $arrResult;
 	}
 	 
@@ -229,7 +242,7 @@ class MenuController{
 class OrgController{
 		
 		
-		public $arrOrgInfo; // keep org info stored in associative array
+//		public $arrOrgInfo; // keep org info stored in associative array
 		private $orgModel;
 		// TODO: use ID to select this from db
 	public function __construct() {
@@ -241,13 +254,7 @@ class OrgController{
 		 // close the database connection
 		 $this->orgModel = null;
 	 }
-	 
-	 public function setOrg() {
-		$id = $_REQUEST['id']; 
-		$arrResult = $orgModel->getOrgById($id);
-		$this->arrOrgInfo = $arrResult['data'];
-	 }
-	 
+	 	 
 	 public function createOrg() {
 		$arrValues = array();
 		$arrValues['name'] = $_REQUEST['name'];
@@ -261,10 +268,12 @@ class OrgController{
 		$arrValues['profileJSON'] = $_REQUEST['profileJSON'];
 		
 		$arrResult = $this->orgModel->createOrg($arrValues);
+		return $arrResult;
 	 }
 	 
 	 public function editOrg() {
 		$arrValues = array();
+		$arrValues['id'] = $_REQUEST['id'];
 		$arrValues['name'] = $_REQUEST['name'];
 		$arrValues['address'] =  $_REQUEST['address'];
 	    $arrValues['city'] =  $_REQUEST['city'];
@@ -274,18 +283,21 @@ class OrgController{
 		$arrValues['email'] =  $_REQUEST['email'];
 		$arrValues['phone2'] = $_REQUEST['phone2'];
 		$arrValues['profileJSON'] = $_REQUEST['profileJSON'];
-		
+		$arrValues['id'] = $_REQUEST['id'];
 		$arrResult = $this->orgModel->editOrg($arrValues);
+		return $arrResult;
 	 }
 	 
 	 public function deleteOrg() {
 		 $id = $_REQUEST['id'];
 		 $arrResult = $this->orgModel->deleteOrg($id);
+		 return $arrResult;
 	 }
 	 
 	 public function getOrgById() {
 		$id = $_REQUEST['id'];
 		$arrResult = $this->orgModel->getOrgById($id);
+		return $arrResult;
 	 }
 }
 ?>
@@ -317,8 +329,9 @@ class UserController{
 		$userId = $_REQUEST['userId'];
 		$orgId = $_REQUEST['orgId'];
 		$arrResult = $this->userModel->isUserInOrg($userId, $orgId);
+		return $arrResult;
 	}
-	
+	// TODO: cookies
 	public function login() {
 		$arrValues = array();
 		$arrValues['username'] = $_REQUEST['username'];
@@ -336,12 +349,17 @@ class UserController{
 			$this->userRole = -1;
 			print_r($arrResult);
 		}
+		return $arrResult;
 	}
 	
+	// TODO: cookies
 	public function logout() {
 		$this->loggedIn = false;
 		$this->username = "";
 		$this->userRole = -1;
+		$arrResult = array();
+		$arrResult['logout'] = true;
+		return $arrResult;
 	}
 	
 	public function getAllUsers(){
@@ -356,6 +374,8 @@ class UserController{
 		$arrValues['userRole'] = $_REQUEST['userRole'];
 		$arrValues['orgId'] = $_REQUEST['orgId'];
 		$arrResult = $this->userModel->register($arrValues);
+		return $arrResult;
+		/*
 		if($arrResult['success']) {
 			//successfully added user
 			return $arrResult;
@@ -364,6 +384,7 @@ class UserController{
 			//there was an error
 			print_r($arrResult);
 		}
+		* */
 	}
 	
 	public function deleteUser() {
@@ -371,6 +392,8 @@ class UserController{
 		$arrValues['username'] = $_REQUEST['username'];
 		$arrValues['password'] = $_REQUEST['password'];
 		$arrResult = $this->userModel->deleteUser($arrValues['username'], $arrValues['password']);
+		return $arrResult;
+		/*
 		if($arrResult['success']) {
 			//successfully added user
 			return $arrResult;
@@ -379,6 +402,7 @@ class UserController{
 			//there was an error
 			print_r($arrResult);
 		}
+		*/
 	}
 }
 

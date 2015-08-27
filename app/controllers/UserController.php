@@ -22,8 +22,9 @@ class UserController{
 		$userId = $_REQUEST['userId'];
 		$orgId = $_REQUEST['orgId'];
 		$arrResult = $this->userModel->isUserInOrg($userId, $orgId);
+		return $arrResult;
 	}
-	
+	// TODO: cookies
 	public function login() {
 		$arrValues = array();
 		$arrValues['username'] = $_REQUEST['username'];
@@ -41,12 +42,17 @@ class UserController{
 			$this->userRole = -1;
 			print_r($arrResult);
 		}
+		return $arrResult;
 	}
 	
+	// TODO: cookies
 	public function logout() {
 		$this->loggedIn = false;
 		$this->username = "";
 		$this->userRole = -1;
+		$arrResult = array();
+		$arrResult['logout'] = true;
+		return $arrResult;
 	}
 	
 	public function getAllUsers(){
@@ -61,6 +67,8 @@ class UserController{
 		$arrValues['userRole'] = $_REQUEST['userRole'];
 		$arrValues['orgId'] = $_REQUEST['orgId'];
 		$arrResult = $this->userModel->register($arrValues);
+		return $arrResult;
+		/*
 		if($arrResult['success']) {
 			//successfully added user
 			return $arrResult;
@@ -69,6 +77,7 @@ class UserController{
 			//there was an error
 			print_r($arrResult);
 		}
+		* */
 	}
 	
 	public function deleteUser() {
@@ -76,6 +85,8 @@ class UserController{
 		$arrValues['username'] = $_REQUEST['username'];
 		$arrValues['password'] = $_REQUEST['password'];
 		$arrResult = $this->userModel->deleteUser($arrValues['username'], $arrValues['password']);
+		return $arrResult;
+		/*
 		if($arrResult['success']) {
 			//successfully added user
 			return $arrResult;
@@ -84,6 +95,7 @@ class UserController{
 			//there was an error
 			print_r($arrResult);
 		}
+		*/
 	}
 }
 

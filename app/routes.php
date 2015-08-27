@@ -1,22 +1,140 @@
 <?php
 /*Test Functions*/
 $routePrefix = 'culinarydirectors/index.php/';
-
 $router->get($routePrefix.'helloworld', function(){
 	return Test::getIndex();
 }, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
 /*Webservice Functions*/
+// start UserController
+$router->post($routePrefix.'user/isUserInOrg', function(){
+	$UserController = new UserController();
+	return json_encode($UserController->isUserInOrg());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'user/login', function(){
+	$UserController = new UserController();
+	return json_encode($UserController->login());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'user/logout', function(){
+	$UserController = new UserController();
+	return json_encode($UserController->logout());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'user/getAllUsers', function(){
+	$UserController = new UserController();
+	return json_encode($UserController->getAllUsers());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
 
 $router->post($routePrefix.'user/register', function(){
 	$UserController = new UserController();
 	return json_encode($UserController->register());
 }, array('before' => 'statsStart', 'after' => 'statsComplete'));
 
-$router->get($routePrefix.'user/get', function(){
+$router->post($routePrefix.'user/deleteUser', function(){
 	$UserController = new UserController();
-	return json_encode($UserController->getAllUsers());
+	return json_encode($UserController->deleteUser());
 }, array('before' => 'statsStart', 'after' => 'statsComplete'));
 
+// Start FeedController
+$router->post($routePrefix.'feed/addMessage', function(){
+	$FeedController = new FeedController();
+	return json_encode($FeedController->addMessage());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'feed/deleteMessageById', function(){
+	$FeedController = new FeedController();
+	return json_encode($FeedController->deleteMessageById());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'feed/getMessagesBySenderId', function(){
+	$FeedController = new FeedController();
+	return json_encode($FeedController->getMessagesBySenderId());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'feed/getMessagesByReceiverId', function(){
+	$FeedController = new FeedController();
+	return json_encode($FeedController->getMessagesByReceiverId());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'feed/getMessagesById', function(){
+	$FeedController = new FeedController();
+	return json_encode($FeedController->getMessagesById());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+// Start Org Controller
+$router->post($routePrefix.'org/createOrg', function(){
+	$OrgController = new OrgController();
+	return json_encode($OrgController->createOrg());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'org/editOrg', function(){
+	$OrgController = new OrgController();
+	return json_encode($OrgController->editOrg());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'org/deleteOrg', function(){
+	$OrgController = new OrgController();
+	return json_encode($OrgController->deleteOrg());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'org/getOrgById', function(){
+	$OrgController = new OrgController();
+	return json_encode($OrgController->getOrgById());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+// Start Menu Controller
+$router->post($routePrefix.'menu/createMenu', function(){
+	$MenuController = new MenuController();
+	return json_encode($MenuController->createMenu());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'menu/editMenu', function(){
+	$MenuController = new MenuController();
+	return json_encode($MenuController->editMenu());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'menu/deleteMenu', function(){
+	$MenuController = new MenuController();
+	return json_encode($MenuController->deleteMenu());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+
+$router->post($routePrefix.'menu/createMenuItem', function(){
+	$MenuController = new MenuController();
+	return json_encode($MenuController->createMenuItem());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'menu/deleteMenuItem', function(){
+	$MenuController = new MenuController();
+	return json_encode($MenuController->deleteMenuItem());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'menu/editMenuItem', function(){
+	$MenuController = new MenuController();
+	return json_encode($MenuController->editMenuItem());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'menu/createFeedback', function(){
+	$MenuController = new MenuController();
+	return json_encode($MenuController->createFeedback());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'menu/deleteFeedback', function(){
+	$MenuController = new MenuController();
+	return json_encode($MenuController->deleteFeedback());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'menu/editFeedback', function(){
+	$MenuController = new MenuController();
+	return json_encode($MenuController->editFeedback());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'menu/getFeedbackForMenu', function(){
+	$MenuController = new MenuController();
+	return json_encode($MenuController->getFeedbackForMenu());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
 /*End Webservice Functions*/
 /*BaaS - Main Reflective Functions*/
 //SELECT and SELECT-like API calls
