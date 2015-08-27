@@ -100,7 +100,6 @@ $router->post($routePrefix.'menu/deleteMenu', function(){
 	return json_encode($MenuController->deleteMenu());
 }, array('before' => 'statsStart', 'after' => 'statsComplete'));
 
-
 $router->post($routePrefix.'menu/createMenuItem', function(){
 	$MenuController = new MenuController();
 	return json_encode($MenuController->createMenuItem());
