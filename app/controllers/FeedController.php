@@ -17,7 +17,6 @@ class FeedController
 		$arrValues['sender'] = $_REQUEST['sender'];
 		$arrValues['receiver'] = $_REQUEST['receiver'];
 		$arrValues['message'] = $_REQUEST['message'];
-		
 		$arrResult = $this->feedModel->addMessage($arrValues);
 		return $arrResult;
 	}
@@ -36,7 +35,6 @@ class FeedController
 		$arrValues['id'] = $_REQUEST['senderId'];
 		$arrValues['where_clause'] = "sender=:id";
 		$arrResult = $this->feedModel->getMessages($arrValues);
-		
 		$arrMessages = $arrResult['data'];
 		return $arrResult;
 	}
@@ -56,7 +54,6 @@ class FeedController
 		$arrValues['id'] = $_REQUEST['id'];
 		$arrValues['where_clause'] = "id=:id";
 		$arrResult = $this->feedModel->getMessages($arrValues);
-		
 		$arrMessages = $arrResult['data'];
 		return $arrResult;
 	}

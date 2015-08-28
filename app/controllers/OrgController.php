@@ -28,7 +28,6 @@ class OrgController{
 		$arrValues['email'] =  $_REQUEST['email'];
 		$arrValues['phone2'] = $_REQUEST['phone2'];
 		$arrValues['profileJSON'] = $_REQUEST['profileJSON'];
-		
 		$arrResult = $this->orgModel->createOrg($arrValues);
 		return $arrResult;
 	 }
@@ -51,14 +50,18 @@ class OrgController{
 	 }
 	 
 	 public function deleteOrg() {
-		 $id = $_REQUEST['id'];
-		 $arrResult = $this->orgModel->deleteOrg($id);
+		 $arrValues = array();
+		 $arrValues['id'] = $_REQUEST['id'];
+		 $arrValues['where_clause'] = "id=:id";
+		 $arrResult = $this->orgModel->deleteOrg($arrValues);
 		 return $arrResult;
 	 }
 	 
 	 public function getOrgById() {
-		$id = $_REQUEST['id'];
-		$arrResult = $this->orgModel->getOrgById($id);
+		$arrValues = array();
+		$arrValues['id'] = $_REQUEST['id'];
+		$arrValues['where_clause'] = "id=:id";
+		$arrResult = $this->orgModel->getOrgById($arrValues);
 		return $arrResult;
 	 }
 }

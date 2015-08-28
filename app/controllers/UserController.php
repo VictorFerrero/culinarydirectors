@@ -61,12 +61,17 @@ class UserController{
 	
 	public function register(){
 		$arrValues = array();
+		$arrResult = array();
 		$arrValues['username'] = $_REQUEST['username'];
 		$arrValues['password'] = $_REQUEST['password'];
 		$arrValues['email'] = $_REQUEST['email'];
 		$arrValues['userRole'] = $_REQUEST['userRole'];
 		$arrValues['orgId'] = $_REQUEST['orgId'];
-		$arrResult = $this->userModel->register($arrValues);
+		$arrResult['valid_input'] = false; // assume invalid input 
+		if($this->isInputValid($arrValues['userRole'], 0)) {
+			$arrResult = $this->userModel->register($arrValues);
+			$arrResult['valid_input'] = true;
+		}
 		return $arrResult;
 		/*
 		if($arrResult['success']) {
@@ -96,6 +101,19 @@ class UserController{
 			print_r($arrResult);
 		}
 		*/
+	}
+	
+	private function isInputValid($input, $flag) {
+		
+		switch($flag) {
+			case 0: // used to validate userRole when registering a user
+				if($input >=0 && $input <= 2) {
+					return true;
+				}
+				return false;
+			break;
+		}
+		return false;
 	}
 }
 

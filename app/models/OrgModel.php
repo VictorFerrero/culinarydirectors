@@ -133,8 +133,8 @@ class OrgModel{
 	 $sql = $sql . " WHERE id=?";
 	 $data[$index] = $id;
 	try {
-		 $stm = $this->dbo->prepare($sql);
-		 $arrResult['db_result'] = $stm->execute($data);
+		 $STH = $this->dbo->prepare($sql);
+		 $arrResult['db_result'] = $STH->execute($data);
 		 $success = true;
      } catch (Exception $e) {
 		 $arrResult['error'] = $e->getMessage();
@@ -156,14 +156,16 @@ class OrgModel{
 		'db_result' => result of running the query. 1 for success, 0 for failure
 		);
 	*/	
-	 public function deleteOrg($id) {
+	 public function deleteOrg($arrValues) {
 		$arrResult = array();
 		$success = false;
-		$sql = "DELETE FROM org WHERE id=:id";
+		$id = $arrValues['id'];
+		$whereClause = $arrValues['where_clause'];
+		$sql = "DELETE FROM org WHERE " . $whereClause;
 		try {
-			$stm = $this->dbo->prepare($sql);
-			$stm->bindParam(":id", $id);
-			$arrResult['db_result'] = $stm->execute();
+			$STH = $this->dbo->prepare($sql);
+			$STH->bindParam(":id", $id);
+			$arrResult['db_result'] = $STH->execute();
 			$success = true;
 		} catch(Exception $e) {
 			$arrResult['error'] = $e->getMessage();
@@ -182,15 +184,17 @@ class OrgModel{
 		'success' => true if org was successfully retrieved from the db
 		);
 	*/
-	 public function getOrgById($id) {
+	 public function getOrg($arrValues) {
 		 $success = false;
 		 $arrResult = array();
-		 
+		 $id = $arrValues['id'];
+		 $whereClause = $arrValues['where_clause'];
+		 $sql = "SELECT * FROM org WHERE " . $whereClause;
 		 try {
-			$stmt = $this->dbo->prepare("SELECT * FROM org WHERE id=:id");
-			$stmt->bindParam(':id', $id);
-			$stmt->execute();
-			$row = $stmt->fetch(PDO::FETCH_ASSOC);
+			$STH = $this->dbo->prepare($sql);
+			$STH->bindParam(':id', $id);
+			$STH->execute();
+			$row = $STH->fetch(PDO::FETCH_ASSOC);
 			$success = true;
 			$arrResult['data'] = $row; 
 		 } catch(Exception $e) {

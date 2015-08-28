@@ -3,7 +3,7 @@
 
 class DatabaseConnectionStrings{
 
-	private static $MySQL_DSCS = "localhost:root:r00t:culinarydirectors"; // TODO: need to get MySql connection string
+	private static $MySQL_DSCS = "localhost:root:11235813:culinarydirectors"; // TODO: need to get MySql connection string
 	
 	// just default to MySql right now
 	public static function getDBCS($dbNickname) {		

@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -26,43 +25,20 @@ public class CulinaryDirectorsAPI {
 		
 	}
 // START of Org related API calls	
-/*
- *$arrValues['name'] = $_REQUEST['name'];
-		$arrValues['address'] =  $_REQUEST['address'];
-	    $arrValues['city'] =  $_REQUEST['city'];
-		$arrValues['state'] =  $_REQUEST['state'];
-		$arrValues['zip'] =  $_REQUEST['zip'];
-		$arrValues['phone'] =  $_REQUEST['phone'];
-		$arrValues['email'] =  $_REQUEST['email'];
-		$arrValues['phone2'] = $_REQUEST['phone2'];
-		$arrValues['profileJSON'] = $_REQUEST['profileJSON'];
- */
 	public HttpResponse createOrg(HashMap<String,String> postDataHashMap) {
 		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
 		String route = CulinaryDirectorsAPI.localAPI + "/org/createOrg";
 		HttpResponse response = this.sendPost(postData, route);
 		return response;
 	}
-	
-	/*
-	 * $arrValues['name'] = $_REQUEST['name'];
-		$arrValues['address'] =  $_REQUEST['address'];
-	    $arrValues['city'] =  $_REQUEST['city'];
-		$arrValues['state'] =  $_REQUEST['state'];
-		$arrValues['zip'] =  $_REQUEST['zip'];
-		$arrValues['phone'] =  $_REQUEST['phone'];
-		$arrValues['email'] =  $_REQUEST['email'];
-		$arrValues['phone2'] = $_REQUEST['phone2'];
-		$arrValues['profileJSON'] = $_REQUEST['profileJSON'];
-	 */
+
 	public HttpResponse editOrg(HashMap<String,String> postDataHashMap) {
 		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
 		String route = CulinaryDirectorsAPI.localAPI + "/org/editOrg";
 		HttpResponse response = this.sendPost(postData, route);
 		return response;
 	}
-	
-//  $id = $_REQUEST['id'];
+
 	public HttpResponse deleteOrg(HashMap<String,String> postDataHashMap) {
 		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
 		String route = CulinaryDirectorsAPI.localAPI + "/org/deleteOrg";
@@ -70,7 +46,6 @@ public class CulinaryDirectorsAPI {
 		return response;
 	}
 	
-//  $id = $_REQUEST['id'];
 	public HttpResponse getOrgById(HashMap<String,String> postDataHashMap) {
 		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
 		String route = CulinaryDirectorsAPI.localAPI + "/org/getOrgById";
@@ -79,11 +54,7 @@ public class CulinaryDirectorsAPI {
 	}
 	
 // START of Feed related API calls	
-/*
- * 		$arrValues['sender'] = $_REQUEST['sender'];
-		$arrValues['receiver'] = $_REQUEST['receiver'];
-		$arrValues['message'] = $_REQUEST['message'];
- */
+
 	public HttpResponse addMessage(HashMap<String,String> postDataHashMap) {
 		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
 		String route = CulinaryDirectorsAPI.localAPI + "/feed/addMessage";
@@ -91,7 +62,6 @@ public class CulinaryDirectorsAPI {
 		return response;
 	}
 	
-//	 $arrValues['id'] = $_REQUEST['id']; 	
 	public HttpResponse deleteMessageById(HashMap<String,String> postDataHashMap) {
 		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
 		String route = CulinaryDirectorsAPI.localAPI + "/feed/deleteMessageById";
@@ -99,7 +69,6 @@ public class CulinaryDirectorsAPI {
 		return response;
 	}
 	
-	// $arrValues['id'] = $_REQUEST['senderId']
 	public HttpResponse getMessagesBySenderId(HashMap<String,String> postDataHashMap) {
 		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
 		String route = CulinaryDirectorsAPI.localAPI + "/feed/getMessagesBySenderId";
@@ -107,7 +76,6 @@ public class CulinaryDirectorsAPI {
 		return response;
 	}
 	
-	// $arrValues['id'] = $_REQUEST['receiverId']
 	public HttpResponse getMessagesByReceiverId(HashMap<String,String> postDataHashMap) {
 		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
 		String route = CulinaryDirectorsAPI.localAPI + "/feed/getMessagesByReceiverId";
@@ -115,7 +83,6 @@ public class CulinaryDirectorsAPI {
 		return response;
 	}
 	
-	// $arrValues['id'] = $_REQUEST['id']
 	public HttpResponse getMessagesById(HashMap<String,String> postDataHashMap) {
 		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
 		String route = CulinaryDirectorsAPI.localAPI + "/feed/getMessagesById";
@@ -238,6 +205,12 @@ public class CulinaryDirectorsAPI {
 		return response;
 	}	
     
+    /**
+     * 		Extracts JSON from the HttpResponse.
+     * 
+     * 		TODO: return a JSON object instead of a string that conforms to JSON standards
+     * 		http://developer.android.com/reference/org/json/JSONObject.html
+     * */
     public String getJSONfromResponse(HttpResponse response) throws IOException {
     	BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 		String line = "";
@@ -250,6 +223,10 @@ public class CulinaryDirectorsAPI {
     }
 	
 // PRIVATE helper methods.	
+	/**
+	*	Extracts the name value pairs from the HashMap and buils a List<NameValuePair> 
+	* 	which will be used by HttpPost object in this.sendPost. 
+	* */
 	private List<NameValuePair> initializePostData(HashMap<String, String> postData) {
 		List<NameValuePair> toReturn = new ArrayList<NameValuePair>();
 		for(String key : postData.keySet()) {
@@ -259,24 +236,19 @@ public class CulinaryDirectorsAPI {
 		return toReturn;
 	}
 	
-	private HttpResponse sendPost(List<NameValuePair> postData, String httpPostString) {
-	//	HttpClient client = new DefaultHttpClient();
+	/**
+	 * 		Sends an HttpPost with the data in postData to the
+	 * 		specified route
+	 * 
+	 * */
+	private HttpResponse sendPost(List<NameValuePair> postData, String route) {
 		HttpClient client = HttpClientBuilder.create().build();
-		HttpPost post = new HttpPost(httpPostString);
-//		String output = "";
+		HttpPost post = new HttpPost(route);
 		try {
-			List<NameValuePair> nameValuePairs = postData;
-			post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			post.setEntity(new UrlEncodedFormEntity(postData));
 			HttpResponse response = client.execute(post);
-//			BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-//			String line = "";
-//			while ((line = rd.readLine()) != null) {
-//				output = output + line;
-//			}
-//			rd.close();
 			return response;
 		} catch (IOException e) {
-//			output = e.getMessage();
 			e.printStackTrace();
 		}
 		return null;

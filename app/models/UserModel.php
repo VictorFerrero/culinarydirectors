@@ -217,8 +217,8 @@ class UserModel{
 	 $sql = $sql . " WHERE id=?";
 	 $data[$index] = $id;
 	try {
-		 $stm = $this->dbo->prepare($sql);
-		 $arrResult['db_result'] = $stm->execute($data);
+		 $STH = $this->dbo->prepare($sql);
+		 $arrResult['db_result'] = $STH->execute($data);
 		 $success = true;
      } catch (Exception $e) {
 		 $arrResult['error'] = $e->getMessage();

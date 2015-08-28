@@ -32,18 +32,19 @@ class MenuController{
 // create a menu. Menu Table schema = 
 // id | chef_id | week (0-52) | day (0-7) | approved (0-1)
 	 public function createMenu() {
-		$arrInsertValues = array();
-		$arrInsertValues['chef_id'] = $_REQUEST['chef_id'];
-		$arrInsertValues['week'] = $_REQUEST['week'];
-	    $arrInsertValues['day'] = $_REQUEST['day'];
-		$arrInsertValues['approved'] = $_REQUEST['approved'];
+		$arrValues = array();
+		$arrValues['chef_id'] = $_REQUEST['chef_id'];
+		$arrValues['week'] = $_REQUEST['week'];
+	    $arrValues['day'] = $_REQUEST['day'];
+		$arrValues['approved'] = $_REQUEST['approved'];
 		$arrResult = array();
-		$arrResult['success'] = false; // assume it does not work
+		$arrResult['valid_input'] = false; // assume it does not work
 		// make sure that week, day, and approved are valid values
-		if($this->isInputValid($arrInsertValues['week'], 0)) {
-			if($this->isInputValid($arrInsertValues['day'], 1)) {
-				if($this->isInputValid($arrInsertValues['approved'], 2)) {
-				$arrResult = $this->menuModel->createMenu($arrInsertValues);
+		if($this->isInputValid($arrValues['week'], 0)) {
+			if($this->isInputValid($arrValues['day'], 1)) {
+				if($this->isInputValid($arrValues['approved'], 2)) {
+					$arrResult = $this->menuModel->createMenu($arrValues);
+					$arrResult['valid_input'] = true;
 				}
 			}
 		}
@@ -53,19 +54,20 @@ class MenuController{
 	// every field for a menu must be in the $_REQUEST variable. Fields not being
 	// eddited should be set to the empty string 
 	 public function editMenu() {
-		$arrEdit = array();
-		$arrEdit['id'] = $_REQUEST['id'];
-		$arrEdit['chef_id'] = $_REQUEST['chef_id'];
-		$arrEdit['week'] = $_REQUEST['week']; 
-		$arrEdit['day'] = $_REQUEST['day'];
-		$arrEdit['approved'] = $_REQUEST['approved'];
+		$arrValues = array();
+		$arrValues['id'] = $_REQUEST['id'];
+		$arrValues['chef_id'] = $_REQUEST['chef_id'];
+		$arrValues['week'] = $_REQUEST['week']; 
+		$arrValues['day'] = $_REQUEST['day'];
+		$arrValues['approved'] = $_REQUEST['approved'];
 		$arrResult = array();
-		$arrResult['success'] = false; // assume it does not work
+		$arrResult['valid_input'] = false; // assume it does not work
 		// do some error checkking
-		if($this->isInputValid($arrEdit['week'], 0)) {
-			if($this->isInputValid($arrEdit['day'], 1)) {
-				if($this->isInputValid($arrEdit['approved'], 2)) {
-				$arrResult = $arrResult = $this->menuModel->editMenu($arrEdit);
+		if($this->isInputValid($arrValues['week'], 0)) {
+			if($this->isInputValid($arrValues['day'], 1)) {
+				if($this->isInputValid($arrValues['approved'], 2)) {
+					$arrResult = $arrResult = $this->menuModel->editMenu($arrValues);
+					$arrResult['valid_input'] = true;
 				}
 			}
 		}
@@ -85,9 +87,29 @@ class MenuController{
 		$arrValues['item_name'] = $_REQUEST['item_name'];
 		$arrValues['meal'] = $_REQUEST['meal'];
 		$arrResult = array();
-		$arrResult['success'] = false;
+		$arrResult['valid_input'] = false;
 		if($this->isInputValid($arrValues['meal'], 2)) { // meal can only be 0 or 1
 			$arrResult = $this->menuModel->createMenuItem($arrValues);
+			$arrResult['valid_input'] = true;
+		}
+		return $arrResult;
+	 }
+	 
+	 // every field for a menu_item must be in the $_REQUEST variable. Fields not being
+	// editted should be set to the empty string
+	 public function editMenuItem() {
+		$arrValues = array();
+		$arrResult = array();
+		$arrValues['id'] = $_REQUEST['id'];
+		$arrValues['menu_id'] = $_REQUEST['menu_id'];
+		$arrValues['item_name'] = $_REQUEST['item_name']; 
+		$arrValues['meal'] = $_REQUEST['meal'];
+		$arrResult['valid_input'] = false;
+		if(strcmp($arrValues['meal'], "" != 0)) {
+			if($this->isInputValid($arrValues['meal'], 2)) { // meal can only be 0 or 1
+				$arrResult = $this->menuModel->editMenuItem($arrValues);
+				$arrResult['valid_input'] = true;
+			}
 		}
 		return $arrResult;
 	 }
@@ -96,33 +118,25 @@ class MenuController{
 		$id = $_REQUEST['id'];
 		$arrResult = $this->menuModel->deleteMenuItem($id); 
 	 }
-	 
-	 // every field for a menu_item must be in the $_REQUEST variable. Fields not being
-	// editted should be set to the empty string
-	 public function editMenuItem() {
-		$arrEdit = array();
-		$arrEdit['id'] = $_REQUEST['id'];
-		$arrEdit['menu_id'] = $_REQUEST['menu_id'];
-		$arrEdit['item_name'] = $_REQUEST['item_name']; 
-		$arrEdit['meal'] = $_REQUEST['meal'];
-		$arrResult = array();
-		$arrResult['success'] = false;
-//		if(strcmp($arrEdit['meal'], "" != 0)) {
-//			if($this->isInputValid($arrEdit['meal'], 2)) {
-				$arrResult = $this->menuModel->editMenuItem($arrEdit);
-//			}
-//		}
-		return $arrResult;
-	 }
-	 
+	  
+/*we need a menu_feedback table with id, feedback_type (enum, ["lateplate","noshow","thumbs"],
+*  and feedback_value (1 for lateplate/noshow -- any entries in here mean "i do have a 
+* lateplate/noshow", there is no entry in this table for other cases, 1 for thumbs up and 0 for thumbs down) 
+	   * */
+	  
 	 	public function createFeedback() {
 	// might need error checking, or we could put constraints on db fields
-		$arrInsertValues = array();
-		$arrInsertValues['feedback_type'] = $_REQUEST['feedback_type'];
-		$arrInsertValues['feedback_value'] = $_REQUEST['feedback_value'];
-		$arrInsertValues['menu_item_id'] = $_REQUEST['menu_item_id'];
-		$arrInsertValues['menu_id'] = $_REQUEST['menu_id'];
-		$arrResult = $this->menuModel->createFeedback($arrInsertValues);
+		$arrValues = array();
+		$arrResult = array();
+		$arrValues['feedback_type'] = $_REQUEST['feedback_type'];
+		$arrValues['feedback_value'] = $_REQUEST['feedback_value'];
+		$arrValues['menu_item_id'] = $_REQUEST['menu_item_id'];
+		$arrValues['menu_id'] = $_REQUEST['menu_id'];
+		$arrResult['valid_input'] = false; // assume the input is invalid
+		if($this->isInputValid($arrValues['feedback_type'], 3)) { // can be 0,1 or 2
+			$arrResult = $this->menuModel->createFeedback($arrValues);
+			$arrResult['valid_input'] = true;
+		}
 		return $arrResult;
 	}
 
@@ -133,13 +147,18 @@ class MenuController{
 	}
 
 	public function editFeedBack() {
-		$arrEdit = array();
-		$arrEdit['id'] = $_REQUEST['id'];
-		$arrEdit['feedback_type'] = $_REQUEST['feedback_type'];
-		$arrEdit['feedback_value'] = $_REQUEST['feedback_value']; 
-		$arrEdit['menu_item_id'] = $_REQUEST['menu_item_id'];
-		$arrEdit['menu_id'] = $_REQUEST['menu_id'];
-		$arrResult = $this->menuModel->editFeedBack($arrEdit);
+		$arrValues = array();
+		$arrResult = array();
+		$arrValues['id'] = $_REQUEST['id'];
+		$arrValues['feedback_type'] = $_REQUEST['feedback_type'];
+		$arrValues['feedback_value'] = $_REQUEST['feedback_value']; 
+		$arrValues['menu_item_id'] = $_REQUEST['menu_item_id'];
+		$arrValues['menu_id'] = $_REQUEST['menu_id'];
+		$arrResult['valid_input'] = false;
+		if($this->isInputValid($arrValues['feedback_type'], 3)) {
+			$arrResult = $this->menuModel->editFeedBack($arrValues);
+			$arrResult['valid_input'] = true;
+		}
 		return $arrResult;
 	}
 	
@@ -151,24 +170,35 @@ class MenuController{
 	 
 	 private function isInputValid($input, $flag) {
 		switch($flag) {
-			case 0:  //check valid week
-			if($input >= 0 AND $input <= 52) {
+			case 0:  // // is 0 <= X <= 52 ???
+			if($input >= 0 && $input <= 52) {
 				return true;
 			}		
-			return false;
+				return false;
 			break;
-			case 1: // check for valid day
-				if($input >= 0 AND $input <= 6) {
+			
+			case 1: // is 0 <= X <= 6 ???
+				if($input >= 0 && $input <= 6) {
+					return true;
+				}
+					return false;
+				break;	
+				
+			case 2: // is X = 0 or 1?
+				if($input == 0 || $input == 1) {
+					return true;
+				}
+					return false;
+			break;
+			
+			case 3: // is X = 0,1,2?  test used for feedback_type validation
+				if($input >= 0 && $input <= 2) {
 					return true;
 				}
 				return false;
-				break;	
-			case 2: // check for valid approved value
-				if($input == 0 OR $input == 1) {
-						return true;
-				}
 			break;
 		}
+		return false;
 	 }
 }
 ?>

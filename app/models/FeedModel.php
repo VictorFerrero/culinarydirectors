@@ -48,7 +48,8 @@ class FeedModel
 	
 	/**
 		expected input: 
-		$id
+		$arrValues['id'] => field identifying what is to be deleted
+		$arrValues['where_clause'] => condition for where clause
 		
 		output:
 		$arrResult = array (
@@ -63,8 +64,8 @@ class FeedModel
 		$whereClause = $arrValues['where_clause'];
 		$sql = "DELETE FROM feed WHERE " . $whereClause;
 		try{
-			$stm = $this->dbo->prepare($sql);
-			$stm->bindParam(":id", $id);
+			$STH = $this->dbo->prepare($sql);
+			$STH->bindParam(":id", $id);
 			$arrResult['db_result'] = $stm->execute();
 			$success = true;
 		} catch(Exception $e) {

@@ -41,7 +41,7 @@ class MenuModel
 			$success = true;
 		} catch (Exception $e) {
 			$arrResult['error'] = $e->getMessage();
-			$success = false; // assume username is invalid if we get an exception
+			$success = false; 
 		}
 		$arrResult['success'] = $success;
 	    return $arrResult;
@@ -133,8 +133,8 @@ class MenuModel
 	 $sql = $sql . " WHERE id=?";
 	 $data[$index] = $id;
 	try {
-		 $stm = $this->dbo->prepare($sql);
-		 $arrResult['db_result'] = $stm->execute($data);
+		 $STH = $this->dbo->prepare($sql);
+		 $arrResult['db_result'] = $STH->execute($data);
 		 $success = true;
      } catch (Exception $e) {
 		 $arrResult['error'] = $e->getMessage();
@@ -167,9 +167,9 @@ class MenuModel
 		$success = false;
 		$sql = "DELETE FROM menu WHERE id=:id";
 		try {
-			$stm = $this->dbo->prepare($sql);
-			$stm->bindParam(":id", $id);
-			$arrResult['db_result'][] = $stm->execute();
+			$STH = $this->dbo->prepare($sql);
+			$STH->bindParam(":id", $id);
+			$arrResult['db_result'][] = $STH->execute();
 			$success = true;
 		} catch(Exception $e) {
 			$arrResult['error'][] = $e->getMessage();
@@ -180,9 +180,9 @@ class MenuModel
 		$success = false;
 		$sql = "DELETE FROM menu_item WHERE menu_id=:menu_id";
 		try{
-			$stm = $this->dbo->prepare($sql);
-			$stm->bindParam(":menu_id", $id);
-			$arrResult['db_result'][] = $stm->execute();
+			$STH = $this->dbo->prepare($sql);
+			$STH->bindParam(":menu_id", $id);
+			$arrResult['db_result'][] = $STH->execute();
 			$success = true;
 		} catch(Exception $e) {
 			$arrResult['error'][] = $e->getMessage();
@@ -194,9 +194,9 @@ class MenuModel
 		$success = false;
 		$sql = "UPDATE menu_feedback SET menu_id=0, menu_item_id=0 WHERE menu_id=" . $id;
 		try{
-			$stm = $this->dbo->prepare($sql);
-			$stm->bindParam(":menu_id", $id);
-			$arrResult['db_result'][] = $stm->execute();
+			$STH = $this->dbo->prepare($sql);
+			$STH->bindParam(":menu_id", $id);
+			$arrResult['db_result'][] = $STH->execute();
 			$success = true;
 		} catch(Exception $e) {
 			$arrResult['error'][] = $e->getMessage();
@@ -287,8 +287,8 @@ class MenuModel
 	 $sql = $sql . " WHERE id=?";
 	 $data[$index] = $id;
 	try {
-		 $stm = $this->dbo->prepare($sql);
-		 $arrResult['db_result'] = $stm->execute($data);
+		 $STH = $this->dbo->prepare($sql);
+		 $arrResult['db_result'] = $STH->execute($data);
 		 $success = true;
      } catch (Exception $e) {
 		 $arrResult['error'] = $e->getMessage();
@@ -313,9 +313,9 @@ class MenuModel
 		$success = false;
 		$sql = "DELETE FROM menu_item WHERE id=:id";
 		try{
-			$stm = $this->dbo->prepare($sql);
-			$stm->bindParam(":id", $id);
-			$arrResult['db_result'] = $stm->execute();
+			$STH = $this->dbo->prepare($sql);
+			$STH->bindParam(":id", $id);
+			$arrResult['db_result'] = $STH->execute();
 			$success = true;
 		} catch(Exception $e) {
 			$arrResult['error'] = $e->getMessage();
@@ -340,10 +340,10 @@ class MenuModel
 		$success = false;
 		$sql = "SELECT * FROM menu_item WHERE menu_id=:menu_id";
 		try {
-			$stm = $this->dbo->prepare($sql);
-			$stm->bindParam(":menu_id", $menuId);
-			$arrResult['db_result'] = $stm->execute();
-			$fetch = $stm->fetchAll(PDO::FETCH_ASSOC);
+			$STH = $this->dbo->prepare($sql);
+			$STH->bindParam(":menu_id", $menuId);
+			$arrResult['db_result'] = $STH->execute();
+			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
 			$arrResult['data'] = $fetch;
 			$success = true;
 		} catch(Exception $e) {
@@ -449,8 +449,8 @@ class MenuModel
 	 $sql = $sql . " WHERE id=?";
 	 $data[$index] = $id;
 	try {
-		 $stm = $this->dbo->prepare($sql);
-		 $arrResult['db_result'] = $stm->execute($data);
+		 $STH = $this->dbo->prepare($sql);
+		 $arrResult['db_result'] = $STH->execute($data);
 		 $success = true;
      } catch (Exception $e) {
 		 $arrResult['error'] = $e->getMessage();
@@ -475,9 +475,9 @@ class MenuModel
 		$success = false;
 		$sql = "DELETE FROM menu_feedback WHERE id=:id";
 		try {
-			$stm = $this->dbo->prepare($sql);
-			$stm->bindParam(":id", $id);
-			$arrResult['db_result'] = $stm->execute();
+			$STH = $this->dbo->prepare($sql);
+			$STH->bindParam(":id", $id);
+			$arrResult['db_result'] = $STH->execute();
 			$success = true;
 		} catch(Exception $e) {
 			$arrResult['error'] = $e->getMessage();
@@ -502,9 +502,9 @@ class MenuModel
 		$success = false;
 		$sql = "SELECT * FROM menu_feedback WHERE menu_id=:menu_id";
 		try {
-			$stm = $this->dbo->prepare($sql);
-			$stm->bindParam(":menu_id", $menuId);
-			$arrResult['db_result'] = $stm->execute();
+			$STH = $this->dbo->prepare($sql);
+			$STH->bindParam(":menu_id", $menuId);
+			$arrResult['db_result'] = $STH->execute();
 			$fetch = $stm->fetchAll(PDO::FETCH_ASSOC);
 			$arrResult['data'] = $fetch;
 			$success = true;

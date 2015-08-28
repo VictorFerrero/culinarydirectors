@@ -11,7 +11,6 @@ class DB_Connections
 		$arrReturn = array();
 		$success = false;
 		$db = null;
-		// TODO: accessing db credentials=> connection string, username and password??
 		$arrCredentials = DatabaseConnectionStrings::getDBCredentials("local");
 		
 		$dsn = $arrCredentials['dsn'];
