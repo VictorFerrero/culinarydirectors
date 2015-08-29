@@ -15,8 +15,7 @@ class OrgModel{
 	 public function __destruct() {
 		$this->dbo = null;
 	}
-	
-	
+		
 	 /**
 		expected input: 
 		$arrValues => assoc array containing all fields neccessary 

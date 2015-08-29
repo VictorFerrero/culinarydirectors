@@ -2,7 +2,7 @@
 	// id | username | password | email | userRole | orgId
 class UserModel{
 			
-	private $dbo;
+	private $dbo; 
 	
 	 public function __construct() {
 			$db = new DB_Connections();
@@ -111,7 +111,6 @@ class UserModel{
 			// TODO: now, based on the userRole, insert a new record into: member_info, chef_info, or admin_info
 			//use same error checks as with the above insert query
 			$userRole = $data['userRole'];
-			
 			switch($userRole) {
 				case 0: // frat member
 				break;
@@ -202,6 +201,7 @@ class UserModel{
 	 $sql = "UPDATE user SET ";
 	 $data = array();
 	 $index = 0;
+	 // go through all possible fields and construct the SET CLAUSE
 	 if(strcmp($username, "") != 0) {
 		 $sql = $sql . "username=?, ";
 		 $data[$index] = $username;
@@ -227,9 +227,9 @@ class UserModel{
 		 $data[$index] = $orgId;
 		 $index = $index + 1;
 	 }
-	 // get rid of the last two characters
+	 // get rid of the last two characters (", ")
 	 $sql = substr($sql,0,-2);
-	 $sql = $sql . " WHERE id=?";
+	 $sql = $sql . " WHERE id=?"; // put together the query
 	 $data[$index] = $id;
 	try {
 		 $STH = $this->dbo->prepare($sql);
@@ -255,6 +255,7 @@ class UserModel{
 		);
 	*/
 	public function login($username, $password) {
+		$userId = null;
 		$success = false;
 		$arrResult = array();	
 		$arrResult['error_message'] = array();
@@ -264,30 +265,43 @@ class UserModel{
 			$STH = $this->dbo->prepare("SELECT * FROM user WHERE username=:username");
 			$STH->bindParam(":username", $username);
 			$STH->execute();
-			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
-		//	print_r($fetch);
+			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC); // should we use fetch or fetchAll? should only be 1 record
 			if(is_array($fetch)) {
 				$hashedPassword = $fetch[0]['password'];
-//				echo $hashedPassword;
 				if(password_verify($password, $hashedPassword)) {
 				// username exists in the database and pw hash compare returned true
 				$arrResult['userInfo'] = $fetch[0]; // not sure what to return. just putting this here for now
 				$arrResult['login'] = true; // the login had the correct credentials
+				$userId = $fetch[0]['id']; // get userId for next query
 				// find info specific to this type of user
 				switch($fetch[0]['userRole']){
 					case 0: //member
 						//query user_info table and assign to ['member_info']
+						$sql = "SELECT * FROM user_info WHERE userId=:userId";
 						break;
 					case 1: //chef
 						//query chef_info table and assign to ['chef_info']
+						"SELECT * FROM chef_info WHERE userId=:userId";
 						break;
 					case 2: //admin
 						//query admin_info table and assign to ['admin_info']
+						"SELECT * FROM admin_info WHERE userId=:userId";
 						break;
 					default: 
 						//throw error, somehow userRole isn't a number
+						throw new Exception("user role is not a valid number in the database");
 						break;
 				}
+				// keep commented for now so as to not cause unexpected bugs.
+				// TODO: still need schemas for the _info tables so that we can
+				// test the below code.
+				/* 
+				$STH = $this->dbo->prepare($sql);
+				$STH->bindParam(":userId", $userId);
+				$STH->execute();
+				$fetch = $STH->fetch(PDO::FETCH_ASSOC); // use fetch or fetchAll? there should only be 1 record
+				$arrResult['member_info'] = $fetch;
+				*/
 				$success = true;
 			}
 			else {
@@ -296,17 +310,12 @@ class UserModel{
 				}
 			}
 			else {
-				// invalid username
 				$arrResult['error_message'][] = "invalid username";
 				$success = false;
 			}
 		} catch (Exception $e) {
 			$arrResult['error'] = $e->getMessage();
-			$success = false; // assume username is invalid if we get an exception
-		}
-		if(!$success) {
-			$arrResult['success'] = $success;
-			return $arrResult;
+			$success = false; 
 		}
 		$arrResult['success'] = $success;
 		return $arrResult;
@@ -340,5 +349,4 @@ class UserModel{
 	    return $arrResult;
 	}
 }
-
 ?>
