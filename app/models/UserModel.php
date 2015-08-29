@@ -1,6 +1,5 @@
 <?php
 	// id | username | password | email | userRole | orgId
-	//TODO: get true/false if user_id is in org_id
 class UserModel{
 			
 	private $dbo;
@@ -25,7 +24,7 @@ class UserModel{
 			$STH->bindParam(":id", $userId);
 			$STH->execute();
 			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
-			$succcess = true;
+			$success = true;
 			if($fetch[0]['orgId'] == $orgId) {
 				$returnValue = true;
 			}
@@ -111,7 +110,21 @@ class UserModel{
 			$STH->execute($data);
 			$success = true;
 			// TODO: now, based on the userRole, insert a new record into: member_info, chef_info, or admin_info
-				//use same error checks as with the above insert query
+			//use same error checks as with the above insert query
+			$userRole = $data['userRole'];
+			
+			switch($userRole) {
+				case 0: // frat member
+				break;
+				
+				case 1: // chef
+				break;
+				
+				case 2: // admin
+				break;
+				
+				default: $arrResult['error'][] = "invalid user role stored in the database";
+			}
 		} catch (Exception $e) {
 			$success = false;
 			$arrResult['error'][] = $e->getMessage();
@@ -119,10 +132,12 @@ class UserModel{
 		// just send some stuff back to caller for debug
 		$arrResult['success'] = $success;
 		// below is for debug
+		/*
 		$arrResult['username'] = $username;
 		$arrResult['hashed_password'] = $hashedPassword;
 		$arrResult['email'] = $email;
 		$arrResult['userRole'] = $userRole;
+		*/
 		return $arrResult;	
 	}
 	
@@ -135,6 +150,7 @@ class UserModel{
 		'success' => true if user was successfuly removed from db, false otherwise
 		);
 	*/
+	// should we pass in another variable for userRole??
 	public function deleteUser($username,$password) {
 		$arrResult = array();
 		$success = false;
