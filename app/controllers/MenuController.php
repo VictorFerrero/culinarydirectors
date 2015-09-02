@@ -36,15 +36,15 @@ class MenuController{
 		$arrValues['chef_id'] = $_REQUEST['chef_id'];
 		$arrValues['week'] = $_REQUEST['week'];
 	    $arrValues['day'] = $_REQUEST['day'];
+	    $arrValues['datestamp'] = $_REQUEST['datestamp'];
 		$arrValues['approved'] = $_REQUEST['approved'];
 		$arrResult = array();
-		$arrResult['valid_input'] = false; // assume it does not work
+		$arrResult['success'] = false; // assume it does not work
 		// make sure that week, day, and approved are valid values
 		if($this->isInputValid($arrValues['week'], 0)) {
 			if($this->isInputValid($arrValues['day'], 1)) {
 				if($this->isInputValid($arrValues['approved'], 2)) {
 					$arrResult = $this->menuModel->createMenu($arrValues);
-					$arrResult['valid_input'] = true;
 				}
 			}
 		}
@@ -59,15 +59,15 @@ class MenuController{
 		$arrValues['chef_id'] = $_REQUEST['chef_id'];
 		$arrValues['week'] = $_REQUEST['week']; 
 		$arrValues['day'] = $_REQUEST['day'];
+		$arrValues['datestamp'] = $_REQUEST['datestamp'];
 		$arrValues['approved'] = $_REQUEST['approved'];
 		$arrResult = array();
-		$arrResult['valid_input'] = false; // assume it does not work
+		$arrResult['success'] = false; // assume it does not work
 		// do some error checkking
 		if($this->isInputValid($arrValues['week'], 0)) {
 			if($this->isInputValid($arrValues['day'], 1)) {
 				if($this->isInputValid($arrValues['approved'], 2)) {
 					$arrResult = $arrResult = $this->menuModel->editMenu($arrValues);
-					$arrResult['valid_input'] = true;
 				}
 			}
 		}
@@ -87,10 +87,9 @@ class MenuController{
 		$arrValues['item_name'] = $_REQUEST['item_name'];
 		$arrValues['meal'] = $_REQUEST['meal'];
 		$arrResult = array();
-		$arrResult['valid_input'] = false;
+		$arrResult['success'] = false;
 		if($this->isInputValid($arrValues['meal'], 2)) { // meal can only be 0 or 1
 			$arrResult = $this->menuModel->createMenuItem($arrValues);
-			$arrResult['valid_input'] = true;
 		}
 		return $arrResult;
 	 }
@@ -104,11 +103,10 @@ class MenuController{
 		$arrValues['menu_id'] = $_REQUEST['menu_id'];
 		$arrValues['item_name'] = $_REQUEST['item_name']; 
 		$arrValues['meal'] = $_REQUEST['meal'];
-		$arrResult['valid_input'] = false;
+		$arrResult['success'] = false;
 		if(strcmp($arrValues['meal'], "" != 0)) {
 			if($this->isInputValid($arrValues['meal'], 2)) { // meal can only be 0 or 1
 				$arrResult = $this->menuModel->editMenuItem($arrValues);
-				$arrResult['valid_input'] = true;
 			}
 		}
 		return $arrResult;
@@ -124,6 +122,7 @@ class MenuController{
 * lateplate/noshow", there is no entry in this table for other cases, 1 for thumbs up and 0 for thumbs down) 
 	   * */
 	  
+	  
 	 	public function createFeedback() {
 	// might need error checking, or we could put constraints on db fields
 		$arrValues = array();
@@ -132,10 +131,9 @@ class MenuController{
 		$arrValues['feedback_value'] = $_REQUEST['feedback_value'];
 		$arrValues['menu_item_id'] = $_REQUEST['menu_item_id'];
 		$arrValues['menu_id'] = $_REQUEST['menu_id'];
-		$arrResult['valid_input'] = false; // assume the input is invalid
+		$arrResult['success'] = false; // assume the input is invalid
 		if($this->isInputValid($arrValues['feedback_type'], 3)) { // can be 0,1 or 2
 			$arrResult = $this->menuModel->createFeedback($arrValues);
-			$arrResult['valid_input'] = true;
 		}
 		return $arrResult;
 	}
@@ -148,16 +146,13 @@ class MenuController{
 
 	public function editFeedBack() {
 		$arrValues = array();
-		$arrResult = array();
 		$arrValues['id'] = $_REQUEST['id'];
 		$arrValues['feedback_type'] = $_REQUEST['feedback_type'];
 		$arrValues['feedback_value'] = $_REQUEST['feedback_value']; 
 		$arrValues['menu_item_id'] = $_REQUEST['menu_item_id'];
 		$arrValues['menu_id'] = $_REQUEST['menu_id'];
-		$arrResult['valid_input'] = false;
 		if($this->isInputValid($arrValues['feedback_type'], 3)) {
 			$arrResult = $this->menuModel->editFeedBack($arrValues);
-			$arrResult['valid_input'] = true;
 		}
 		return $arrResult;
 	}

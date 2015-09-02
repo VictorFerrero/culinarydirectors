@@ -1,6 +1,4 @@
 <?php
-// TODO: we need accessors for the menu table. 
-// not sure what field we should be selecting on.
 class MenuModel
 {
 	private $dbo;
@@ -66,10 +64,12 @@ class MenuModel
 		$chef_id = $arrValues['chef_id'];
 		$week = $arrValues['week'];
 	    $day = $arrValues['day'];
+		$datestamp = $arrValues['datestamp'];
 		$approved = $arrValues['approved'];
 		 try {
-			$data = array( 'chef_id' => $chef_id, 'week' => $week, 'day' => $day, 'approved' => $approved);
-			$STH = $this->dbo->prepare("INSERT INTO menu VALUES (NULL, :chef_id, :week, :day, :approved)");
+			$data = array( 'chef_id' => $chef_id, 'week' => $week, 
+			'day' => $day,'datestamp' => $datestamp,'approved' => $approved);
+			$STH = $this->dbo->prepare("INSERT INTO menu VALUES (NULL, :chef_id, :week, :day, :datestamp, :approved)");
 			$STH->execute($data);
 			$success = true;
 		} catch (Exception $e) {
@@ -104,6 +104,7 @@ class MenuModel
 	 $chef_id = $arrValues['chef_id'];
 	 $week = $arrValues['week'];
 	 $day = $arrValues['day'];
+	 $datestamp = $arrValues['datestamp'];
 	 $approved = $arrValues['approved'];
 	 $sql = "UPDATE menu SET ";
 	 $data = array();
@@ -121,6 +122,11 @@ class MenuModel
 	 if(strcmp($day, "") != 0) {
 		 $sql = $sql . "day=?, ";
 		 $data[$index] = $day;
+		 $index = $index + 1;
+	 }
+	 if(strcmp($datestamp, "") != 0) {
+		 $sql = $sql . "datestamp=?, ";
+		 $data[$index] = $datestamp;
 		 $index = $index + 1;
 	 }
 	 if(strcmp($approved, "") != 0) {
