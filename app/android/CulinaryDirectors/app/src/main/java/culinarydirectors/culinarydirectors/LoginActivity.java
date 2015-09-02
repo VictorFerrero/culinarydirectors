@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-
 import java.io.Console;
 
 /**
@@ -20,12 +19,15 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_signin);
+        //test thread pool -- check APITHREADPOOL logs to see this working.
+        APIThreadPool.getInstance().callAPIAsync();
     }
     public void onLoginClick(View dialog) {
         // User touched the dialog's positive button
         Log.w("login", "login clicked");
         Intent intent = new Intent(this, MainActivity.class);
         //TODO: use threadpool and webservice calls instead of static json.
+        //      see the threadpool class
         //TODO: load USER and MENUS from a route that returns an array with
         // "USER"=>user model function result of login,
         // "MENUS"=>list of menus for given user groupby date
