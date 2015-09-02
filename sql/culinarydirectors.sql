@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS `menu` (
   `chef_id` int(11) NOT NULL,
   `week` int(11) NOT NULL,
   `day` int(11) NOT NULL,
+  `datestamp` Date NOT NULL,
   `approved` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;

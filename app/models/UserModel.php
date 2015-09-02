@@ -13,6 +13,10 @@ class UserModel{
 		$this->dbo = null;
 	}
 
+	/**
+	*	True if the user denoted by $userId is also in the organization
+	* 	that corresponds to $orgId 
+	* */
 	public function isUserInOrg($userId, $orgId) {
 		$success = false;
 		$arrResult = array();
@@ -121,7 +125,9 @@ class UserModel{
 				case 2: // admin
 				break;
 				
-				default: $arrResult['error'][] = "invalid user role stored in the database";
+				default: 
+				$arrResult['error'][] = "invalid user role stored in the database";
+				break;
 			}
 		} catch (Exception $e) {
 			$success = false;
