@@ -19,8 +19,6 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_signin);
-        //test thread pool -- check APITHREADPOOL logs to see this working.
-        APIThreadPool.getInstance().callAPIAsync();
     }
     public void onLoginClick(View dialog) {
         // User touched the dialog's positive button

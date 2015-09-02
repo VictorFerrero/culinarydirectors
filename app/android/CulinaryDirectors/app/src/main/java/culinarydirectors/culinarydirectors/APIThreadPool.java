@@ -3,13 +3,15 @@ package culinarydirectors.culinarydirectors;
 /**
  * Created by Sreenath on 9/1/2015.
  */
-import android.util.Log;
+
+import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import org.apache.http.HttpResponse;
+import org.json.JSONObject;
 
 public class APIThreadPool {
     //properties
@@ -41,20 +43,13 @@ public class APIThreadPool {
     //TODO: pass in params that API calling functions in CulinaryDirectorsAPI needs?
     
     // String route = /menu/createMenu
-    public JSONObject callAPIAsync(HashMap<String,String> postDataHashMap, String route){
+    public JSONObject callAPIAsync(final HashMap<String,String> postDataHashMap, final String route){
 
         //TODO: Run api call, set some return values (api return, statuses, etc)
         Callable<JSONObject> aCallable = new Callable<JSONObject>(){
             @Override
             public JSONObject call() {
                 try{
-                    //SKP: Replace this loop with API CALL -- used to test that thread runs
-                    // successfully and in parallel to UI Loading. Test successful 9/1
-                /*    for(int i = 0; i < 10; i++){
-                        Log.w("APITHREADPOOL","Runnable is doing something");
-                        Thread.sleep(1000);
-                    }
-                  */
                   HttpResponse response = APIThreadPool.api.callAPI(postDataHashMap, route);
                   JSONObject json = api.getJSONfromResponse(response);
                   return json;
@@ -65,7 +60,17 @@ public class APIThreadPool {
         };
         // Time to run it
         Future<JSONObject> callableFuture = APIThreadPool.pool.submit(aCallable);
-        return callableFuture.get();
+        try {
+            // get() waits for the task to finish and then gets the result
+            return callableFuture.get();
+        } catch (InterruptedException e) {
+            // thrown if task was interrupted before completion
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            // thrown if the task threw an execption while executing
+            e.printStackTrace();
+        }
+        return new JSONObject();
     }
 
 
