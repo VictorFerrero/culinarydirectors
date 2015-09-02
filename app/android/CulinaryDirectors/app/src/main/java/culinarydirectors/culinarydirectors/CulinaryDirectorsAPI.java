@@ -13,6 +13,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -38,7 +39,7 @@ public class CulinaryDirectorsAPI {
      * 		TODO: return a JSON object instead of a string that conforms to JSON standards
      * 		http://developer.android.com/reference/org/json/JSONObject.html
      * */
-    public JSONObject getJSONfromResponse(HttpResponse response) throws IOException {
+    public JSONObject getJSONfromResponse(HttpResponse response) throws IOException, JSONException {
     	BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 		String line = "";
 		String output = "";

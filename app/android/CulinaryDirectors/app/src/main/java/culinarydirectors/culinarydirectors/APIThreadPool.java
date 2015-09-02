@@ -55,6 +55,8 @@ public class APIThreadPool {
                   return json;
                 }catch(Exception e){
 					//TODO: return error json
+                } finally {
+                    return new JSONObject();
                 }
             }
         };
@@ -69,8 +71,9 @@ public class APIThreadPool {
         } catch (ExecutionException e) {
             // thrown if the task threw an execption while executing
             e.printStackTrace();
+        } finally {
+            return new JSONObject();
         }
-        return new JSONObject();
     }
 
 
