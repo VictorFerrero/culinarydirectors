@@ -35,9 +35,7 @@ public class CulinaryDirectorsAPI {
 	}
     /**
      * 		Extracts JSON from the HttpResponse.
-     * 
-     * 		TODO: return a JSON object instead of a string that conforms to JSON standards
-     * 		http://developer.android.com/reference/org/json/JSONObject.html
+     *
      * */
     public JSONObject getJSONfromResponse(HttpResponse response) throws IOException, JSONException {
     	BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
