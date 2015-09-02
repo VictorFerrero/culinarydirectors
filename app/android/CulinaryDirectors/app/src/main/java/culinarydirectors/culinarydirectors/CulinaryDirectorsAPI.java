@@ -24,194 +24,20 @@ public class CulinaryDirectorsAPI {
 	public CulinaryDirectorsAPI() {
 		
 	}
-// START of Org related API calls	
-	public HttpResponse createOrg(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/org/createOrg";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
 
-	public HttpResponse editOrg(HashMap<String,String> postDataHashMap) {
+	public HttpResponse callAPI(HashMap<String,String> postDataHashMap, String route) {
 		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/org/editOrg";
+		route = CulinaryDirectorsAPI.localAPI + route;
 		HttpResponse response = this.sendPost(postData, route);
 		return response;
 	}
-
-	public HttpResponse deleteOrg(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/org/deleteOrg";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-	public HttpResponse getOrgById(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/org/getOrgById";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-// START of Feed related API calls	
-
-	public HttpResponse addMessage(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/feed/addMessage";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-	public HttpResponse deleteMessageById(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/feed/deleteMessageById";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-	public HttpResponse getMessagesBySenderId(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/feed/getMessagesBySenderId";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-	public HttpResponse getMessagesByReceiverId(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/feed/getMessagesByReceiverId";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-	public HttpResponse getMessagesById(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/feed/getMessagesById";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-// START of menu related API calls	
-    public HttpResponse createMenu(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/menu/createMenu";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-    public HttpResponse editMenu(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/menu/editMenu";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-    public HttpResponse deleteMenu(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/menu/deleteMenu";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-    public HttpResponse createMenuItem(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/menu/createMenuItem";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-    public HttpResponse editMenuItem(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/menu/editMenuItem";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-    public HttpResponse deleteMenuItem(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/menu/deleteMenuItem";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-    public HttpResponse createFeedback(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/menu/createFeedback";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-    public HttpResponse editFeedback(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/menu/editFeedback";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-    public HttpResponse deleteFeedback(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/menu/deleteFeedback";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-    public HttpResponse getFeedbackForMenu(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/menu/getFeedbackForMenu";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-	
-// START of user related API calls	
-    public HttpResponse isUserInOrg(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/user/isUserInOrg";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-    public HttpResponse login(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/user/login";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-    public HttpResponse logout(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/user/logout";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-	public HttpResponse getAllUsers(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/user/getAllUsers";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-	public HttpResponse register(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/user/register";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}
-	
-    public HttpResponse deleteUser(HashMap<String,String> postDataHashMap) {
-		List<NameValuePair> postData = this.initializePostData(postDataHashMap);
-		String route = CulinaryDirectorsAPI.localAPI + "/user/deleteUser";
-		HttpResponse response = this.sendPost(postData, route);
-		return response;
-	}	
-    
     /**
      * 		Extracts JSON from the HttpResponse.
      * 
      * 		TODO: return a JSON object instead of a string that conforms to JSON standards
      * 		http://developer.android.com/reference/org/json/JSONObject.html
      * */
-    public String getJSONfromResponse(HttpResponse response) throws IOException {
+    public JSONObject getJSONfromResponse(HttpResponse response) throws IOException {
     	BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 		String line = "";
 		String output = "";
@@ -219,7 +45,9 @@ public class CulinaryDirectorsAPI {
 			output = output + line;
 		}
 		rd.close();
-		return output;
+		output = output.substring(1, output.length() - 1);
+		JSONObject toReturn = new JSONObject(output);
+		return toReturn;
     }
 	
 // PRIVATE helper methods.	
