@@ -1,6 +1,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".MainActivity">
+
+    <!-- 3 tabs for pages -->
+    <include layout="@layout/calendar_view"/>
+    <include layout="@layout/feed_view"/>
+    <include layout="@layout/profile_view"/>
+    <!-- end 3 'content' tabs / pages -->
 
     <!--italian navbar-->
     <RadioGroup
@@ -14,12 +23,14 @@
             android:id="@+id/btnMenu"
             style="@style/navbar_button"
             android:text="@string/fa_cutlery"
+            android:onClick="onCalendarClick"
             android:layout_height="fill_parent"
             />
         <RadioButton
             android:id="@+id/btnFeed"
             style="@style/navbar_button"
             android:text="@string/fa_comments"
+            android:onClick="onFeedClick"
             android:layout_marginLeft="5dp"
             android:layout_height="fill_parent"
             />
@@ -27,6 +38,7 @@
             android:id="@+id/btnProfile"
             style="@style/navbar_button"
             android:text="@string/fa_user"
+            android:onClick="onProfileClick"
             android:layout_marginLeft="5dp"
             android:layout_height="fill_parent"
             />

@@ -13,4 +13,12 @@
     <string name="fa_pencil">&#xf040;</string>
     <string name="fa_edit">&#xf044;</string>
     <!-- end font-awesome strings -->
+    <!--begin UI-hinting strings -->
+    <string name="login_un_hint">Email</string>
+    <string name="login_pw_hint">Password</string>
+    <string name="register_un_hint">Email</string>
+    <string name="register_pw1_hint">Password</string>
+    <string name="register_pw2_hint">Re-enter Password</string>
+
+    <!-- end hinting strings -->
 </resources>
