@@ -14,8 +14,40 @@
         <item name="android:background">#222</item>
         <item name="android:gravity">center_horizontal</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:textSize">54dp</item>
+        <item name="android:textSize">48dp</item>
         <item name="android:textColor">#fff</item>
+    </style>
+
+    <style name="profile_area">
+
+    </style>
+
+    <style name="small_black_top">
+        <item name="android:textSize">9dp</item>
+        <item name="android:textColor">#000</item>
+    </style>
+
+    <style name="blue_link_btm">
+        <item name="android:textSize">11dp</item>
+        <item name="android:textColor">#0000FF</item>
+    </style>
+
+    <style name="textview_30">
+        <item name="android:textSize">16dp</item>
+        <!--item name="android:textStyle">bold</item-->
+        <item name="android:textColor">#000</item>
+    </style>
+
+    <style name="textview_31">
+        <item name="android:textSize">18dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#000</item>
+    </style>
+
+    <style name="textview_29">
+        <item name="android:textSize">14dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#000</item>
     </style>
 
 </resources>

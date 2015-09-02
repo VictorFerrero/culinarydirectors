@@ -4,6 +4,8 @@ package culinarydirectors.culinarydirectors;
  * Created by Sreenath on 9/1/2015.
  */
 
+import android.app.Activity;
+
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -19,21 +21,19 @@ public class APIThreadPool {
     //singleton
     private static APIThreadPool cachedThreadPool = null;
     // API object
-    private static CulinaryDirectorsAPI api = new CulinaryDirectorsAPI();
+    private static final CulinaryDirectorsAPI api = new CulinaryDirectorsAPI();
     
     protected APIThreadPool() {
         //defeat instantiation!
     }
     public static APIThreadPool getInstance() {
         // Obtain a cached thread pool
-        if (cachedThreadPool == null) {
-            cachedThreadPool = new APIThreadPool();
-        }
+        if (cachedThreadPool == null) { cachedThreadPool = new APIThreadPool(); }
         return cachedThreadPool;
     }
     //no destructors in java but in case we need to specify some sort of explicit cleaning function
     public void destroy(){
-        APIThreadPool.pool.shutdown(); // shutdown the pool.
+        APIThreadPool.pool.shutdown();
         cachedThreadPool = null;
     }
     //functions
@@ -42,38 +42,24 @@ public class APIThreadPool {
     // fields denoting success/ failure api call
     //TODO: pass in params that API calling functions in CulinaryDirectorsAPI needs?
     
-    // String route = /menu/createMenu
-    public JSONObject callAPIAsync(final HashMap<String,String> postDataHashMap, final String route){
+    // String route = "/menu/createMenu" | String callback = "createMenuSuccess"
+    public void callAPIAsync(final HashMap<String,String> postDataHashMap, final String route, final String callback, final Activity activity){
 
         //TODO: Run api call, set some return values (api return, statuses, etc)
-        Callable<JSONObject> aCallable = new Callable<JSONObject>(){
+        Runnable aRunnable = new Runnable(){
             @Override
-            public JSONObject call() {
+            public void run() {
                 try{
                   HttpResponse response = APIThreadPool.api.callAPI(postDataHashMap, route);
                   JSONObject json = api.getJSONfromResponse(response);
-                  return json;
+                  api.runCallback(callback, json, activity);
                 }catch(Exception e){
-					//TODO: return error json
-                } finally {
-                    return new JSONObject();
+					//TODO: error handling
                 }
             }
         };
-        // Time to run it
-        Future<JSONObject> callableFuture = APIThreadPool.pool.submit(aCallable);
-        try {
-            // get() waits for the task to finish and then gets the result
-            return callableFuture.get();
-        } catch (InterruptedException e) {
-            // thrown if task was interrupted before completion
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            // thrown if the task threw an execption while executing
-            e.printStackTrace();
-        } finally {
-            return new JSONObject();
-        }
+        // Time to run it -- keep future object reference for debugging purposes
+        Future<?> callableFuture = APIThreadPool.pool.submit(aRunnable);
     }
 
 

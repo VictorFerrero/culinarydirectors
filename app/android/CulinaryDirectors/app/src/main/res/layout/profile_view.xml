@@ -2,8 +2,166 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="75dp"
+    android:padding="20dp"
     android:id="@+id/profile_view"
     android:orientation="vertical"
     android:visibility="gone">
-
+    <TextView android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="0dp"
+        android:id="@+id/profileTitle"
+        android:text="PROFILE"
+        style="@style/textview_31">
+    </TextView>
+    <!--main profile info: pic, name, org-->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:orientation="horizontal"
+        style="@style/profile_area">
+        <RelativeLayout
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5">
+            <ImageView android:layout_width="100dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_height="100dp"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/profilePic"
+                style="@style/textview_31">
+            </ImageView>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5">
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:id="@+id/profileUsernameLabel"
+                        android:text="USERNAME"
+                        style="@style/textview_29">
+                    </TextView>
+                    <TextView android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:id="@+id/fa_edit11"
+                        android:text="@string/fa_edit"
+                        style="@style/textview_29"
+                        android:visibility="gone">
+                    </TextView>
+                </LinearLayout>
+                <EditText
+                    android:id="@+id/profileUsernameValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Your Username"
+                    android:editable="false"
+                    style="@style/textview_30"/>
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:id="@+id/profileOrgLabel"
+                        android:text="ORGANIZATION"
+                        style="@style/textview_29">
+                    </TextView>
+                    <TextView android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:id="@+id/fa_edit12"
+                        android:text="@string/fa_edit"
+                        style="@style/textview_29"
+                        android:visibility="gone">
+                    </TextView>
+                </LinearLayout>
+                <EditText
+                    android:id="@+id/profileOrgValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Your Organization"
+                    android:editable="false"
+                    style="@style/textview_30" />
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+    <!--dietary restrictions, meal plan-->
+    <!--TextView android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:id="@+id/profileTitle2"
+        android:text="PROFILE"
+        style="@style/textview_31">
+    </TextView-->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="40dp">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/dietaryRestrictionsLabel"
+                android:text="DIETARY RESTRICTIONS:"
+                style="@style/textview_29">
+            </TextView>
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/fa_edit13"
+                android:text="@string/fa_edit"
+                style="@style/textview_29">
+            </TextView>
+        </LinearLayout>
+        <EditText
+            android:id="@+id/dietaryRestrictionsValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Your Dietary restrictions"
+            style="@style/textview_30"/>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/mealPlanLabel"
+                android:text="MEAL PLAN:"
+                style="@style/textview_29">
+            </TextView>
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/fa_edit14"
+                android:text="@string/fa_edit"
+                style="@style/textview_29">
+            </TextView>
+        </LinearLayout>
+        <EditText
+            android:id="@+id/mealPlanValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Your Meal Plan Info"
+            style="@style/textview_30"/>
+    </LinearLayout>
 </LinearLayout>

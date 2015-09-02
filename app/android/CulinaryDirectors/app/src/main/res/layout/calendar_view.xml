@@ -1,13 +1,337 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="75dp"
+    android:padding="20dp"
     android:id="@+id/calendar_view"
     android:orientation="vertical"
     android:visibility="gone">
+    <!--LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView android:layout_width="wrap_content"
+                android:layout_toLeftOf="@+id/currentDate"
+                android:layout_height="wrap_content"
+                android:id="@+id/arrowLeft"
+                android:text="@string/double_arrow_left"
+                style="@style/textview_31">
+            </TextView>
+
+            <TextView android:layout_width="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/currentDate"
+                android:id="@+id/arrowRight"
+                android:text="@string/double_arrow_right"
+                style="@style/textview_31">
+            </TextView>
+        </RelativeLayout>
+    </LinearLayout-->
+    <TextView android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="0dp"
+        android:id="@+id/currentDate"
+        style="@style/textview_31">
+    </TextView>
+    <!--Lunch-->
     <TextView android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/currentDate">
-
+        android:text="Lunch"
+        android:layout_marginTop="40dp"
+        style="@style/textview_31">
     </TextView>
+    <!--View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="#000"/-->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:id="@+id/calendar_l1"
+        android:orientation="horizontal"
+        android:visibility="gone">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="46dp"
+        android:orientation="horizontal">
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/menu_item_l1"
+            style="@style/textview_30">
+        </TextView>
+        <Button android:id="@+id/thumb_up_l1"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_toLeftOf="@+id/thumb_down_l1"
+            android:layout_alignParentBottom="true"
+            android:text="@string/thumbs_up"
+            android:background="@drawable/thumbs_up_btn"
+            android:focusable="true">
+        </Button>
+        <Button android:id="@+id/thumb_down_l1"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:text="@string/thumbs_down"
+            android:background="@drawable/thumbs_down_btn"
+            android:focusable="true">
+        </Button>
+    </RelativeLayout>
+    </LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:id="@+id/calendar_l2"
+        android:orientation="horizontal"
+        android:visibility="gone">
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="46dp"
+            android:orientation="horizontal">
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+                android:id="@+id/menu_item_l2"
+                style="@style/textview_30">
+            </TextView>
+            <Button android:id="@+id/thumb_up_l2"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_toLeftOf="@+id/thumb_down_l2"
+                android:layout_alignParentBottom="true"
+                android:text="@string/thumbs_up"
+                android:background="@drawable/thumbs_up_btn"
+                android:focusable="true">
+            </Button>
+            <Button android:id="@+id/thumb_down_l2"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:text="@string/thumbs_down"
+                android:background="@drawable/thumbs_down_btn"
+                android:focusable="true">
+            </Button>
+        </RelativeLayout>
+    </LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:id="@+id/calendar_l3"
+        android:orientation="horizontal"
+        android:visibility="gone">
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="46dp"
+            android:orientation="horizontal">
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+                android:id="@+id/menu_item_l3"
+                style="@style/textview_30">
+            </TextView>
+            <Button android:id="@+id/thumb_up_l3"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_toLeftOf="@+id/thumb_down_l3"
+                android:layout_alignParentBottom="true"
+                android:text="@string/thumbs_up"
+                android:background="@drawable/thumbs_up_btn"
+                android:focusable="true">
+            </Button>
+            <Button android:id="@+id/thumb_down_l3"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:text="@string/thumbs_down"
+                android:background="@drawable/thumbs_down_btn"
+                android:focusable="true">
+            </Button>
+        </RelativeLayout>
+    </LinearLayout>
+    <!--RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Late Plate"/>
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Show"/-->
+    <!--Dinner-->
+    <TextView android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Dinner"
+        android:layout_marginTop="40dp"
+        style="@style/textview_31">
+    </TextView>
+    <!--View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="#000"/-->
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:id="@+id/calendar_d1"
+        android:orientation="horizontal"
+        android:visibility="gone">
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="46dp"
+            android:orientation="horizontal">
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+                android:id="@+id/menu_item_d1"
+                style="@style/textview_30">
+            </TextView>
+            <Button android:id="@+id/thumb_up_d1"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_toLeftOf="@+id/thumb_down_d1"
+                android:layout_alignParentBottom="true"
+                android:text="@string/thumbs_up"
+                android:background="@drawable/thumbs_up_btn"
+                android:focusable="true">
+            </Button>
+            <Button android:id="@+id/thumb_down_d1"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:text="@string/thumbs_down"
+                android:background="@drawable/thumbs_down_btn"
+                android:focusable="true">
+            </Button>
+        </RelativeLayout>
+    </LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:id="@+id/calendar_d2"
+        android:orientation="horizontal"
+        android:visibility="gone">
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="46dp"
+            android:orientation="horizontal">
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+                android:id="@+id/menu_item_d2"
+                style="@style/textview_30">
+            </TextView>
+            <Button android:id="@+id/thumb_up_d2"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_toLeftOf="@+id/thumb_down_d2"
+                android:layout_alignParentBottom="true"
+                android:text="@string/thumbs_up"
+                android:background="@drawable/thumbs_up_btn"
+                android:focusable="true">
+            </Button>
+            <Button android:id="@+id/thumb_down_d2"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:text="@string/thumbs_down"
+                android:background="@drawable/thumbs_down_btn"
+                android:focusable="true">
+            </Button>
+        </RelativeLayout>
+    </LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:id="@+id/calendar_d3"
+        android:orientation="horizontal"
+        android:visibility="gone">
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="46dp"
+            android:orientation="horizontal">
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+                android:id="@+id/menu_item_d3"
+                style="@style/textview_30">
+            </TextView>
+            <Button android:id="@+id/thumb_up_d3"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_toLeftOf="@+id/thumb_down_d3"
+                android:layout_alignParentBottom="true"
+                android:text="@string/thumbs_up"
+                android:background="@drawable/thumbs_up_btn"
+                android:focusable="true">
+            </Button>
+            <Button android:id="@+id/thumb_down_d3"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:text="@string/thumbs_down"
+                android:background="@drawable/thumbs_down_btn"
+                android:focusable="true">
+            </Button>
+        </RelativeLayout>
+    </LinearLayout>
+    <!--RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Late Plate"/>
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No Show"/-->
 </LinearLayout>
+</ScrollView>

@@ -1,8 +1,11 @@
 package culinarydirectors.culinarydirectors;
 
+import android.app.Activity;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +54,18 @@ public class CulinaryDirectorsAPI {
 		JSONObject toReturn = new JSONObject(output);
 		return toReturn;
     }
+
+	/**
+	 *  Runs callback on success of an API call
+	 */
+	public void runCallback(String callback, JSONObject json, Activity activity) throws Exception{
+		ActivityCallbacks ac = new ActivityCallbacks();
+		Class callbackClass = ActivityCallbacks.class;
+		//TODO: handle SecurityException and NoSuchMethodException
+		Method the_callback = callbackClass.getMethod(callback, JSONObject.class, Activity.class);
+		//TODO: handle IllegalArgumentException, IllegalAccessException, and InvocationTargetException
+		the_callback.invoke(ac,json,activity);
+	}
 	
 // PRIVATE helper methods.	
 	/**

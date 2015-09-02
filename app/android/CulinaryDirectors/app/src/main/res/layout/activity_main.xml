@@ -4,13 +4,20 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     tools:context=".MainActivity">
-
+    <!--Header-->
+    <ImageView
+        android:src="@drawable/header_logo_new"
+        android:layout_width="match_parent"
+        android:layout_height="69dp"
+        android:layout_marginTop="5dp"
+        android:scaleType="center"
+        android:background="#FFFFFF"
+        android:contentDescription="@string/app_name" />
     <!-- 3 tabs for pages -->
     <include layout="@layout/calendar_view"/>
     <include layout="@layout/feed_view"/>
     <include layout="@layout/profile_view"/>
     <!-- end 3 'content' tabs / pages -->
-
     <!--italian navbar-->
     <RadioGroup
         android:layout_width="fill_parent"
