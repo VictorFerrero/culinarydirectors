@@ -43,25 +43,22 @@ public class APIThreadPool {
     //TODO: pass in params that API calling functions in CulinaryDirectorsAPI needs?
     
     // String route = "/menu/createMenu" | String callback = "createMenuSuccess"
-    public void callAPIAsync(final HashMap<String,String> postDataHashMap, final String route, final String callback, final Activity activity){
+    public void callAPIAsync
+    (final HashMap<String,String> postDataHashMap, final String route, final String callback, final Activity activity){
 
-        //TODO: Run api call, set some return values (api return, statuses, etc)
         Runnable aRunnable = new Runnable(){
             @Override
             public void run() {
                 try{
-                  HttpResponse response = APIThreadPool.api.callAPI(postDataHashMap, route);
-                  JSONObject json = api.getJSONfromResponse(response);
-                  api.runCallback(callback, json, activity);
+                    HttpResponse response = APIThreadPool.api.callAPI(postDataHashMap, route);
+                    JSONObject json = api.getJSONfromResponse(response);
+                    api.runCallback(callback, json, activity);
                 }catch(Exception e){
-					//TODO: error handling
+                    //TODO: error handling
                 }
             }
         };
         // Time to run it -- keep future object reference for debugging purposes
         Future<?> callableFuture = APIThreadPool.pool.submit(aRunnable);
     }
-
-
-
 }

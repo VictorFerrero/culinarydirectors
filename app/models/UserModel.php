@@ -76,40 +76,39 @@ class UserModel{
 		// first we check if username already exists
 		$arrResult = array();
 		$success = false;
-		$username = $arrValues['username'];
 		$hashedPassword = password_hash($arrValues['password'], PASSWORD_BCRYPT);
 		$email = $arrValues['email'];
 		$userRole = $arrValues['userRole'];
 		$orgId = $arrValues['orgId'];
 		$arrResult['error'] = array();
-		// see if username has been used already
-		$boolValidUsername = false;
+		// see if email has been used already
+		$boolValidEmail = false;
 		 try {
-			$STH = $this->dbo->prepare("SELECT * FROM user WHERE username=:username");
-			$STH->bindParam(":username", $username);
+			$STH = $this->dbo->prepare("SELECT * FROM user WHERE email=:email");
+			$STH->bindParam(":email", $email);
 			$STH->execute();
 			$fetch = $STH->fetch(PDO::FETCH_ASSOC);
 			if(is_array($fetch)) {
-				// username exists in the db
-				$boolValidUsername = false;
-				$arrResult['error'][] = "the username already exists";
+				// email exists in the db
+				$boolValidEmail = false;
+				$arrResult['error'][] = "the email already exists";
 			}
 			else {
-				// username is available
-				$boolValidUsername = true;
+				// email is available
+				$boolValidEmail = true;
 			}
 		} catch (Exception $e) {
 			$arrResult['error'][] = $e->getMessage();
-			$boolValidUsername = false; // assume username is invalid if we get an exception
+			$boolValidEmail = false; // assume email is invalid if we get an exception
 		}
 		if(!$boolValidUsername) {
 			$arrResult['success'] = false;
 			return $arrResult;
 		}
-		// we have a valid username. So lets add it to the db
+		// we have a valid email. So lets add it to the db
 		 try {
-			$data = array( 'username' => $username, 'password' => $hashedPassword, 'email' => $email, 'orgId' => $orgId, 'userRole' => $userRole);
-			$STH = $this->dbo->prepare("INSERT INTO user VALUES (NULL, :username, :password, :email, :userRole, :orgId)");
+			$data = array('password' => $hashedPassword, 'email' => $email, 'orgId' => $orgId, 'userRole' => $userRole);
+			$STH = $this->dbo->prepare("INSERT INTO user VALUES (NULL, :password, :email, :userRole, :orgId)");
 			$STH->execute($data);
 			$success = true;
 			// TODO: now, based on the userRole, insert a new record into: member_info, chef_info, or admin_info
@@ -118,13 +117,10 @@ class UserModel{
 			switch($userRole) {
 				case 0: // frat member
 				break;
-				
 				case 1: // chef
 				break;
-				
 				case 2: // admin
 				break;
-				
 				default: 
 				$arrResult['error'][] = "invalid user role stored in the database";
 				break;
@@ -137,7 +133,6 @@ class UserModel{
 		$arrResult['success'] = $success;
 		// below is for debug
 		/*
-		$arrResult['username'] = $username;
 		$arrResult['hashed_password'] = $hashedPassword;
 		$arrResult['email'] = $email;
 		$arrResult['userRole'] = $userRole;
@@ -199,7 +194,6 @@ class UserModel{
 	 $arrResult = array();
 	 $success = false;
 	 $id = $arrValues['id'];
-	 $username = $arrValues['username'];
 	 $hashedPassword = password_hash($arrValues['password'], PASSWORD_BCRYPT);
 	 $email = $arrValues['email'];
 	 $userRole = $arrValues['userRole'];
@@ -208,11 +202,6 @@ class UserModel{
 	 $data = array();
 	 $index = 0;
 	 // go through all possible fields and construct the SET CLAUSE
-	 if(strcmp($username, "") != 0) {
-		 $sql = $sql . "username=?, ";
-		 $data[$index] = $username;
-		 $index = $index + 1;
-	 }
 	 if(strcmp($hashedPassword, "") != 0) {
 		 $sql = $sql . "password=?, ";
 		 $data[$index] = $hashedPassword;
@@ -260,7 +249,7 @@ class UserModel{
 		'success' => true if user was successfuly added, false otherwise
 		);
 	*/
-	public function login($username, $password) {
+	public function login($email, $password) {
 		$userId = null;
 		$success = false;
 		$arrResult = array();	
@@ -268,15 +257,15 @@ class UserModel{
 		$arrResult['login'] = false;
 		$success = false;
 		 try {
-			$STH = $this->dbo->prepare("SELECT * FROM user WHERE username=:username");
-			$STH->bindParam(":username", $username);
+			$STH = $this->dbo->prepare("SELECT * FROM user WHERE email=:email");
+			$STH->bindParam(":email", $email);
 			$STH->execute();
 			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC); // should we use fetch or fetchAll? should only be 1 record
 			if(is_array($fetch)) {
 				$hashedPassword = $fetch[0]['password'];
 				if(password_verify($password, $hashedPassword)) {
-				// username exists in the database and pw hash compare returned true
-				$arrResult['userInfo'] = $fetch[0]; // not sure what to return. just putting this here for now
+				// email exists in the database and pw hash compare returned true
+				$arrResult['user_info'] = $fetch[0]; // not sure what to return. just putting this here for now
 				$arrResult['login'] = true; // the login had the correct credentials
 				$userId = $fetch[0]['id']; // get userId for next query
 				// find info specific to this type of user
@@ -306,7 +295,7 @@ class UserModel{
 				$STH->bindParam(":userId", $userId);
 				$STH->execute();
 				$fetch = $STH->fetch(PDO::FETCH_ASSOC); // use fetch or fetchAll? there should only be 1 record
-				$arrResult['member_info'] = $fetch;
+				$arrResult['type_info'] = $fetch;
 				*/
 				$success = true;
 			}
@@ -350,6 +339,39 @@ class UserModel{
 		} catch (Exception $e) {
 			$arrResult['error'] = $e->getMessage();
 			$success = false; // assume username is invalid if we get an exception
+		}
+		$arrResult['success'] = $success;
+	    return $arrResult;
+	}
+	
+	public function forgotPassword($email) {
+		$arrResult = array();
+		$arrResult['error'] = array();
+		$success = false;
+		 try {
+			$STH = $this->dbo->prepare("SELECT * FROM user WHERE email=:email");
+			$STH->bindParam(":email", $email);
+			$STH->execute();
+			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
+			$arrResult['data'] = $fetch;
+			if(is_array($fetch)) {
+				//TODO: we need to auto generate a new password, hashing is one way
+				$newPassword = "NEW_PASSWORD";
+				$hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+				$STH = $this->dbo->prepare("UPDATE user SET password=:password WHERE id=:id");
+				$STH->bindParams(":password", $hashedPassword);
+				$STH->bindParams(":id", $fetch[0]['id']);
+				$arrResult['password_query'] = $STH->execute();
+				// TODO: email formatting
+				mail($email, "SUBJECT: new password", $newPassword);
+			}
+			else {
+				$arrResult['error'][] = "email not found";
+			}
+			$success = true; // this will only be false if one of the queries caused an exception
+		} catch (Exception $e) {
+			$arrResult['error'][] = $e->getMessage();
+			$success = false; 
 		}
 		$arrResult['success'] = $success;
 	    return $arrResult;

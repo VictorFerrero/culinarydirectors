@@ -17,6 +17,11 @@ $router->post($routePrefix.'user/login', function(){
 	return json_encode($UserController->login());
 }, array('before' => 'statsStart', 'after' => 'statsComplete'));
 
+$router->post($routePrefix.'user/forgotPassword', function(){
+	$UserController = new UserController();
+	return json_encode($UserController->forgotPassword());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
 $router->post($routePrefix.'user/logout', function(){
 	$UserController = new UserController();
 	return json_encode($UserController->logout());

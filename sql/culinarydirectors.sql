@@ -30,6 +30,8 @@ CREATE TABLE IF NOT EXISTS `feed` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `sender` int(11) NOT NULL,
   `receiver` int(11) NOT NULL,
+  `creation` DATETIME NOT NULL,
+  `reply_to` int(11) NOT NULL,
   `message` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
@@ -107,7 +109,6 @@ CREATE TABLE IF NOT EXISTS `org` (
 
 CREATE TABLE IF NOT EXISTS `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(30) NOT NULL,
   `password` text NOT NULL,
   `email` varchar(100) NOT NULL,
   `userRole` int(11) NOT NULL,

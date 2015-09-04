@@ -32,10 +32,13 @@ class FeedModel
 		$success = false;		
 		$sender = $arrValues['sender'];
 		$receiver = $arrValues['receiver'];
+		$creation = $arrValues['creation'];
+		$reply_to = $arrValues['reply_to'];
 	    $message = $arrValues['message'];
 		 try {
-			$data = array( 'sender' => $sender, 'receiver' => $receiver, 'message' => $message);
-			$STH = $this->dbo->prepare("INSERT INTO feed VALUES (NULL, :sender, :receiver, :message)");
+			$data = array( 'sender' => $sender, 'receiver' => $receiver, 'creation' => $creation,
+							'reply_to' => $reply_to, 'message' => $message);
+			$STH = $this->dbo->prepare("INSERT INTO feed VALUES (NULL, :sender, :receiver, :creation, :reply_to, :message)");
 			$STH->execute($data);
 			$success = true;
 		} catch (Exception $e) {

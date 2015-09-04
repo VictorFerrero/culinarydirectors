@@ -16,6 +16,8 @@ class FeedController
 		$arrValues = array();
 		$arrValues['sender'] = $_REQUEST['sender'];
 		$arrValues['receiver'] = $_REQUEST['receiver'];
+		$arrValues['creation'] = date('Y-m-d H:i:s');
+		$arrValues['reply_to'] = $_REQUEST['reply_to'];
 		$arrValues['message'] = $_REQUEST['message'];
 		$arrResult = $this->feedModel->addMessage($arrValues);
 		return $arrResult;
@@ -29,7 +31,6 @@ class FeedController
 		return $arrResult;
 	}
 	
-	// -1 means the message is TO everyone
 	public function getMessagesBySenderId() {
 		$arrValues = array();
 		$arrValues['id'] = $_REQUEST['senderId'];
@@ -39,6 +40,7 @@ class FeedController
 		return $arrResult;
 	}
 	
+	// -1 means the message is TO everyone
 	public function getMessagesByReceiverId() {
 		$arrValues = array();
 		$arrValues['id'] = $_REQUEST['receiverId'];

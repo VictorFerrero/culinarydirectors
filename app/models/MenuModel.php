@@ -521,5 +521,23 @@ class MenuModel
 		$arrResult['success'] = $success;
 		return $arrResult;	
 	}
+	
+		public function getMenuForOrg($orgId) {
+		$sql = "SELECT menu.* from menu INNER JOIN user ON menu.chef_id = user.id WHERE user.orgId=:orgId AND menu.approved=1 ORDER BY datestamp ASC";
+		$arrResult = array();
+		$success = false;
+		 try {
+			$STH = $this->dbo->prepare($sql);
+			$STH->bindParam(":orgId", $orgId);
+			$STH->execute();
+			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
+			$arrResult['data'] = $fetch;
+			$success = true;
+		} catch (Exception $e) {
+			$arrResult['error'] = $e->getMessage();
+			$success = false; // assume username is invalid if we get an exception
+		}
+		return $arrResult;
+	}
 }
 ?>

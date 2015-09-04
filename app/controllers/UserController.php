@@ -3,9 +3,6 @@
 
 class UserController{
 		
-	private $userRole; // 0 = fratmember, 1 = chef, 2 = admin
-	private $username;
-	private $loggedIn;
 	private $userModel;
 	
 	public function __construct() {
@@ -27,31 +24,56 @@ class UserController{
 	// TODO: cookies
 	public function login() {
 		$arrValues = array();
-		$arrValues['username'] = $_REQUEST['username'];
+		$arrValues['email'] = $_REQUEST['email'];
 		$arrValues['password'] = $_REQUEST['password'];
-		$arrResult = $this->userModel->login($arrValues['username'], $arrValues['password']);
-		if($arrResult['login']) {
-			$arrUser = $arrResult['userInfo'];
-			$this->username = $arrUser['username'];
-			$this->userRole = $arrUser['userRole'];
-			$this->loggedIn = true;
+		$arrResult = $this->userModel->login($arrValues['email'], $arrValues['password']);
+		if($arrResult['login']) { // login was successful
+			// get the info about the user
+			$arrUser = $arrResult['user_info'];
+			// get the info for the org
+			$orgId = $arrUser['orgId'];
+			$orgModel = new OrgModel();
+			$arrValues = array();
+			$arrValues['id'] = $orgId;
+		    $arrValues['where_clause'] = "id=:id";
+			$arrOrg = $orgModel->getOrg($arrValues);
+			$orgModel = null;// call destructor, close db connections
+			// get the info for the feed
+			$feedModel = new FeedModel();
+			$arrValues = array();
+			$arrValues['id'] = $arrUser['id']; // get all messages in feed sent to this user
+			$arrValues['where_clause'] = "receiver=:id";
+			$arrFeed['received'] = $feedModel->getMessages($arrValues); // get the messages directed toward the user
+			$arrValues = array();
+			$arrValues['id'] = -1; // -1 means the message is sent to everyone
+			$arrValues['where_clause'] = "receiver=:id";
+			$arrFeed['to_everyone'] = $feedModel->getMessages($arrValues); // get the messages directed toward everyone
+			// TODO: more queries to get more messages from the feed
+			$feedModel = null;
+			// get the menu
+			$menuModel = new MenuModel();
+			$arrValues = new array();
+			$arrMenu = $menuModel->getMenuForOrg($orgId);
+			// get the menu items
+			$arrMenuItems = $menuModel->getMenuItemsForMenu($arrMenu['id']);
+			$menuModel = null;
+			$arrResult = array();
+			$arrResult['login'] = true; // since we destroy $arrResult values, we need this to send to client
+			$arrResult['user'] = $arrUser;
+			$arrResult['feed'] = $arrFeed;
+			$arrResult['menu'] = $arrMenu;
+			$arrResult['menu_item'] = $arrMenuItems;
+			return $arrResult;
 		}
 		else {
-			$this->loggedIn = false;
-			$this->username = "";
-			$this->userRole = -1;
-			print_r($arrResult);
+			// $arrResult will already have error info set from call to user model
 		}
 		return $arrResult;
 	}
 	
 	// TODO: cookies
 	public function logout() {
-		$this->loggedIn = false;
-		$this->username = "";
-		$this->userRole = -1;
 		$arrResult = array();
-		$arrResult['logout'] = true;
 		return $arrResult;
 	}
 	
@@ -62,7 +84,6 @@ class UserController{
 	public function register(){
 		$arrValues = array();
 		$arrResult = array();
-		$arrValues['username'] = $_REQUEST['username'];
 		$arrValues['password'] = $_REQUEST['password'];
 		$arrValues['email'] = $_REQUEST['email'];
 		$arrValues['userRole'] = $_REQUEST['userRole'];
@@ -101,6 +122,12 @@ class UserController{
 			print_r($arrResult);
 		}
 		*/
+	}
+	
+	public function forgotPassword() {
+		$email = $_REQUEST['email']; 
+		$arrResult = $this->userModel->forgotPassword($email);
+		return $arrResult;
 	}
 	
 	private function isInputValid($input, $flag) {
