@@ -349,12 +349,13 @@ class UserModel{
 		$arrResult['error'] = array();
 		$success = false;
 		 try {
+		 // first we look for the record of this email in the user table
 			$STH = $this->dbo->prepare("SELECT * FROM user WHERE email=:email");
 			$STH->bindParam(":email", $email);
 			$STH->execute();
 			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
 			$arrResult['data'] = $fetch;
-			if(is_array($fetch)) {
+			if(is_array($fetch)) { // we found a match
 				//TODO: we need to auto generate a new password, hashing is one way
 				$newPassword = "NEW_PASSWORD";
 				$hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
@@ -365,7 +366,7 @@ class UserModel{
 				// TODO: email formatting
 				mail($email, "SUBJECT: new password", $newPassword);
 			}
-			else {
+			else { // no match
 				$arrResult['error'][] = "email not found";
 			}
 			$success = true; // this will only be false if one of the queries caused an exception
