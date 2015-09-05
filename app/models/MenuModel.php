@@ -341,7 +341,7 @@ class MenuModel
 		'success' => true if menu was successfuly removed, false otherwise
 		);
 	*/
-	public function getMenuItemForMenu($menuId) {
+	public function getMenuItemsForMenu($menuId) {
 		$arrResult = array();
 		$success = false;
 		$sql = "SELECT * FROM menu_item WHERE menu_id=:menu_id";

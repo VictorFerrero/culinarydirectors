@@ -101,7 +101,7 @@ class UserModel{
 			$arrResult['error'][] = $e->getMessage();
 			$boolValidEmail = false; // assume email is invalid if we get an exception
 		}
-		if(!$boolValidUsername) {
+		if(!$boolValidEmail) {
 			$arrResult['success'] = false;
 			return $arrResult;
 		}
@@ -239,14 +239,14 @@ class UserModel{
 	}
 	
 	/**
-		expected input: username and password pair
+		expected input: email and password pair
 		
 		output:
 		$arrResult = array (
-		'error_message' => invalid username and password pair
+		'error_message' => invalid email and password pair
 		'error' => exception object for first query attempt
 		'userInfo' => the assoc array representing the users record in the db
-		'success' => true if user was successfuly added, false otherwise
+		'success' => 
 		);
 	*/
 	public function login($email, $password) {

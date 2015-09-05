@@ -36,16 +36,9 @@ public class APIThreadPool {
         APIThreadPool.pool.shutdown();
         cachedThreadPool = null;
     }
-    //functions
-    //TODO: make class for logging info on call, return that class instead of String
-    // JSON object will either contain data requested (user, menu) or it will have
-    // fields denoting success/ failure api call
-    //TODO: pass in params that API calling functions in CulinaryDirectorsAPI needs?
-    
-    // String route = "/menu/createMenu" | String callback = "createMenuSuccess"
+
     public void callAPIAsync
     (final HashMap<String,String> postDataHashMap, final String route, final String callback, final Activity activity){
-
         Runnable aRunnable = new Runnable(){
             @Override
             public void run() {

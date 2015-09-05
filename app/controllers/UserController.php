@@ -1,6 +1,4 @@
 <?php
-// TODO: login and logout need work
-
 class UserController{
 		
 	private $userModel;
@@ -21,7 +19,7 @@ class UserController{
 		$arrResult = $this->userModel->isUserInOrg($userId, $orgId);
 		return $arrResult;
 	}
-	// TODO: cookies
+
 	public function login() {
 		$arrValues = array();
 		$arrValues['email'] = $_REQUEST['email'];
@@ -52,17 +50,19 @@ class UserController{
 			$feedModel = null;
 			// get the menu
 			$menuModel = new MenuModel();
-			$arrValues = new array();
-			$arrMenu = $menuModel->getMenuForOrg($orgId);
-			// get the menu items
-			$arrMenuItems = $menuModel->getMenuItemsForMenu($arrMenu['id']);
+			$arrValues = array();
+			$arrMenu = $menuModel->getMenuForOrg($orgId); // [0] => assocArray for a menu, [1] => next menu, etc..
+			// go through each menu, and get the menu_items for that menu
+			foreach($arrMenu as $intIndex => $menu) { // menu will be an assoc array
+				// for each menu, add a field to the assoc array for the menu items
+				$menu['menu_items'] = $menuModel->getMenuItemsForMenu($menu['id']);
+			}
 			$menuModel = null;
 			$arrResult = array();
 			$arrResult['login'] = true; // since we destroy $arrResult values, we need this to send to client
 			$arrResult['user'] = $arrUser;
 			$arrResult['feed'] = $arrFeed;
 			$arrResult['menu'] = $arrMenu;
-			$arrResult['menu_item'] = $arrMenuItems;
 			return $arrResult;
 		}
 		else {
@@ -71,7 +71,6 @@ class UserController{
 		return $arrResult;
 	}
 	
-	// TODO: cookies
 	public function logout() {
 		$arrResult = array();
 		return $arrResult;
