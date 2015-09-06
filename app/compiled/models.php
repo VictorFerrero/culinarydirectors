@@ -67,10 +67,13 @@ class FeedModel
 		$success = false;		
 		$sender = $arrValues['sender'];
 		$receiver = $arrValues['receiver'];
+		$creation = $arrValues['creation'];
+		$reply_to = $arrValues['reply_to'];
 	    $message = $arrValues['message'];
 		 try {
-			$data = array( 'sender' => $sender, 'receiver' => $receiver, 'message' => $message);
-			$STH = $this->dbo->prepare("INSERT INTO feed VALUES (NULL, :sender, :receiver, :message)");
+			$data = array( 'sender' => $sender, 'receiver' => $receiver, 'creation' => $creation,
+							'reply_to' => $reply_to, 'message' => $message);
+			$STH = $this->dbo->prepare("INSERT INTO feed VALUES (NULL, :sender, :receiver, :creation, :reply_to, :message)");
 			$STH->execute($data);
 			$success = true;
 		} catch (Exception $e) {
@@ -83,7 +86,8 @@ class FeedModel
 	
 	/**
 		expected input: 
-		$id
+		$arrValues['id'] => field identifying what is to be deleted
+		$arrValues['where_clause'] => condition for where clause
 		
 		output:
 		$arrResult = array (
@@ -147,8 +151,6 @@ class FeedModel
 
 ?>
 <?php
-// TODO: we need accessors for the menu table. 
-// not sure what field we should be selecting on.
 class MenuModel
 {
 	private $dbo;
@@ -189,7 +191,7 @@ class MenuModel
 			$success = true;
 		} catch (Exception $e) {
 			$arrResult['error'] = $e->getMessage();
-			$success = false; // assume username is invalid if we get an exception
+			$success = false; 
 		}
 		$arrResult['success'] = $success;
 	    return $arrResult;
@@ -214,10 +216,12 @@ class MenuModel
 		$chef_id = $arrValues['chef_id'];
 		$week = $arrValues['week'];
 	    $day = $arrValues['day'];
+		$datestamp = $arrValues['datestamp'];
 		$approved = $arrValues['approved'];
 		 try {
-			$data = array( 'chef_id' => $chef_id, 'week' => $week, 'day' => $day, 'approved' => $approved);
-			$STH = $this->dbo->prepare("INSERT INTO menu VALUES (NULL, :chef_id, :week, :day, :approved)");
+			$data = array( 'chef_id' => $chef_id, 'week' => $week, 
+			'day' => $day,'datestamp' => $datestamp,'approved' => $approved);
+			$STH = $this->dbo->prepare("INSERT INTO menu VALUES (NULL, :chef_id, :week, :day, :datestamp, :approved)");
 			$STH->execute($data);
 			$success = true;
 		} catch (Exception $e) {
@@ -252,6 +256,7 @@ class MenuModel
 	 $chef_id = $arrValues['chef_id'];
 	 $week = $arrValues['week'];
 	 $day = $arrValues['day'];
+	 $datestamp = $arrValues['datestamp'];
 	 $approved = $arrValues['approved'];
 	 $sql = "UPDATE menu SET ";
 	 $data = array();
@@ -269,6 +274,11 @@ class MenuModel
 	 if(strcmp($day, "") != 0) {
 		 $sql = $sql . "day=?, ";
 		 $data[$index] = $day;
+		 $index = $index + 1;
+	 }
+	 if(strcmp($datestamp, "") != 0) {
+		 $sql = $sql . "datestamp=?, ";
+		 $data[$index] = $datestamp;
 		 $index = $index + 1;
 	 }
 	 if(strcmp($approved, "") != 0) {
@@ -483,7 +493,7 @@ class MenuModel
 		'success' => true if menu was successfuly removed, false otherwise
 		);
 	*/
-	public function getMenuItemForMenu($menuId) {
+	public function getMenuItemsForMenu($menuId) {
 		$arrResult = array();
 		$success = false;
 		$sql = "SELECT * FROM menu_item WHERE menu_id=:menu_id";
@@ -663,6 +673,26 @@ class MenuModel
 		$arrResult['success'] = $success;
 		return $arrResult;	
 	}
+	
+		public function getMenuForOrg($orgId) {
+		$sql = "SELECT menu.* from menu INNER JOIN user ON menu.chef_id = user.id WHERE user.orgId=:orgId AND menu.approved=1 ORDER BY datestamp ASC";
+		$arrResult = array();
+		$success = false;
+		$arrResult['data'] = array();
+		 try {
+			$STH = $this->dbo->prepare($sql);
+			$STH->bindParam(":orgId", $orgId);
+			$STH->execute();
+			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
+			$arrResult['data'] = $fetch;
+			$success = true;
+		} catch (Exception $e) {
+			$arrResult['error'] = $e->getMessage();
+			$success = false; // assume username is invalid if we get an exception
+		}
+		$arrResult['success'] = $success;
+		return $arrResult;
+	}
 }
 ?>
 <?php
@@ -682,8 +712,7 @@ class OrgModel{
 	 public function __destruct() {
 		$this->dbo = null;
 	}
-	
-	
+		
 	 /**
 		expected input: 
 		$arrValues => assoc array containing all fields neccessary 
@@ -695,7 +724,7 @@ class OrgModel{
 		);
 	*/
 	 public function createOrg($arrValues) {
-		$arrResult = array();
+	$arrResult = array();
 		$success = false;		
 		$name = $arrValues['name'];
 		$address = $arrValues['address'];
@@ -719,6 +748,7 @@ class OrgModel{
 		} catch (Exception $e) {
 			$success = false;
 			$arrResult['error'] = $e->getMessage();
+			$arrResult['name'] = $name;
 		}
 		$arrResult['success'] = $success;
 		return $arrResult;
@@ -823,10 +853,12 @@ class OrgModel{
 		'db_result' => result of running the query. 1 for success, 0 for failure
 		);
 	*/	
-	 public function deleteOrg($id) {
+	 public function deleteOrg($arrValues) {
 		$arrResult = array();
 		$success = false;
-		$sql = "DELETE FROM org WHERE id=:id";
+		$id = $arrValues['id'];
+		$whereClause = $arrValues['where_clause'];
+		$sql = "DELETE FROM org WHERE " . $whereClause;
 		try {
 			$STH = $this->dbo->prepare($sql);
 			$STH->bindParam(":id", $id);
@@ -849,12 +881,14 @@ class OrgModel{
 		'success' => true if org was successfully retrieved from the db
 		);
 	*/
-	 public function getOrgById($id) {
+	 public function getOrg($arrValues) {
 		 $success = false;
 		 $arrResult = array();
-		 
+		 $id = $arrValues['id'];
+		 $whereClause = $arrValues['where_clause'];
+		 $sql = "SELECT * FROM org WHERE " . $whereClause;
 		 try {
-			$STH = $this->dbo->prepare("SELECT * FROM org WHERE id=:id");
+			$STH = $this->dbo->prepare($sql);
 			$STH->bindParam(':id', $id);
 			$STH->execute();
 			$row = $STH->fetch(PDO::FETCH_ASSOC);
@@ -875,10 +909,9 @@ class TestModel{
 }
 ?><?php
 	// id | username | password | email | userRole | orgId
-	//TODO: get true/false if user_id is in org_id
 class UserModel{
 			
-	private $dbo;
+	private $dbo; 
 	
 	 public function __construct() {
 			$db = new DB_Connections();
@@ -889,7 +922,10 @@ class UserModel{
 		$this->dbo = null;
 	}
 
-// TODO: success is getting set to false when it should be true
+	/**
+	*	True if the user denoted by $userId is also in the organization
+	* 	that corresponds to $orgId 
+	* */
 	public function isUserInOrg($userId, $orgId) {
 		$success = false;
 		$arrResult = array();
@@ -900,7 +936,7 @@ class UserModel{
 			$STH->bindParam(":id", $userId);
 			$STH->execute();
 			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
-			$succcess = true;
+			$success = true;
 			if($fetch[0]['orgId'] == $orgId) {
 				$returnValue = true;
 			}
@@ -949,44 +985,55 @@ class UserModel{
 		// first we check if username already exists
 		$arrResult = array();
 		$success = false;
-		$username = $arrValues['username'];
 		$hashedPassword = password_hash($arrValues['password'], PASSWORD_BCRYPT);
 		$email = $arrValues['email'];
 		$userRole = $arrValues['userRole'];
 		$orgId = $arrValues['orgId'];
 		$arrResult['error'] = array();
-		// see if username has been used already
-		$boolValidUsername = false;
+		// see if email has been used already
+		$boolValidEmail = false;
 		 try {
-			$STH = $this->dbo->prepare("SELECT * FROM user WHERE username=:username");
-			$STH->bindParam(":username", $username);
+			$STH = $this->dbo->prepare("SELECT * FROM user WHERE email=:email");
+			$STH->bindParam(":email", $email);
 			$STH->execute();
 			$fetch = $STH->fetch(PDO::FETCH_ASSOC);
 			if(is_array($fetch)) {
-				// username exists in the db
-				$boolValidUsername = false;
-				$arrResult['error'][] = "the username already exists";
+				// email exists in the db
+				$boolValidEmail = false;
+				$arrResult['error'][] = "the email already exists";
 			}
 			else {
-				// username is available
-				$boolValidUsername = true;
+				// email is available
+				$boolValidEmail = true;
 			}
 		} catch (Exception $e) {
 			$arrResult['error'][] = $e->getMessage();
-			$boolValidUsername = false; // assume username is invalid if we get an exception
+			$boolValidEmail = false; // assume email is invalid if we get an exception
 		}
-		if(!$boolValidUsername) {
+		if(!$boolValidEmail) {
 			$arrResult['success'] = false;
 			return $arrResult;
 		}
-		// we have a valid username. So lets add it to the db
+		// we have a valid email. So lets add it to the db
 		 try {
-			$data = array( 'username' => $username, 'password' => $hashedPassword, 'email' => $email, 'orgId' => $orgId, 'userRole' => $userRole);
-			$STH = $this->dbo->prepare("INSERT INTO user VALUES (NULL, :username, :password, :email, :userRole, :orgId)");
+			$data = array('password' => $hashedPassword, 'email' => $email, 'orgId' => $orgId, 'userRole' => $userRole);
+			$STH = $this->dbo->prepare("INSERT INTO user VALUES (NULL, :password, :email, :userRole, :orgId)");
 			$STH->execute($data);
 			$success = true;
 			// TODO: now, based on the userRole, insert a new record into: member_info, chef_info, or admin_info
-				//use same error checks as with the above insert query
+			//use same error checks as with the above insert query
+			$userRole = $data['userRole'];
+			switch($userRole) {
+				case 0: // frat member
+				break;
+				case 1: // chef
+				break;
+				case 2: // admin
+				break;
+				default: 
+				$arrResult['error'][] = "invalid user role stored in the database";
+				break;
+			}
 		} catch (Exception $e) {
 			$success = false;
 			$arrResult['error'][] = $e->getMessage();
@@ -994,10 +1041,11 @@ class UserModel{
 		// just send some stuff back to caller for debug
 		$arrResult['success'] = $success;
 		// below is for debug
-		$arrResult['username'] = $username;
+		/*
 		$arrResult['hashed_password'] = $hashedPassword;
 		$arrResult['email'] = $email;
 		$arrResult['userRole'] = $userRole;
+		*/
 		return $arrResult;	
 	}
 	
@@ -1010,6 +1058,7 @@ class UserModel{
 		'success' => true if user was successfuly removed from db, false otherwise
 		);
 	*/
+	// should we pass in another variable for userRole??
 	public function deleteUser($username,$password) {
 		$arrResult = array();
 		$success = false;
@@ -1054,7 +1103,6 @@ class UserModel{
 	 $arrResult = array();
 	 $success = false;
 	 $id = $arrValues['id'];
-	 $username = $arrValues['username'];
 	 $hashedPassword = password_hash($arrValues['password'], PASSWORD_BCRYPT);
 	 $email = $arrValues['email'];
 	 $userRole = $arrValues['userRole'];
@@ -1062,11 +1110,7 @@ class UserModel{
 	 $sql = "UPDATE user SET ";
 	 $data = array();
 	 $index = 0;
-	 if(strcmp($username, "") != 0) {
-		 $sql = $sql . "username=?, ";
-		 $data[$index] = $username;
-		 $index = $index + 1;
-	 }
+	 // go through all possible fields and construct the SET CLAUSE
 	 if(strcmp($hashedPassword, "") != 0) {
 		 $sql = $sql . "password=?, ";
 		 $data[$index] = $hashedPassword;
@@ -1087,9 +1131,9 @@ class UserModel{
 		 $data[$index] = $orgId;
 		 $index = $index + 1;
 	 }
-	 // get rid of the last two characters
+	 // get rid of the last two characters (", ")
 	 $sql = substr($sql,0,-2);
-	 $sql = $sql . " WHERE id=?";
+	 $sql = $sql . " WHERE id=?"; // put together the query
 	 $data[$index] = $id;
 	try {
 		 $STH = $this->dbo->prepare($sql);
@@ -1104,50 +1148,64 @@ class UserModel{
 	}
 	
 	/**
-		expected input: username and password pair
+		expected input: email and password pair
 		
 		output:
 		$arrResult = array (
-		'error_message' => invalid username and password pair
+		'error_message' => invalid email and password pair
 		'error' => exception object for first query attempt
 		'userInfo' => the assoc array representing the users record in the db
-		'success' => true if user was successfuly added, false otherwise
+		'success' => 
 		);
 	*/
-	public function login($username, $password) {
+	public function login($email, $password) {
+		$userId = null;
 		$success = false;
 		$arrResult = array();	
 		$arrResult['error_message'] = array();
 		$arrResult['login'] = false;
 		$success = false;
 		 try {
-			$STH = $this->dbo->prepare("SELECT * FROM user WHERE username=:username");
-			$STH->bindParam(":username", $username);
+			$STH = $this->dbo->prepare("SELECT * FROM user WHERE email=:email");
+			$STH->bindParam(":email", $email);
 			$STH->execute();
-			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
-		//	print_r($fetch);
+			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC); // should we use fetch or fetchAll? should only be 1 record
 			if(is_array($fetch)) {
 				$hashedPassword = $fetch[0]['password'];
-//				echo $hashedPassword;
 				if(password_verify($password, $hashedPassword)) {
-				// username exists in the database and pw hash compare returned true
-				$arrResult['userInfo'] = $fetch[0]; // not sure what to return. just putting this here for now
+				// email exists in the database and pw hash compare returned true
+				$arrResult['user_info'] = $fetch[0]; // not sure what to return. just putting this here for now
 				$arrResult['login'] = true; // the login had the correct credentials
+				$userId = $fetch[0]['id']; // get userId for next query
 				// find info specific to this type of user
 				switch($fetch[0]['userRole']){
 					case 0: //member
 						//query user_info table and assign to ['member_info']
+						$sql = "SELECT * FROM user_info WHERE userId=:userId";
 						break;
 					case 1: //chef
 						//query chef_info table and assign to ['chef_info']
+						"SELECT * FROM chef_info WHERE userId=:userId";
 						break;
 					case 2: //admin
 						//query admin_info table and assign to ['admin_info']
+						"SELECT * FROM admin_info WHERE userId=:userId";
 						break;
 					default: 
 						//throw error, somehow userRole isn't a number
+						throw new Exception("user role is not a valid number in the database");
 						break;
 				}
+				// keep commented for now so as to not cause unexpected bugs.
+				// TODO: still need schemas for the _info tables so that we can
+				// test the below code.
+				/* 
+				$STH = $this->dbo->prepare($sql);
+				$STH->bindParam(":userId", $userId);
+				$STH->execute();
+				$fetch = $STH->fetch(PDO::FETCH_ASSOC); // use fetch or fetchAll? there should only be 1 record
+				$arrResult['type_info'] = $fetch;
+				*/
 				$success = true;
 			}
 			else {
@@ -1156,17 +1214,12 @@ class UserModel{
 				}
 			}
 			else {
-				// invalid username
 				$arrResult['error_message'][] = "invalid username";
 				$success = false;
 			}
 		} catch (Exception $e) {
 			$arrResult['error'] = $e->getMessage();
-			$success = false; // assume username is invalid if we get an exception
-		}
-		if(!$success) {
-			$arrResult['success'] = $success;
-			return $arrResult;
+			$success = false; 
 		}
 		$arrResult['success'] = $success;
 		return $arrResult;
@@ -1199,6 +1252,39 @@ class UserModel{
 		$arrResult['success'] = $success;
 	    return $arrResult;
 	}
+	
+	public function forgotPassword($email) {
+		$arrResult = array();
+		$arrResult['error'] = array();
+		$success = false;
+		 try {
+		 // first we look for the record of this email in the user table
+			$STH = $this->dbo->prepare("SELECT * FROM user WHERE email=:email");
+			$STH->bindParam(":email", $email);
+			$STH->execute();
+			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
+			$arrResult['data'] = $fetch;
+			if(is_array($fetch)) { // we found a match
+				//TODO: we need to auto generate a new password, hashing is one way
+				$newPassword = "NEW_PASSWORD";
+				$hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+				$STH = $this->dbo->prepare("UPDATE user SET password=:password WHERE id=:id");
+				$STH->bindParams(":password", $hashedPassword);
+				$STH->bindParams(":id", $fetch[0]['id']);
+				$arrResult['password_query'] = $STH->execute();
+				// TODO: email formatting
+				mail($email, "SUBJECT: new password", $newPassword);
+			}
+			else { // no match
+				$arrResult['error'][] = "email not found";
+			}
+			$success = true; // this will only be false if one of the queries caused an exception
+		} catch (Exception $e) {
+			$arrResult['error'][] = $e->getMessage();
+			$success = false; 
+		}
+		$arrResult['success'] = $success;
+	    return $arrResult;
+	}
 }
-
 ?>

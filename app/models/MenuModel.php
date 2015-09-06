@@ -526,6 +526,7 @@ class MenuModel
 		$sql = "SELECT menu.* from menu INNER JOIN user ON menu.chef_id = user.id WHERE user.orgId=:orgId AND menu.approved=1 ORDER BY datestamp ASC";
 		$arrResult = array();
 		$success = false;
+		$arrResult['data'] = array();
 		 try {
 			$STH = $this->dbo->prepare($sql);
 			$STH->bindParam(":orgId", $orgId);
@@ -537,6 +538,7 @@ class MenuModel
 			$arrResult['error'] = $e->getMessage();
 			$success = false; // assume username is invalid if we get an exception
 		}
+		$arrResult['success'] = $success;
 		return $arrResult;
 	}
 }

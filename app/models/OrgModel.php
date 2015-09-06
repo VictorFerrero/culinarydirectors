@@ -27,7 +27,7 @@ class OrgModel{
 		);
 	*/
 	 public function createOrg($arrValues) {
-		$arrResult = array();
+	$arrResult = array();
 		$success = false;		
 		$name = $arrValues['name'];
 		$address = $arrValues['address'];
@@ -51,6 +51,7 @@ class OrgModel{
 		} catch (Exception $e) {
 			$success = false;
 			$arrResult['error'] = $e->getMessage();
+			$arrResult['name'] = $name;
 		}
 		$arrResult['success'] = $success;
 		return $arrResult;

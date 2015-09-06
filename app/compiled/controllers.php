@@ -16,8 +16,9 @@ class FeedController
 		$arrValues = array();
 		$arrValues['sender'] = $_REQUEST['sender'];
 		$arrValues['receiver'] = $_REQUEST['receiver'];
+		$arrValues['creation'] = date('Y-m-d H:i:s');
+		$arrValues['reply_to'] = $_REQUEST['reply_to'];
 		$arrValues['message'] = $_REQUEST['message'];
-		
 		$arrResult = $this->feedModel->addMessage($arrValues);
 		return $arrResult;
 	}
@@ -30,17 +31,16 @@ class FeedController
 		return $arrResult;
 	}
 	
-	// -1 means the message is TO everyone
 	public function getMessagesBySenderId() {
 		$arrValues = array();
 		$arrValues['id'] = $_REQUEST['senderId'];
 		$arrValues['where_clause'] = "sender=:id";
 		$arrResult = $this->feedModel->getMessages($arrValues);
-		
 		$arrMessages = $arrResult['data'];
 		return $arrResult;
 	}
 	
+	// -1 means the message is TO everyone
 	public function getMessagesByReceiverId() {
 		$arrValues = array();
 		$arrValues['id'] = $_REQUEST['receiverId'];
@@ -56,7 +56,6 @@ class FeedController
 		$arrValues['id'] = $_REQUEST['id'];
 		$arrValues['where_clause'] = "id=:id";
 		$arrResult = $this->feedModel->getMessages($arrValues);
-		
 		$arrMessages = $arrResult['data'];
 		return $arrResult;
 	}
@@ -100,6 +99,7 @@ class MenuController{
 		$arrValues['chef_id'] = $_REQUEST['chef_id'];
 		$arrValues['week'] = $_REQUEST['week'];
 	    $arrValues['day'] = $_REQUEST['day'];
+	    $arrValues['datestamp'] = $_REQUEST['datestamp'];
 		$arrValues['approved'] = $_REQUEST['approved'];
 		$arrResult = array();
 		$arrResult['success'] = false; // assume it does not work
@@ -107,7 +107,7 @@ class MenuController{
 		if($this->isInputValid($arrValues['week'], 0)) {
 			if($this->isInputValid($arrValues['day'], 1)) {
 				if($this->isInputValid($arrValues['approved'], 2)) {
-				$arrResult = $this->menuModel->createMenu($arrValues);
+					$arrResult = $this->menuModel->createMenu($arrValues);
 				}
 			}
 		}
@@ -122,6 +122,7 @@ class MenuController{
 		$arrValues['chef_id'] = $_REQUEST['chef_id'];
 		$arrValues['week'] = $_REQUEST['week']; 
 		$arrValues['day'] = $_REQUEST['day'];
+		$arrValues['datestamp'] = $_REQUEST['datestamp'];
 		$arrValues['approved'] = $_REQUEST['approved'];
 		$arrResult = array();
 		$arrResult['success'] = false; // assume it does not work
@@ -129,7 +130,7 @@ class MenuController{
 		if($this->isInputValid($arrValues['week'], 0)) {
 			if($this->isInputValid($arrValues['day'], 1)) {
 				if($this->isInputValid($arrValues['approved'], 2)) {
-				$arrResult = $arrResult = $this->menuModel->editMenu($arrValues);
+					$arrResult = $arrResult = $this->menuModel->editMenu($arrValues);
 				}
 			}
 		}
@@ -167,7 +168,7 @@ class MenuController{
 		$arrValues['meal'] = $_REQUEST['meal'];
 		$arrResult['success'] = false;
 		if(strcmp($arrValues['meal'], "" != 0)) {
-			if($this->isInputValid($arrValues['meal'], 2)) {
+			if($this->isInputValid($arrValues['meal'], 2)) { // meal can only be 0 or 1
 				$arrResult = $this->menuModel->editMenuItem($arrValues);
 			}
 		}
@@ -194,7 +195,7 @@ class MenuController{
 		$arrValues['menu_item_id'] = $_REQUEST['menu_item_id'];
 		$arrValues['menu_id'] = $_REQUEST['menu_id'];
 		$arrResult['success'] = false; // assume the input is invalid
-		if($this->isInputValid($arrValues['feedback_type'], 3)) {
+		if($this->isInputValid($arrValues['feedback_type'], 3)) { // can be 0,1 or 2
 			$arrResult = $this->menuModel->createFeedback($arrValues);
 		}
 		return $arrResult;
@@ -289,7 +290,6 @@ class OrgController{
 		$arrValues['email'] =  $_REQUEST['email'];
 		$arrValues['phone2'] = $_REQUEST['phone2'];
 		$arrValues['profileJSON'] = $_REQUEST['profileJSON'];
-		
 		$arrResult = $this->orgModel->createOrg($arrValues);
 		return $arrResult;
 	 }
@@ -312,14 +312,18 @@ class OrgController{
 	 }
 	 
 	 public function deleteOrg() {
-		 $id = $_REQUEST['id'];
-		 $arrResult = $this->orgModel->deleteOrg($id);
+		 $arrValues = array();
+		 $arrValues['id'] = $_REQUEST['id'];
+		 $arrValues['where_clause'] = "id=:id";
+		 $arrResult = $this->orgModel->deleteOrg($arrValues);
 		 return $arrResult;
 	 }
 	 
 	 public function getOrgById() {
-		$id = $_REQUEST['id'];
-		$arrResult = $this->orgModel->getOrgById($id);
+		$arrValues = array();
+		$arrValues['id'] = $_REQUEST['id'];
+		$arrValues['where_clause'] = "id=:id";
+		$arrResult = $this->orgModel->getOrgById($arrValues);
 		return $arrResult;
 	 }
 }
@@ -329,13 +333,8 @@ class Test{
 	public static function getIndex(){return TestModel::getIndexText();}
 }
 ?><?php
-// TODO: login and logout need work
-
 class UserController{
 		
-	private $userRole; // 0 = fratmember, 1 = chef, 2 = admin
-	private $username;
-	private $loggedIn;
 	private $userModel;
 	
 	public function __construct() {
@@ -354,34 +353,65 @@ class UserController{
 		$arrResult = $this->userModel->isUserInOrg($userId, $orgId);
 		return $arrResult;
 	}
-	// TODO: cookies
+
 	public function login() {
 		$arrValues = array();
-		$arrValues['username'] = $_REQUEST['username'];
+		$arrValues['email'] = $_REQUEST['email'];
 		$arrValues['password'] = $_REQUEST['password'];
-		$arrResult = $this->userModel->login($arrValues['username'], $arrValues['password']);
-		if($arrResult['login']) {
-			$arrUser = $arrResult['userInfo'];
-			$this->username = $arrUser['username'];
-			$this->userRole = $arrUser['userRole'];
-			$this->loggedIn = true;
+		$arrResult = $this->userModel->login($arrValues['email'], $arrValues['password']);
+		if($arrResult['login']) { // login was successful
+			// get the info about the user
+			$arrUser = $arrResult;
+			// get the info for the org
+			$orgId = $arrUser['user_info']['orgId']; // the id of the org that the user is in
+			$orgModel = new OrgModel();
+			$arrValues = array();
+			$arrValues['id'] = $orgId;
+		    $arrValues['where_clause'] = "id=:id";
+			$arrOrg = $orgModel->getOrg($arrValues);
+			$orgModel = null;// call destructor, close db connections
+			// get the info for the feed
+			$feedModel = new FeedModel();
+			$arrValues = array();
+			$arrValues['id'] = $arrUser['user_info']['id']; 
+			$arrValues['where_clause'] = "receiver=:id"; // get all messages in feed sent to this user
+			$arrTemp = $feedModel->getMessages($arrValues);
+			$arrFeed['received'] = $arrTemp; // get the messages directed toward the user
+			$arrValues = array();
+			$arrValues['id'] = -1; // -1 means the message is sent to everyone
+			$arrValues['where_clause'] = "receiver=:id";
+			$arrTemp = $feedModel->getMessages($arrValues);
+			$arrFeed['to_everyone'] = $arrTemp; // get the messages directed toward everyone
+			// TODO: more queries to get more messages from the feed
+			$feedModel = null;
+			// get the menu
+			$menuModel = new MenuModel();
+			$arrValues = array();
+			$arrTemp =  $menuModel->getMenuForOrg($orgId);
+			foreach($arrTemp['data'] as $index => $arrAssoc) {
+				$arrTemp['data'][$index]['menu_items'] = $menuModel->getMenuItemsForMenu($arrTemp['data'][$index]['id']);
+			}
+			$arrMenu = $arrTemp; // [0] => assocArray for a menu, [1] => next menu, etc..
+			// go through each menu, and get the menu_items for that menu
+//			$arrTemp = $menuModel->getMenuItemsForMenu($arrMenu['data'][0]['id']);
+//			$arrMenu['menu_items'] = $arrTemp['data'];
+			$menuModel = null;
+			$arrResult = array();
+			$arrResult['login'] = true; // since we destroy $arrResult values, we need this to send to client
+			$arrResult['user'] = $arrUser;
+			$arrResult['feed'] = $arrFeed;
+			$arrResult['menu'] = $arrMenu;
+			$arrResult['org'] = $arrOrg;
+			return $arrResult;
 		}
 		else {
-			$this->loggedIn = false;
-			$this->username = "";
-			$this->userRole = -1;
-			print_r($arrResult);
+			// $arrResult will already have error info set from call to user model
 		}
 		return $arrResult;
 	}
 	
-	// TODO: cookies
 	public function logout() {
-		$this->loggedIn = false;
-		$this->username = "";
-		$this->userRole = -1;
 		$arrResult = array();
-		$arrResult['logout'] = true;
 		return $arrResult;
 	}
 	
@@ -391,12 +421,16 @@ class UserController{
 	
 	public function register(){
 		$arrValues = array();
-		$arrValues['username'] = $_REQUEST['username'];
+		$arrResult = array();
 		$arrValues['password'] = $_REQUEST['password'];
 		$arrValues['email'] = $_REQUEST['email'];
 		$arrValues['userRole'] = $_REQUEST['userRole'];
 		$arrValues['orgId'] = $_REQUEST['orgId'];
-		$arrResult = $this->userModel->register($arrValues);
+		$arrResult['valid_input'] = false; // assume invalid input 
+		if($this->isInputValid($arrValues['userRole'], 0)) {
+			$arrResult = $this->userModel->register($arrValues);
+			$arrResult['valid_input'] = true;
+		}
 		return $arrResult;
 		/*
 		if($arrResult['success']) {
@@ -426,6 +460,25 @@ class UserController{
 			print_r($arrResult);
 		}
 		*/
+	}
+	
+	public function forgotPassword() {
+		$email = $_REQUEST['email']; 
+		$arrResult = $this->userModel->forgotPassword($email);
+		return $arrResult;
+	}
+	
+	private function isInputValid($input, $flag) {
+		
+		switch($flag) {
+			case 0: // used to validate userRole when registering a user
+				if($input >=0 && $input <= 2) {
+					return true;
+				}
+				return false;
+			break;
+		}
+		return false;
 	}
 }
 

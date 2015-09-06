@@ -125,9 +125,11 @@ public class LoginActivity extends Activity {
             String userJson = data.getJSONObject("user").toString();
             String menuJson = data.getJSONObject("menu").toString();
             String orgJson = data.getJSONObject("org").toString();
-            intent.putExtra(MENUS, menuJson);
-            intent.putExtra(USER, userJson);
-            intent.putExtra(ORG, orgJson);
+            String feedJson = data.getJSONObject("feed").toString();
+            intent.putExtra(LoginActivity.MENUS, menuJson);
+            intent.putExtra(LoginActivity.USER, userJson);
+            intent.putExtra(LoginActivity.ORG, orgJson);
+            intent.putExtra(LoginActivity.FEED, feedJson);
             startActivity(intent);
         } catch(JSONException e) {
             e.printStackTrace();

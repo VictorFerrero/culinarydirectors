@@ -27,9 +27,9 @@ class UserController{
 		$arrResult = $this->userModel->login($arrValues['email'], $arrValues['password']);
 		if($arrResult['login']) { // login was successful
 			// get the info about the user
-			$arrUser = $arrResult['user_info'];
+			$arrUser = $arrResult;
 			// get the info for the org
-			$orgId = $arrUser['orgId'];
+			$orgId = $arrUser['user_info']['orgId']; // the id of the org that the user is in
 			$orgModel = new OrgModel();
 			$arrValues = array();
 			$arrValues['id'] = $orgId;
@@ -39,30 +39,35 @@ class UserController{
 			// get the info for the feed
 			$feedModel = new FeedModel();
 			$arrValues = array();
-			$arrValues['id'] = $arrUser['id']; // get all messages in feed sent to this user
-			$arrValues['where_clause'] = "receiver=:id";
-			$arrFeed['received'] = $feedModel->getMessages($arrValues); // get the messages directed toward the user
+			$arrValues['id'] = $arrUser['user_info']['id']; 
+			$arrValues['where_clause'] = "receiver=:id"; // get all messages in feed sent to this user
+			$arrTemp = $feedModel->getMessages($arrValues);
+			$arrFeed['received'] = $arrTemp; // get the messages directed toward the user
 			$arrValues = array();
 			$arrValues['id'] = -1; // -1 means the message is sent to everyone
 			$arrValues['where_clause'] = "receiver=:id";
-			$arrFeed['to_everyone'] = $feedModel->getMessages($arrValues); // get the messages directed toward everyone
+			$arrTemp = $feedModel->getMessages($arrValues);
+			$arrFeed['to_everyone'] = $arrTemp; // get the messages directed toward everyone
 			// TODO: more queries to get more messages from the feed
 			$feedModel = null;
 			// get the menu
 			$menuModel = new MenuModel();
 			$arrValues = array();
-			$arrMenu = $menuModel->getMenuForOrg($orgId); // [0] => assocArray for a menu, [1] => next menu, etc..
-			// go through each menu, and get the menu_items for that menu
-			foreach($arrMenu as $intIndex => $menu) { // menu will be an assoc array
-				// for each menu, add a field to the assoc array for the menu items
-				$menu['menu_items'] = $menuModel->getMenuItemsForMenu($menu['id']);
+			$arrTemp =  $menuModel->getMenuForOrg($orgId);
+			foreach($arrTemp['data'] as $index => $arrAssoc) {
+				$arrTemp['data'][$index]['menu_items'] = $menuModel->getMenuItemsForMenu($arrTemp['data'][$index]['id']);
 			}
+			$arrMenu = $arrTemp; // [0] => assocArray for a menu, [1] => next menu, etc..
+			// go through each menu, and get the menu_items for that menu
+//			$arrTemp = $menuModel->getMenuItemsForMenu($arrMenu['data'][0]['id']);
+//			$arrMenu['menu_items'] = $arrTemp['data'];
 			$menuModel = null;
 			$arrResult = array();
 			$arrResult['login'] = true; // since we destroy $arrResult values, we need this to send to client
 			$arrResult['user'] = $arrUser;
 			$arrResult['feed'] = $arrFeed;
 			$arrResult['menu'] = $arrMenu;
+			$arrResult['org'] = $arrOrg;
 			return $arrResult;
 		}
 		else {
