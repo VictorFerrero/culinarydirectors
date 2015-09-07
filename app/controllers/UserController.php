@@ -54,13 +54,11 @@ class UserController{
 			$menuModel = new MenuModel();
 			$arrValues = array();
 			$arrTemp =  $menuModel->getMenuForOrg($orgId);
+			// go through each menu and get the menu items that are on that menu
 			foreach($arrTemp['data'] as $index => $arrAssoc) {
 				$arrTemp['data'][$index]['menu_items'] = $menuModel->getMenuItemsForMenu($arrTemp['data'][$index]['id']);
 			}
-			$arrMenu = $arrTemp; // [0] => assocArray for a menu, [1] => next menu, etc..
-			// go through each menu, and get the menu_items for that menu
-//			$arrTemp = $menuModel->getMenuItemsForMenu($arrMenu['data'][0]['id']);
-//			$arrMenu['menu_items'] = $arrTemp['data'];
+			$arrMenu = $arrTemp;
 			$menuModel = null;
 			$arrResult = array();
 			$arrResult['login'] = true; // since we destroy $arrResult values, we need this to send to client
@@ -116,16 +114,6 @@ class UserController{
 		$arrValues['password'] = $_REQUEST['password'];
 		$arrResult = $this->userModel->deleteUser($arrValues['username'], $arrValues['password']);
 		return $arrResult;
-		/*
-		if($arrResult['success']) {
-			//successfully added user
-			return $arrResult;
-		}
-		else {
-			//there was an error
-			print_r($arrResult);
-		}
-		*/
 	}
 	
 	public function forgotPassword() {

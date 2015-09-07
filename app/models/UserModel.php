@@ -110,10 +110,8 @@ class UserModel{
 			$data = array('password' => $hashedPassword, 'email' => $email, 'orgId' => $orgId, 'userRole' => $userRole);
 			$STH = $this->dbo->prepare("INSERT INTO user VALUES (NULL, :password, :email, :userRole, :orgId)");
 			$STH->execute($data);
-			$success = true;
 			// TODO: now, based on the userRole, insert a new record into: member_info, chef_info, or admin_info
 			//use same error checks as with the above insert query
-			$userRole = $data['userRole'];
 			switch($userRole) {
 				case 0: // frat member
 				break;
@@ -122,7 +120,7 @@ class UserModel{
 				case 2: // admin
 				break;
 				default: 
-				$arrResult['error'][] = "invalid user role stored in the database";
+				$arrResult['error'][] = "invalid user role. Can be 0, 1, 2";
 				break;
 			}
 		} catch (Exception $e) {
@@ -150,17 +148,17 @@ class UserModel{
 		);
 	*/
 	// should we pass in another variable for userRole??
-	public function deleteUser($username,$password) {
+	public function deleteUser($email,$password) {
 		$arrResult = array();
 		$success = false;
 		 try {
-			$STH = $this->dbo->prepare("SELECT * FROM user WHERE username=:username");
-			$STH->bindParam(":username", $username);
+			$STH = $this->dbo->prepare("SELECT * FROM user WHERE email=:email");
+			$STH->bindParam(":email", $email);
 			$STH->execute();
 			$fetch = $STH->fetch(PDO::FETCH_ASSOC);
 			if(password_verify($password,$fetch['password'])){ //TODO: or if admin is deleting a user
-				$STH = $this->dbo->prepare("DELETE FROM user WHERE username=:username");
-				$STH->bindParam(":username", $username);
+				$STH = $this->dbo->prepare("DELETE FROM user WHERE email=:email");
+				$STH->bindParam(":email", $email);
 				$STH->execute();	
 				$success = true;
 			} else {
@@ -169,7 +167,6 @@ class UserModel{
 			}
 		} catch (Exception $e) {
 			$arrResult['error'] = $e->getMessage();
-			$boolValidUsername = false; // assume username is invalid if we get an exception
 		}
 		$arrResult['success'] = $success;
 		return $arrResult;
@@ -194,7 +191,8 @@ class UserModel{
 	 $arrResult = array();
 	 $success = false;
 	 $id = $arrValues['id'];
-	 $hashedPassword = password_hash($arrValues['password'], PASSWORD_BCRYPT);
+	 $password = $arrValues['password'];
+	 $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 	 $email = $arrValues['email'];
 	 $userRole = $arrValues['userRole'];
 	 $orgId = $arrValues['orgId'];
@@ -202,7 +200,7 @@ class UserModel{
 	 $data = array();
 	 $index = 0;
 	 // go through all possible fields and construct the SET CLAUSE
-	 if(strcmp($hashedPassword, "") != 0) {
+	 if(strcmp($password, "") != 0) {
 		 $sql = $sql . "password=?, ";
 		 $data[$index] = $hashedPassword;
 		 $index = $index + 1;
@@ -224,7 +222,7 @@ class UserModel{
 	 }
 	 // get rid of the last two characters (", ")
 	 $sql = substr($sql,0,-2);
-	 $sql = $sql . " WHERE id=?"; // put together the query
+	 $sql = $sql . " WHERE id=?"; // put together the where clause
 	 $data[$index] = $id;
 	try {
 		 $STH = $this->dbo->prepare($sql);
@@ -344,27 +342,30 @@ class UserModel{
 	    return $arrResult;
 	}
 	
+	// new password for my account in the database is 6928
 	public function forgotPassword($email) {
 		$arrResult = array();
 		$arrResult['error'] = array();
 		$success = false;
+		$newPassword = rand(1000, 9999);
 		 try {
 		 // first we look for the record of this email in the user table
 			$STH = $this->dbo->prepare("SELECT * FROM user WHERE email=:email");
 			$STH->bindParam(":email", $email);
 			$STH->execute();
-			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
+			$fetch = $STH->fetch(PDO::FETCH_ASSOC); // emails should be unique, use fetch instead of fetchAll
 			$arrResult['data'] = $fetch;
 			if(is_array($fetch)) { // we found a match
-				//TODO: we need to auto generate a new password, hashing is one way
-				$newPassword = "NEW_PASSWORD";
 				$hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
-				$STH = $this->dbo->prepare("UPDATE user SET password=:password WHERE id=:id");
-				$STH->bindParams(":password", $hashedPassword);
-				$STH->bindParams(":id", $fetch[0]['id']);
-				$arrResult['password_query'] = $STH->execute();
+				$STH = $this->dbo->prepare("UPDATE user SET password=? WHERE id=?");
+				$arrData = array();
+				$arrData[0] = $hashedPassword;
+				$arrData[1] = $fetch['id'];
+				$arrResult['password_query'] = $STH->execute($arrData);
 				// TODO: email formatting
-				mail($email, "SUBJECT: new password", $newPassword);
+				$msg = "Your new password is " . $newPassword . "\n";
+				$msg = $msg . "Please change it to a longer, more secure password after logging in";
+				mail($email, "Password Reset for Culinary Directors", $msg);
 			}
 			else { // no match
 				$arrResult['error'][] = "email not found";
@@ -375,6 +376,7 @@ class UserModel{
 			$success = false; 
 		}
 		$arrResult['success'] = $success;
+		$arrResult['newPassword'] = $newPassword;
 	    return $arrResult;
 	}
 }

@@ -1253,27 +1253,31 @@ class UserModel{
 	    return $arrResult;
 	}
 	
+	
+	// new password for my account in the database is 3390
 	public function forgotPassword($email) {
 		$arrResult = array();
 		$arrResult['error'] = array();
 		$success = false;
+		$newPassword = rand(1000, 9999);
 		 try {
 		 // first we look for the record of this email in the user table
 			$STH = $this->dbo->prepare("SELECT * FROM user WHERE email=:email");
 			$STH->bindParam(":email", $email);
 			$STH->execute();
-			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC);
+			$fetch = $STH->fetch(PDO::FETCH_ASSOC);
 			$arrResult['data'] = $fetch;
 			if(is_array($fetch)) { // we found a match
-				//TODO: we need to auto generate a new password, hashing is one way
-				$newPassword = "NEW_PASSWORD";
 				$hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
-				$STH = $this->dbo->prepare("UPDATE user SET password=:password WHERE id=:id");
-				$STH->bindParams(":password", $hashedPassword);
-				$STH->bindParams(":id", $fetch[0]['id']);
-				$arrResult['password_query'] = $STH->execute();
+				$STH = $this->dbo->prepare("UPDATE user SET password=? WHERE id=?");
+				$arrData = array();
+				$arrData[0] = $hashedPassword;
+				$arrData[1] = $fetch['id'];
+				$arrResult['password_query'] = $STH->execute($arrData);
 				// TODO: email formatting
-				mail($email, "SUBJECT: new password", $newPassword);
+				$msg = "Your new password is " . $newPassword . "\n";
+				$msg = $msg . "Please change it to a longer, more secure password after logging in";
+				mail($email, "Password Reset for Culinary Directors", $msg);
 			}
 			else { // no match
 				$arrResult['error'][] = "email not found";
@@ -1284,6 +1288,7 @@ class UserModel{
 			$success = false; 
 		}
 		$arrResult['success'] = $success;
+		$arrResult['newPassword'] = $newPassword;
 	    return $arrResult;
 	}
 }
