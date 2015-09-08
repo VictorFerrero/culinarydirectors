@@ -8,6 +8,7 @@
 class OrgModel{
 		private $dbo;
 
+		
 	public function __construct() {
 		$db = new DB_Connections();
 		$this->dbo = $db->getNewDBO();
