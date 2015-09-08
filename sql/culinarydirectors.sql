@@ -45,8 +45,9 @@ CREATE TABLE IF NOT EXISTS `feed` (
 CREATE TABLE IF NOT EXISTS `member_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL,
-  `meal_plan` int(8) NOT NULL,
-  `dietary_restrictions` varchar(64) NOT NULL,
+  `meal_plan` VARCHAR( 5000 ) NOT NULL,
+  `dietary_restrictions` VARCHAR( 5000 ) NOT NULL,
+  `profileJSON` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
@@ -59,6 +60,7 @@ CREATE TABLE IF NOT EXISTS `member_info` (
 CREATE TABLE IF NOT EXISTS `chef_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL,
+  `profileJSON` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
@@ -71,8 +73,14 @@ CREATE TABLE IF NOT EXISTS `chef_info` (
 CREATE TABLE IF NOT EXISTS `admin_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL,
+  `profileJSON` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- Add indexes for _info tables
+ALTER TABLE  `member_info` ADD INDEX (  `userId` ) ;
+ALTER TABLE  `chef_info` ADD INDEX (  `userId` ) ;
+ALTER TABLE  `admin_info` ADD INDEX (  `userId` ) ;
 
 -- --------------------------------------------------------
 
