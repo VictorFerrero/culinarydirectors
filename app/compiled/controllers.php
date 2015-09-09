@@ -96,6 +96,7 @@ class MenuController{
 // id | chef_id | week (0-52) | day (0-7) | approved (0-1)
 	 public function createMenu() {
 		$arrValues = array();
+		$arrValues['name'] = $_REQUEST['name'];
 		$arrValues['chef_id'] = $_REQUEST['chef_id'];
 		$arrValues['week'] = $_REQUEST['week'];
 	    $arrValues['day'] = $_REQUEST['day'];
@@ -119,6 +120,7 @@ class MenuController{
 	 public function editMenu() {
 		$arrValues = array();
 		$arrValues['id'] = $_REQUEST['id'];
+		$arrValues['name'] = $_REQUEST['name'];
 		$arrValues['chef_id'] = $_REQUEST['chef_id'];
 		$arrValues['week'] = $_REQUEST['week']; 
 		$arrValues['day'] = $_REQUEST['day'];
@@ -356,14 +358,15 @@ class UserController{
 
 	public function login() {
 		$arrValues = array();
-		$arrValues['email'] = $_REQUEST['email'];
-		$arrValues['password'] = $_REQUEST['password'];
-		$arrResult = $this->userModel->login($arrValues['email'], $arrValues['password']);
+		$email = $_REQUEST['email'];
+		$password = $_REQUEST['password'];
+		$arrResult = $this->userModel->login($email, $password);
 		if($arrResult['login']) { // login was successful
 			// get the info about the user
 			$arrUser = $arrResult;
+			$orgId = $arrUser['user_profile']['orgId']; // the id of the org that the user is in
+			$userId = $arrUser['user_profile']['id'];
 			// get the info for the org
-			$orgId = $arrUser['user_info']['orgId']; // the id of the org that the user is in
 			$orgModel = new OrgModel();
 			$arrValues = array();
 			$arrValues['id'] = $orgId;
@@ -373,7 +376,7 @@ class UserController{
 			// get the info for the feed
 			$feedModel = new FeedModel();
 			$arrValues = array();
-			$arrValues['id'] = $arrUser['user_info']['id']; 
+			$arrValues['id'] = $userId; 
 			$arrValues['where_clause'] = "receiver=:id"; // get all messages in feed sent to this user
 			$arrTemp = $feedModel->getMessages($arrValues);
 			$arrFeed['received'] = $arrTemp; // get the messages directed toward the user
@@ -390,7 +393,19 @@ class UserController{
 			$arrTemp =  $menuModel->getMenuForOrg($orgId);
 			// go through each menu and get the menu items that are on that menu
 			foreach($arrTemp['data'] as $index => $arrAssoc) {
-				$arrTemp['data'][$index]['menu_items'] = $menuModel->getMenuItemsForMenu($arrTemp['data'][$index]['id']);
+				$arr =  $menuModel->getMenuItemsForMenu($arrTemp['data'][$index]['id']);
+				$arrLunchItems = array();
+				$arrDinnerItems = array();
+				foreach($arr['data'] as $int => $menu_item_record) {
+					if($menu_item_record['meal'] == 0) {
+						$arrLunchItems[] = $menu_item_record;
+					}
+					else {
+						$arrDinnerItems[] = $menu_item_record;
+					}
+				}
+				$arrTemp['data'][$index]['lunch_items'] = $arrLunchItems;
+				$arrTemp['data'][$index]['dinner_items'] = $arrDinnerItems;
 			}
 			$arrMenu = $arrTemp;
 			$menuModel = null;
@@ -424,6 +439,13 @@ class UserController{
 		$arrValues['email'] = $_REQUEST['email'];
 		$arrValues['userRole'] = $_REQUEST['userRole'];
 		$arrValues['orgId'] = $_REQUEST['orgId'];
+		$arrValues['fname'] = $_REQUEST['fname'];
+		$arrValues['lname'] = $_REQUEST['lname'];
+		if($arrValues['userRole'] == 0) {
+			$arrValues['meal_plan'] = $_REQUEST['meal_plan'];
+			$arrValues['dietary_restrictions'] = $_REQUEST['dietary_restrictions'];
+		}
+		$arrValues['profileJSON'] = $_REQUEST['profileJSON'];
 		$arrResult['valid_input'] = false; // assume invalid input 
 		if($this->isInputValid($arrValues['userRole'], 0)) {
 			$arrResult = $this->userModel->register($arrValues);

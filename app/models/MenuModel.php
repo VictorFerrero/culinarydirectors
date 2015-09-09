@@ -61,15 +61,16 @@ class MenuModel
 	public function createMenu($arrValues) {
 		$arrResult = array();
 		$success = false;		
+		$name = $arrValues['name'];
 		$chef_id = $arrValues['chef_id'];
 		$week = $arrValues['week'];
 	    $day = $arrValues['day'];
 		$datestamp = $arrValues['datestamp'];
 		$approved = $arrValues['approved'];
 		 try {
-			$data = array( 'chef_id' => $chef_id, 'week' => $week, 
+			$data = array( 'name' => $name, 'chef_id' => $chef_id, 'week' => $week, 
 			'day' => $day,'datestamp' => $datestamp,'approved' => $approved);
-			$STH = $this->dbo->prepare("INSERT INTO menu VALUES (NULL, :chef_id, :week, :day, :datestamp, :approved)");
+			$STH = $this->dbo->prepare("INSERT INTO menu VALUES (NULL,:name, :chef_id, :week, :day, :datestamp, :approved)");
 			$STH->execute($data);
 			$success = true;
 		} catch (Exception $e) {
@@ -101,6 +102,7 @@ class MenuModel
 	 $arrResult = array();
 	 $success = false;
 	 $id = $arrValues['id'];
+	 $name = $arrValues['name']; 
 	 $chef_id = $arrValues['chef_id'];
 	 $week = $arrValues['week'];
 	 $day = $arrValues['day'];
@@ -109,6 +111,11 @@ class MenuModel
 	 $sql = "UPDATE menu SET ";
 	 $data = array();
 	 $index = 0;
+	  if(strcmp($name, "") != 0) {
+		 $sql = $sql . "name=?, ";
+		 $data[$index] = $name;
+		 $index = $index + 1;
+	 }
 	 if(strcmp($chef_id, "") != 0) {
 		 $sql = $sql . "chef_id=?, ";
 		 $data[$index] = $chef_id;

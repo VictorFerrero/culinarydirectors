@@ -199,7 +199,7 @@ public class MainActivity extends Activity {
     private void initFeed(){
         try{
             //image
-            byte[] decodedString = Base64.decode(this.userJSON.getJSONObject("user_info").getString("img"), Base64.DEFAULT);
+            byte[] decodedString = Base64.decode(this.userJSON.getJSONObject("user_profile").getString("img"), Base64.DEFAULT);
             Bitmap bitMap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
             ImageView imageView = (ImageView) findViewById(R.id.msg_1_pic);
             imageView.setImageBitmap(bitMap);
@@ -213,20 +213,20 @@ public class MainActivity extends Activity {
     private void initProfile(){
         try{
             //image
-            byte[] decodedString = Base64.decode(this.userJSON.getJSONObject("user_info").getString("img"), Base64.DEFAULT);
+            byte[] decodedString = Base64.decode(this.userJSON.getJSONObject("user_profile").getString("img"), Base64.DEFAULT);
             Bitmap bitMap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
             ImageView imageView = (ImageView) findViewById(R.id.profilePic);
             imageView.setImageBitmap(bitMap);
             //name, orgName
             EditText et = (EditText) findViewById(R.id.profileUsernameValue);
-            et.setText(this.userJSON.getJSONObject("user_info").getString("name"));
+            et.setText(this.userJSON.getJSONObject("user_profile").getString("name"));
             et = (EditText) findViewById(R.id.profileOrgValue);
             et.setText(this.orgJSON.getJSONObject("data").getString("name"));
             //meal_plan_info and dietary_restrictions
             et = (EditText) findViewById(R.id.mealPlanValue);
-            et.setText(this.userJSON.getJSONObject("user_info").getString("meal_plan_info"));
+            et.setText(this.userJSON.getJSONObject("user_profile").getString("meal_plan_info"));
             et = (EditText) findViewById(R.id.dietaryRestrictionsValue);
-            et.setText(this.userJSON.getJSONObject("user_info").getString("dietary_restrictions"));
+            et.setText(this.userJSON.getJSONObject("user_profile").getString("dietary_restrictions"));
         } catch(Exception e){Log.w("Exception",e.getMessage()+e.getStackTrace());}
     }
 
@@ -239,8 +239,6 @@ public class MainActivity extends Activity {
             TextView tv = (TextView)this.findViewById(R.id.currentDate);
             tv.setText(menu.getString("displayDate"));
             //set menu items
-            // TODO: JSON objects for menu do not have field for lunch_items/dinner_items
-            // you have to look inside menu_items to get the meal field. 0 = lunch, 1 = dinner
             JSONArray lunch = menu.getJSONArray("lunch_items");
             JSONArray dinner = menu.getJSONArray("dinner_items");
             //TODO: change to loop and dynamic layout when pulling from service

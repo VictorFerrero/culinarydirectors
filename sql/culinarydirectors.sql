@@ -82,6 +82,7 @@ CREATE TABLE IF NOT EXISTS `admin_info` (
 
 CREATE TABLE IF NOT EXISTS `menu` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) NOT NULL,
   `chef_id` int(11) NOT NULL,
   `week` int(11) NOT NULL,
   `day` int(11) NOT NULL,
@@ -151,6 +152,8 @@ CREATE TABLE IF NOT EXISTS `user` (
   `email` varchar(100) NOT NULL,
   `userRole` int(11) NOT NULL,
   `orgId` int(11) NOT NULL,
+  `fname` varchar(100) NOT NULL,
+  `lname` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 

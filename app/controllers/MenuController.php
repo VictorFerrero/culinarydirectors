@@ -33,6 +33,7 @@ class MenuController{
 // id | chef_id | week (0-52) | day (0-7) | approved (0-1)
 	 public function createMenu() {
 		$arrValues = array();
+		$arrValues['name'] = $_REQUEST['name'];
 		$arrValues['chef_id'] = $_REQUEST['chef_id'];
 		$arrValues['week'] = $_REQUEST['week'];
 	    $arrValues['day'] = $_REQUEST['day'];
@@ -56,6 +57,7 @@ class MenuController{
 	 public function editMenu() {
 		$arrValues = array();
 		$arrValues['id'] = $_REQUEST['id'];
+		$arrValues['name'] = $_REQUEST['name'];
 		$arrValues['chef_id'] = $_REQUEST['chef_id'];
 		$arrValues['week'] = $_REQUEST['week']; 
 		$arrValues['day'] = $_REQUEST['day'];

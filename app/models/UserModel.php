@@ -74,12 +74,17 @@ class UserModel{
 	*/
 	public function register($arrValues) {
 		// first we check if username already exists
+		$sql = "";
+		$data = array();
+		$userId = -1;
 		$arrResult = array();
 		$success = false;
 		$hashedPassword = password_hash($arrValues['password'], PASSWORD_BCRYPT);
 		$email = $arrValues['email'];
 		$userRole = $arrValues['userRole'];
 		$orgId = $arrValues['orgId'];
+		$fname = $arrValues['fname'];
+		$lname = $arrValues['lname'];
 		$arrResult['error'] = array();
 		// see if email has been used already
 		$boolValidEmail = false;
@@ -107,22 +112,39 @@ class UserModel{
 		}
 		// we have a valid email. So lets add it to the db
 		 try {
-			$data = array('password' => $hashedPassword, 'email' => $email, 'orgId' => $orgId, 'userRole' => $userRole);
-			$STH = $this->dbo->prepare("INSERT INTO user VALUES (NULL, :password, :email, :userRole, :orgId)");
+			$data = array('password' => $hashedPassword, 'email' => $email, 'orgId' => $orgId, 'userRole' => $userRole,
+							'fname' => $fname, 'lname' => $lname);
+			$STH = $this->dbo->prepare("INSERT INTO user VALUES (NULL, :password, :email, :userRole, :orgId, :fname, :lname)");
 			$STH->execute($data);
-			// TODO: now, based on the userRole, insert a new record into: member_info, chef_info, or admin_info
-			//use same error checks as with the above insert query
+			
+			// we need to get the id of the user we just added, so we can link the user table with the user_info tables
+			$sql = "SELECT * FROM user WHERE email=:email";
+			$STH = $this->dbo->prepare($sql);
+			$STH->bindParam(":email", $email);
+			$STH->execute();
+			$fetch = $STH->fetch(PDO::FETCH_ASSOC);
+			$userId = $fetch['id'];
 			switch($userRole) {
 				case 0: // frat member
+					$sql = "INSERT INTO member_info VALUES (NULL, :userId, :meal_plan, :dietary_restrictions, :profileJSON)";
+					$data = array('userId' => $userId, 'meal_plan' => $arrValues['meal_plan'],
+							'dietary_restrictions' => $arrValues['dietary_restrictions'], 'profileJSON' => $arrValues['profileJSON']);
 				break;
 				case 1: // chef
+					$sql = "INSERT INTO chef_info VALUES (NULL, :userId, :profileJSON)";
+					$data = array('userId' => $userId, 'profileJSON' => $arrValues['profileJSON']);
 				break;
 				case 2: // admin
+					$sql = "INSERT INTO admin_info VALUES (NULL, :userId, :profileJSON)";
+					$data = array('userId' => $userId, 'profileJSON' => $arrValues['profileJSON']);
 				break;
 				default: 
 				$arrResult['error'][] = "invalid user role. Can be 0, 1, 2";
 				break;
 			}
+			$STH = $this->dbo->prepare($sql);
+			$STH->execute($data);
+			$success = true;
 		} catch (Exception $e) {
 			$success = false;
 			$arrResult['error'][] = $e->getMessage();
@@ -248,53 +270,53 @@ class UserModel{
 		);
 	*/
 	public function login($email, $password) {
-		$userId = null;
+		$userId = -1;
+		$userRole = -1;
+		$sql = "";
 		$success = false;
 		$arrResult = array();	
 		$arrResult['error_message'] = array();
 		$arrResult['login'] = false;
 		$success = false;
 		 try {
-			$STH = $this->dbo->prepare("SELECT * FROM user WHERE email=:email");
+			$STH = $this->dbo->prepare("SELECT password, id, userRole FROM user WHERE email=:email");
 			$STH->bindParam(":email", $email);
 			$STH->execute();
 			$fetch = $STH->fetchAll(PDO::FETCH_ASSOC); // should we use fetch or fetchAll? should only be 1 record
 			if(is_array($fetch)) {
 				$hashedPassword = $fetch[0]['password'];
 				if(password_verify($password, $hashedPassword)) {
-				// email exists in the database and pw hash compare returned true
-				$arrResult['user_info'] = $fetch[0]; // not sure what to return. just putting this here for now
-				$arrResult['login'] = true; // the login had the correct credentials
 				$userId = $fetch[0]['id']; // get userId for next query
-				// find info specific to this type of user
-				switch($fetch[0]['userRole']){
+				$userRole = $fetch[0]['userRole']; // used to put together the final query based on the users role
+				// email exists in the database and pw hash compare returned true
+				// put together sql query to get user profile
+				switch($userRole){
 					case 0: //member
-						//query user_info table and assign to ['member_info']
-						$sql = "SELECT * FROM user_info WHERE userId=:userId";
+						//query member_info table
+						$sql = "SELECT u.id, u.orgId, u.email, u.userRole, concat(u.fname , ' ' , u.lname) AS name, m.meal_plan, m.dietary_restrictions, m.profileJSON ";
+						$sql = $sql . "FROM user AS u INNER JOIN member_info as m ON m.userId = u.id WHERE u.id=:userId";
 						break;
 					case 1: //chef
-						//query chef_info table and assign to ['chef_info']
-						"SELECT * FROM chef_info WHERE userId=:userId";
+						//query chef_info table 
+						$sql = "SELECT u.id, u.email, u.userRole, concat(u.fname , ' ' , u.lname) AS name, m.profileJSON ";
+						$sql = $sql . "FROM user AS u INNER JOIN chef_info as m ON m.userId = u.id WHERE u.id=:userId";
 						break;
 					case 2: //admin
-						//query admin_info table and assign to ['admin_info']
-						"SELECT * FROM admin_info WHERE userId=:userId";
+						//query admin_info table
+						$sql = "SELECT u.id, u.email, u.userRole, concat(u.fname , ' ' , u.lname) AS name, m.profileJSON ";
+						$sql = $sql . "FROM user AS u INNER JOIN admin_info as m ON m.userId = u.id WHERE u.id=:userId";
 						break;
 					default: 
 						//throw error, somehow userRole isn't a number
 						throw new Exception("user role is not a valid number in the database");
 						break;
 				}
-				// keep commented for now so as to not cause unexpected bugs.
-				// TODO: still need schemas for the _info tables so that we can
-				// test the below code.
-				/* 
 				$STH = $this->dbo->prepare($sql);
 				$STH->bindParam(":userId", $userId);
 				$STH->execute();
 				$fetch = $STH->fetch(PDO::FETCH_ASSOC); // use fetch or fetchAll? there should only be 1 record
-				$arrResult['type_info'] = $fetch;
-				*/
+				$arrResult['user_profile'] = $fetch;
+				$arrResult['login'] = true; // the login had the correct credentials				
 				$success = true;
 			}
 			else {
