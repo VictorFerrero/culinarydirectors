@@ -990,84 +990,92 @@ class UserModel{
 		);
 	*/
 	public function register($arrValues) {
-		// first we check if username already exists
+		// START function variables and objects declarations
+		$userId = -1;
 		$sql = "";
 		$data = array();
-		$userId = -1;
 		$arrResult = array();
-		$success = false;
-		$hashedPassword = password_hash($arrValues['password'], PASSWORD_BCRYPT);
-		$email = $arrValues['email'];
-		$userRole = $arrValues['userRole'];
-		$orgId = $arrValues['orgId'];
-		$fname = $arrValues['fname'];
-		$lname = $arrValues['lname'];
 		$arrResult['error'] = array();
-		// see if email has been used already
-		$boolValidEmail = false;
-		 try {
-			$STH = $this->dbo->prepare("SELECT * FROM user WHERE email=:email");
-			$STH->bindParam(":email", $email);
-			$STH->execute();
-			$fetch = $STH->fetch(PDO::FETCH_ASSOC);
-			if(is_array($fetch)) {
-				// email exists in the db
-				$boolValidEmail = false;
-				$arrResult['error'][] = "the email already exists";
+		$success = false;
+		// need these here for scoping reasons
+		$email = $arrValues[0]['email']; 
+		$hashedPassword = password_hash($arrValues[0]['password'], PASSWORD_BCRYPT);
+		$userRole = $arrValues[0]['userRole'];
+		$orgId = $arrValues[0]['orgId'];
+		$fname = $arrValues[0]['fname'];
+		$lname = $arrValues[0]['lname'];
+		// prepare whatever statements we can, and bind parameters
+		$INSERT_STH = $this->dbo->prepare("INSERT INTO user VALUES (NULL, :password, :email, :userRole, :orgId, :fname, :lname)");
+		$INSERT_STH->bindParam(":password", $hashedPassword);
+		$INSERT_STH->bindParam(":email", $email);
+		$INSERT_STH->bindParam(":userRole", $userRole);
+		$INSERT_STH->bindParam(":orgId", $orgId);
+		$INSERT_STH->bindParam(":fname", $fname);
+		$INSERT_STH->bindParam(":lname", $lname);
+		$SELECT_ID_STH = $this->dbo->prepare("SELECT id FROM user WHERE email=:email"); 
+		$SELECT_ID_STH->bindParam(":email", $email); // bind param binds by REFERENCE
+		// END 
+		// check to see if all emails are valid
+		foreach($arrValues as $intIndex => $arrAssoc) {
+			$email = $arrAssoc['email']; // this variable is binded to two prepared PDO statements
+			// see if emails have been used already
+			 try {
+				$SELECT_ID_STH->execute(); // see if the email is already in the database
+				$fetch = $SELECT_ID_STH->fetch(PDO::FETCH_ASSOC);
+				if(is_array($fetch)) {
+					// email exists in the db
+					$arrValues[$intIndex]['validEmail'] = false; // mark this user record as not having valid email
+					$arrResult['error'][] = "the email " . $email . " already exists";
+				}
+				else {
+					// email is available. so we mark the record, and then add it to the database
+					$arrValues[$intIndex]['validEmail'] = true;
+					// get the other parameters necessary to add the user
+					$hashedPassword = password_hash($arrAssoc['password'], PASSWORD_BCRYPT);
+					$userRole = $arrAssoc['userRole'];
+					$orgId = $arrAssoc['orgId'];
+					$fname = $arrAssoc['fname'];
+					$lname = $arrAssoc['lname'];
+					 try {
+						$INSERT_STH->execute(); // above params are already binded to the prepared statement
+						// we need to get the id of the user we just added, so we can link the user table with the user_info tables
+						$SELECT_ID_STH->execute();
+						$fetch = $SELECT_ID_STH->fetch(PDO::FETCH_ASSOC);
+						$userId = $fetch['id'];
+						switch($userRole) {
+							case 0: // frat member
+								$sql = "INSERT INTO member_info VALUES (NULL, :userId, :meal_plan, :dietary_restrictions, :profileJSON)";
+								$data = array('userId' => $userId, 'meal_plan' => $arrAssoc['meal_plan'],
+										'dietary_restrictions' => $arrAssoc['dietary_restrictions'], 'profileJSON' => $arrAssoc['profileJSON']);
+							break;
+							case 1: // chef
+								$sql = "INSERT INTO chef_info VALUES (NULL, :userId, :profileJSON)";
+								$data = array('userId' => $userId, 'profileJSON' => $arrAssoc['profileJSON']);
+							break;
+							case 2: // admin
+								$sql = "INSERT INTO admin_info VALUES (NULL, :userId, :profileJSON)";
+								$data = array('userId' => $userId, 'profileJSON' => $arrAssoc['profileJSON']);
+							break;
+							default: 
+							$arrResult['error'][] = "invalid user role. Can be 0, 1, 2";
+							break;
+						}
+						// this statement depends on sql from switch statement, so lets keep it here
+						$USER_INFO_STH = $this->dbo->prepare($sql);
+						$USER_INFO_STH->execute($data);
+						$success = true;
+					} catch (Exception $e) {
+						$success = false;
+						$arrResult['error'][] = $e->getMessage();
+					}
+				}
+			} catch (Exception $e) {
+				$arrResult['error'][] = $e->getMessage();
 			}
-			else {
-				// email is available
-				$boolValidEmail = true;
-			}
-		} catch (Exception $e) {
-			$arrResult['error'][] = $e->getMessage();
-			$boolValidEmail = false; // assume email is invalid if we get an exception
-		}
-		if(!$boolValidEmail) {
-			$arrResult['success'] = false;
-			return $arrResult;
-		}
-		// we have a valid email. So lets add it to the db
-		 try {
-			$data = array('password' => $hashedPassword, 'email' => $email, 'orgId' => $orgId, 'userRole' => $userRole,
-							'fname' => $fname, 'lname' => $lname);
-			$STH = $this->dbo->prepare("INSERT INTO user VALUES (NULL, :password, :email, :userRole, :orgId, :fname, :lname)");
-			$STH->execute($data);
-			
-			// we need to get the id of the user we just added, so we can link the user table with the user_info tables
-			$sql = "SELECT * FROM user WHERE email=:email";
-			$STH = $this->dbo->prepare($sql);
-			$STH->bindParam(":email", $email);
-			$STH->execute();
-			$fetch = $STH->fetch(PDO::FETCH_ASSOC);
-			$userId = $fetch['id'];
-			switch($userRole) {
-				case 0: // frat member
-					$sql = "INSERT INTO member_info VALUES (NULL, :userId, :meal_plan, :dietary_restrictions, :profileJSON)";
-					$data = array('userId' => $userId, 'meal_plan' => $arrValues['meal_plan'],
-							'dietary_restrictions' => $arrValues['dietary_restrictions'], 'profileJSON' => $arrValues['profileJSON']);
-				break;
-				case 1: // chef
-					$sql = "INSERT INTO chef_info VALUES (NULL, :userId, :profileJSON)";
-					$data = array('userId' => $userId, 'profileJSON' => $arrValues['profileJSON']);
-				break;
-				case 2: // admin
-					$sql = "INSERT INTO admin_info VALUES (NULL, :userId, :profileJSON)";
-					$data = array('userId' => $userId, 'profileJSON' => $arrValues['profileJSON']);
-				break;
-				default: 
-				$arrResult['error'][] = "invalid user role. Can be 0, 1, 2";
-				break;
-			}
-			$STH = $this->dbo->prepare($sql);
-			$STH->execute($data);
-			$success = true;
-		} catch (Exception $e) {
-			$success = false;
-			$arrResult['error'][] = $e->getMessage();
 		}
 		// just send some stuff back to caller for debug
 		$arrResult['success'] = $success;
+		$arrResult['values'] = $arrValues; // return so client can see if there were any invalid emails
 		// below is for debug
 		/*
 		$arrResult['hashed_password'] = $hashedPassword;
@@ -1087,25 +1095,54 @@ class UserModel{
 		);
 	*/
 	// should we pass in another variable for userRole??
-	public function deleteUser($email,$password) {
+	public function deleteUser($arrValues) {
+		$email = $arrValues['email'];
+		$password = $arrValues['password'];
+		$userRole = $arrValues['userRole'];
 		$arrResult = array();
+		$arrResult['error'] = array();
 		$success = false;
 		 try {
 			$STH = $this->dbo->prepare("SELECT * FROM user WHERE email=:email");
 			$STH->bindParam(":email", $email);
 			$STH->execute();
 			$fetch = $STH->fetch(PDO::FETCH_ASSOC);
-			if(password_verify($password,$fetch['password'])){ //TODO: or if admin is deleting a user
-				$STH = $this->dbo->prepare("DELETE FROM user WHERE email=:email");
-				$STH->bindParam(":email", $email);
-				$STH->execute();	
-				$success = true;
-			} else {
-				$success = false;
-				$arrResult['error'] = "not authorized to delete this acct";
+			if(is_array($fetch)) {
+				$userId = $fetch['userId'];
+				if(password_verify($password,$fetch['password']) || $userRole == 2){ //TODO: or if admin is deleting a user
+					$STH = $this->dbo->prepare("DELETE FROM user WHERE email=:email");
+					$STH->bindParam(":email", $email);
+					$STH->execute();
+					switch($userRole) {
+						case 0:
+							$sql = "DELETE FROM member_info WHERE userId=:userId";
+						break;
+					
+						case 1:
+							$sql = "DELETE FROM chef_info WHERE userId=:userId";
+						break;
+						
+						case 2:
+							$sql = "DELETE FROM admin_info WHERE userId=:userId";
+						break;
+						default:
+							$arrResult['error'][] = "invalid user role";
+						break;
+					}
+					$STH = $this->dbo->prepare($sql);
+					$STH->bindParam(":userId", $userId);
+					$STH->execute();
+					$success = true;
+				} else {
+					$success = false;
+					$arrResult['error'][] = "not authorized to delete this acct";
+				}
+			}
+			else {
+				$arrResult['error'][] = "email not found in the datbase";
 			}
 		} catch (Exception $e) {
-			$arrResult['error'] = $e->getMessage();
+			$arrResult['error'][] = $e->getMessage();
 		}
 		$arrResult['success'] = $success;
 		return $arrResult;

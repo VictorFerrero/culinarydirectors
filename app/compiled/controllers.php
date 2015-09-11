@@ -349,6 +349,53 @@ class UserController{
 		$this->userModel = null;
 	}
 	
+	// password, email, userRole, orgId, fname, lname
+	public function registerUsersWithCSV() {
+	try {
+	$arrResult = array();
+	$arrResult[0] = $_POST;
+	$arrResult[1] = $_FILES;
+		$arrValues = array();
+		$intIndex = 0; 
+		$x = 1;
+		// populate $arrValues with all the fields
+		if(isset($_POST['submit'])) {
+			if($_FILES['csv']['error'] == 0) {
+				$tmpName = $_FILES['csv']['tmp_name'];
+				$csvAsArray = array_map('str_getcsv', file($tmpName));
+				foreach($csvAsArray as $index => $numericalArr) {
+					if($index == 0 && strcmp($numericalArr[2], "userRole") == 0) {
+						// sometimes the first line in the csv could be the column names, so we do nothing
+					}
+					else { 
+						$userRole = $numericalArr[2];
+						$arrValues[$intIndex]['password'] = $numericalArr[0];
+						$arrValues[$intIndex]['email'] = $numericalArr[1];
+						$arrValues[$intIndex]['userRole'] = $numericalArr[2];
+						$arrValues[$intIndex]['orgId'] = $numericalArr[3];
+						$arrValues[$intIndex]['fname'] = $numericalArr[4];
+						$arrValues[$intIndex]['lname'] = $numericalArr[5];
+						if($userRole == 0) { // only members have these two fields
+							$arrValues[$intIndex]['meal_plan'] = $numericalArr[6];
+							$arrValues[$intIndex]['dietary_restrictions'] = $numericalArr[7];
+						}
+						$arrValues[$intIndex]['profileJSON'] = $numericalArr[8]; // everyone gets a json profile
+						$intIndex = $intIndex + 1;
+					}
+				}
+			}
+			else {
+				$arr = array('error' => "error uploading the csv file");
+				return $arr;
+			}
+		}
+		} catch (Exception $e) {
+			return $e->getMessage();
+		}
+		$arrResult = $this->userModel->register($arrValues);
+		return $arrResult;
+	}
+	
 	public function isUserInOrg($userId, $orgId) {
 		$userId = $_REQUEST['userId'];
 		$orgId = $_REQUEST['orgId'];
@@ -423,10 +470,11 @@ class UserController{
 		return $arrResult;
 	}
 	
-	public function logout() {
+	public function logout() {	
 		$arrResult = array();
 		return $arrResult;
 	}
+
 	
 	public function getAllUsers(){
 		return $this->userModel->getAllUsers();
@@ -435,40 +483,31 @@ class UserController{
 	public function register(){
 		$arrValues = array();
 		$arrResult = array();
-		$arrValues['password'] = $_REQUEST['password'];
-		$arrValues['email'] = $_REQUEST['email'];
-		$arrValues['userRole'] = $_REQUEST['userRole'];
-		$arrValues['orgId'] = $_REQUEST['orgId'];
-		$arrValues['fname'] = $_REQUEST['fname'];
-		$arrValues['lname'] = $_REQUEST['lname'];
-		if($arrValues['userRole'] == 0) {
-			$arrValues['meal_plan'] = $_REQUEST['meal_plan'];
-			$arrValues['dietary_restrictions'] = $_REQUEST['dietary_restrictions'];
+		$arrValues[0]['password'] = $_REQUEST['password'];
+		$arrValues[0]['email'] = $_REQUEST['email'];
+		$arrValues[0]['userRole'] = $_REQUEST['userRole'];
+		$arrValues[0]['orgId'] = $_REQUEST['orgId'];
+		$arrValues[0]['fname'] = $_REQUEST['fname'];
+		$arrValues[0]['lname'] = $_REQUEST['lname'];
+		if($arrValues[0]['userRole'] == 0) { // only members have these two fields
+			$arrValues[0]['meal_plan'] = $_REQUEST['meal_plan'];
+			$arrValues[0]['dietary_restrictions'] = $_REQUEST['dietary_restrictions'];
 		}
-		$arrValues['profileJSON'] = $_REQUEST['profileJSON'];
+		$arrValues[0]['profileJSON'] = $_REQUEST['profileJSON'];
 		$arrResult['valid_input'] = false; // assume invalid input 
 		if($this->isInputValid($arrValues['userRole'], 0)) {
 			$arrResult = $this->userModel->register($arrValues);
 			$arrResult['valid_input'] = true;
 		}
 		return $arrResult;
-		/*
-		if($arrResult['success']) {
-			//successfully added user
-			return $arrResult;
-		}
-		else {
-			//there was an error
-			print_r($arrResult);
-		}
-		* */
 	}
 	
 	public function deleteUser() {
 		$arrValues = array();
-		$arrValues['username'] = $_REQUEST['username'];
+		$arrValues['email'] = $_REQUEST['email'];
 		$arrValues['password'] = $_REQUEST['password'];
-		$arrResult = $this->userModel->deleteUser($arrValues['username'], $arrValues['password']);
+		$arrValues['userRole'] = $_REQUEST['userRole'];
+		$arrResult = $this->userModel->deleteUser($arrValues);
 		return $arrResult;
 	}
 	
@@ -479,7 +518,6 @@ class UserController{
 	}
 	
 	private function isInputValid($input, $flag) {
-		
 		switch($flag) {
 			case 0: // used to validate userRole when registering a user
 				if($input >=0 && $input <= 2) {

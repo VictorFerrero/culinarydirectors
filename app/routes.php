@@ -1,8 +1,9 @@
 <?php
 /*Test Functions*/
 $routePrefix = 'culinarydirectors/index.php/';
-$router->get($routePrefix.'helloworld', function(){
-	return Test::getIndex();
+$router->post($routePrefix.'helloworld', function(){
+	$arr = array(); $arr['message'] = "hello, world";
+	return json_encode($arr);
 }, array('before' => 'statsStart', 'after' => 'statsComplete'));
 
 /*Webservice Functions*/
@@ -35,6 +36,11 @@ $router->post($routePrefix.'user/getAllUsers', function(){
 $router->post($routePrefix.'user/register', function(){
 	$UserController = new UserController();
 	return json_encode($UserController->register());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'user/registerUsersWithCSV', function(){
+	$UserController = new UserController();
+	return json_encode($UserController->registerUsersWithCSV());
 }, array('before' => 'statsStart', 'after' => 'statsComplete'));
 
 $router->post($routePrefix.'user/deleteUser', function(){
