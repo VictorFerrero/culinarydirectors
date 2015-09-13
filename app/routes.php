@@ -7,6 +7,27 @@ $router->post($routePrefix.'helloworld', function(){
 }, array('before' => 'statsStart', 'after' => 'statsComplete'));
 
 /*Webservice Functions*/
+/*Admin panel*/
+$router->post($routePrefix.'adminpanel/login', function(){
+	$AdminPanelController = new AdminPanelController();
+	return json_encode($AdminPanelController->login());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'adminpanel/lists', function(){
+	$AdminPanelController = new AdminPanelController();
+	return json_encode($AdminPanelController->lists());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'adminpanel/upsert', function(){
+	$AdminPanelController = new AdminPanelController();
+	return json_encode($AdminPanelController->upsert());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+
+$router->post($routePrefix.'adminpanel/delete', function(){
+	$AdminPanelController = new AdminPanelController();
+	return json_encode($AdminPanelController->delete());
+}, array('before' => 'statsStart', 'after' => 'statsComplete'));
+/*end admin panel*/
 // start UserController
 $router->post($routePrefix.'user/isUserInOrg', function(){
 	$UserController = new UserController();

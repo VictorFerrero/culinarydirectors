@@ -335,12 +335,12 @@ class UserModel{
 						break;
 					case 1: //chef
 						//query chef_info table 
-						$sql = "SELECT u.id, u.email, u.userRole, concat(u.fname , ' ' , u.lname) AS name, m.profileJSON ";
+						$sql = "SELECT u.id, u.orgId, u.email, u.userRole, concat(u.fname , ' ' , u.lname) AS name, m.profileJSON ";
 						$sql = $sql . "FROM user AS u INNER JOIN chef_info as m ON m.userId = u.id WHERE u.id=:userId";
 						break;
 					case 2: //admin
 						//query admin_info table
-						$sql = "SELECT u.id, u.email, u.userRole, concat(u.fname , ' ' , u.lname) AS name, m.profileJSON ";
+						$sql = "SELECT u.id, u.orgId, u.email, u.userRole, concat(u.fname , ' ' , u.lname) AS name, m.profileJSON ";
 						$sql = $sql . "FROM user AS u INNER JOIN admin_info as m ON m.userId = u.id WHERE u.id=:userId";
 						break;
 					default: 

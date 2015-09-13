@@ -50,10 +50,6 @@
         android:layout_marginTop="40dp"
         style="@style/textview_31">
     </TextView>
-    <!--View
-        android:layout_width="fill_parent"
-        android:layout_height="2dp"
-        android:background="#000"/-->
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="46dp"
@@ -325,13 +321,5 @@
             </Button>
         </RelativeLayout>
     </LinearLayout>
-    <!--RadioButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Late Plate"/>
-    <RadioButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="No Show"/-->
 </LinearLayout>
 </ScrollView>
